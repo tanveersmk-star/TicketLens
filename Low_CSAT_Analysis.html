@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket Analysis Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-strong: #f8fbfc;
+      --text: #1f2937;
+      --text-muted: #556170;
+      --primary: #0f6370;
+      --primary-soft: #d4eff2;
+      --accent: #1a85a7;
+      --border: #d8e2e8;
+      --shadow: 0 18px 40px rgba(15, 45, 65, 0.08);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+    body { padding: 0; }
+    header { background: linear-gradient(135deg, #0d4c61 0%, #166c7b 100%); color: white; padding: 28px 24px; }
+    header h1 { margin: 0; font-size: 2rem; letter-spacing: -0.02em; }
+    header p { max-width: 860px; margin: 12px 0 0; color: rgba(255,255,255,0.88); line-height: 1.7; }
+    .page-wrap { max-width: 1280px; margin: 0 auto; padding: 24px; }
+    .grid { display: grid; gap: 24px; grid-template-columns: minmax(320px, 420px) minmax(0, 1fr); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .card-header { padding: 22px 24px; border-bottom: 1px solid var(--border); background: var(--surface-strong); }
+    .card-header h2 { margin: 0; font-size: 1.1rem; letter-spacing: -0.01em; }
+    .card-header p { margin: 10px 0 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+    .card-body { padding: 22px 24px; }
+    .dropzone { border: 2px dashed rgba(15,99,112,.32); border-radius: 18px; padding: 28px; text-align: center; background: linear-gradient(180deg, #f9fcfd 0%, #eef8f9 100%); cursor: pointer; transition: border-color 0.2s ease, background 0.2s ease; }
+    .dropzone.dragover { border-color: var(--primary); background: #e6f7f9; }
+    .dropzone h3 { margin: 0 0 10px; font-size: 1.08rem; }
+    .dropzone p { margin: 0 0 18px; color: var(--text-muted); font-size: 0.96rem; }
+    .dropzone small { color: var(--text-muted); }
+    button, select, input[type='checkbox'] + label, textarea { font-family: inherit; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; border: none; border-radius: 999px; padding: 12px 20px; background: var(--primary); color: white; font-weight: 700; cursor: pointer; transition: transform 0.15s ease, background 0.2s ease; }
+    .btn:hover { transform: translateY(-1px); background: #0c5562; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: #f4f7f9; }
+    .controls { display: grid; gap: 16px; }
+    .field { display: grid; gap: 8px; }
+    .field label { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+    select, textarea { width: 100%; border-radius: 14px; border: 1px solid var(--border); padding: 12px 14px; font-size: 0.95rem; color: var(--text); background: white; resize: vertical; }
+    textarea { min-height: 110px; line-height: 1.6; }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .checkbox-row input { width: 18px; height: 18px; accent-color: var(--primary); }
+    .small-text { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+    .status-note { margin-top: 16px; color: var(--text); font-size: 0.95rem; }
+    .status-note span { font-weight: 700; }
+    .meta-list { display: grid; gap: 12px; }
+    .meta-item { display: grid; gap: 4px; }
+    .meta-item strong { font-size: 0.95rem; color: var(--text); }
+    .meta-item span { color: var(--text-muted); font-size: 0.92rem; }
+    .flag-list { display: grid; gap: 10px; }
+    .flag-pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 999px; border: 1px solid rgba(15,99,112,.16); background: #eefffe; color: #0d5a66; font-size: 0.92rem; }
+    .report-card { display: grid; gap: 18px; }
+    .report-section { background: var(--surface-strong); border-radius: 16px; border: 1px solid var(--border); padding: 22px; }
+    .report-section h3 { margin: 0 0 12px; font-size: 1rem; color: var(--primary); }
+    .report-section p, .report-section ul, .report-section ol, .report-section td, .report-section th { color: var(--text-muted); font-size: 0.96rem; line-height: 1.8; }
+    .report-section ul, .report-section ol { padding-left: 18px; margin: 0; }
+    .report-section table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .report-section th, .report-section td { text-align: left; padding: 10px 12px; border: 1px solid #dbe5ea; }
+    .report-section th { background: #f1f7f9; font-weight: 700; }
+    .report-section hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+    .raw-output { background: #f7fafb; border: 1px solid var(--border); border-radius: 14px; padding: 16px; white-space: pre-wrap; font-size: 0.92rem; color: var(--text-muted); max-height: 300px; overflow: auto; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 -6px; }
+    .button-row button { flex: 1 1 180px; }
+    .hidden { display: none !important; }
+    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+    @media print { body { background: white; } header, .controls, .button-row, .status-note, .checkbox-row, .dropzone, .meta-list + .small-text { display: none !important; } .page-wrap { padding: 0; } .report-card { box-shadow: none; border: none; } .report-section { page-break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="page-wrap">
+      <h1>Ticket Analysis Generator</h1>
+      <p>Upload a support ticket PDF or load sample data to generate a leadership-ready service management review. The report is built for CSAT risk, root cause clarity, and improvement action planning.</p>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <div class="grid">
+      <section class="card">
+        <div class="card-header">
+          <h2>Upload & Analysis Options</h2>
+          <p>Choose a ticket PDF, select the review mode, and decide whether the raw extraction is visible.</p>
+        </div>
+        <div class="card-body">
+          <div id="dropzone" class="dropzone" tabindex="0">
+            <h3>Drop a PDF here</h3>
+            <p>Drag and drop an uploaded ticket export or click to browse for a PDF file.</p>
+            <small>Supports OmniTracker and service ticket reports.</small>
+          </div>
+          <input id="file-input" type="file" accept="application/pdf" class="hidden">
+          <div class="field">
+            <label for="analysis-mode">Analysis Mode</label>
+            <select id="analysis-mode">
+              <option value="standard">Standard Ticket Analysis</option>
+              <option value="service_management">Service Management Review</option>
+              <option value="csat_risk">CSAT Risk Review</option>
+              <option value="leadership">Leadership Summary</option>
+            </select>
+          </div>
+          <div class="field checkbox-row">
+            <input id="service-actions" type="checkbox" checked>
+            <label for="service-actions">Include Service Management Improvement Actions</label>
+          </div>
+          <div class="field checkbox-row">
+            <input id="show-raw" type="checkbox">
+            <label for="show-raw">Show extracted raw ticket data</label>
+          </div>
+          <div class="field">
+            <label for="custom-instruction">Optional custom instruction override</label>
+            <textarea id="custom-instruction" placeholder="Add a leadership nuance or focus area for the report, e.g. emphasize customer communication, escalation clarity, or closure rationale."></textarea>
+          </div>
+          <div class="button-row" style="margin-top: 18px;">
+            <button id="generate-btn" class="btn">Generate Report</button>
+            <button id="sample-btn" class="btn btn-secondary">Load Sample Data</button>
+            <button id="reset-btn" class="btn btn-secondary">Reset</button>
+          </div>
+          <div class="status-note" id="status-note">No file selected yet.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Parsed Ticket Snapshot</h2>
+          <p>Review extracted metadata, detected service management flags, and review the generated report content.</p>
+        </div>
+        <div class="card-body">
+          <div class="meta-list" id="metadata-panel"></div>
+          <div class="field" style="margin-top: 18px;">
+            <strong>Flags</strong>
+            <div class="flag-list" id="flags-panel"></div>
+          </div>
+          <div class="field" id="raw-panel" class="hidden" style="margin-top: 18px;">
+            <strong>Extracted Raw Ticket Text</strong>
+            <div id="raw-output" class="raw-output"></div>
+          </div>
+          <div class="field" style="margin-top: 18px;">
+            <strong>Export & Print</strong>
+            <div class="button-row" style="margin-top: 10px;">
+              <button id="copy-md-btn" class="btn btn-secondary">Copy Markdown</button>
+              <button id="copy-html-btn" class="btn btn-secondary">Copy HTML</button>
+              <button id="download-md-btn" class="btn btn-secondary">Download Markdown</button>
+              <button id="print-btn" class="btn">Print</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="report-card" id="report-card"></section>
+  </main>
+
+  <script>
+    const sampleTicketText = `Ticket ID: I-25020096 / C-25061794
+Title: Anhänge im RTC Cockpit; Lange Laufzeit bis diese geöffnet werden
+Service: SAP ERP I3P VSR (Return Center system)
+Category: Application Performance
+Created: 22.09.2025 09:20:14
+Closed: 08.10.2025 17:05:00
+Status: Closed
+Priority: Normal
+Customer Priority: Medium
+Reporting Person: Return Center User
+Responsible Group: L4 CS / L4 Basis
+Responsible Person: Tom Meissner
+
+Problem Statement:
+Attachments in the RTC Cockpit are taking excessively long to open, particularly when archived attachments are accessed by Return Center users.
+
+Communication Timeline:
+22.09.2025 - User reported slowdown opening attachments.
+23.09.2025 - Tom Meissner identified an HTTP_POST_FILES / SAPHTTP latency issue in SAP Document calls.
+24.09.2025 - Support requested confirmation that issue still occurs after opening archived documents.
+29.09.2025 - No customer response to repeated clarification requests.
+08.10.2025 - Ticket closed after no response, issue not confirmed as resolved.
+
+Technical Findings:
+ST12 trace analysis confirmed a first-call performance bottleneck when SAPHTTP executes HTTP_POST_FILES for document attachment retrieval.
+The delay appears on first-time function calls within an SAP Document element and affects archive display for Return Center users.
+
+Closure Reason:
+Closed due to no customer response rather than after implementing a remediation.
+
+Workaround:
+None provided or documented.
+
+Escalation Indicators:
+Matter was routed between L4 CS and L4 Basis without clear final owner. No scheduled follow-up or solution timeline was communicated.
+`;
+
+    const sampleTicketData = {
+      ticket_id_internal: 'I-25020096',
+      ticket_id_customer: 'C-25061794',
+      title: 'Anhänge im RTC Cockpit; Lange Laufzeit bis diese geöffnet werden',
+      service: 'SAP ERP I3P VSR (Return Center system)',
+      category: 'Application Performance',
+      created_at: '2025-09-22',
+      closed_at: '2025-10-08',
+      status: 'Closed',
+      priority: 'Normal',
+      customer_priority: 'Medium',
+      reporting_person: 'Return Center User',
+      responsible_group: 'L4 CS / L4 Basis',
+      responsible_person: 'Tom Meissner',
+      problem_statement: 'Attachments in the RTC Cockpit take excessively long to open, especially archived attachments for Return Center users.',
+      technical_findings: [
+        'Delay occurs when HTTP_POST_FILES is called via RFC SAPHTTP on first access within an SAP Document.',
+        'ST12 trace analysis confirmed first-call performance bottleneck for archive attachment display.'
+      ],
+      communications: [
+        { date: '2025-09-22', author: 'User', type: 'update', summary: 'Reported slow opening of attachments in RTC Cockpit.' },
+        { date: '2025-09-23', author: 'Tom Meissner', type: 'analysis', summary: 'Identified SAPHTTP / HTTP_POST_FILES first-call latency as likely root cause.' },
+        { date: '2025-09-24', author: 'Support', type: 'follow_up', summary: 'Requested customer confirmation that issue persisted after further checks.' },
+        { date: '2025-09-29', author: 'Support', type: 'follow_up', summary: 'No response received from customer after repeated clarification requests.' },
+        { date: '2025-10-08', author: 'System', type: 'closure', summary: 'Ticket closed due to customer non-response rather than confirmed resolution.' }
+      ],
+      closure_reason: 'Closed after no customer response, not after technical remediation.',
+      workaround: null,
+      escalation_indicators: 'Routed between L4 CS and L4 Basis without clear final owner.',
+      root_cause_assessment: 'First-call latency in SAP HTTP_POST_FILES via RFC SAPHTTP was identified, but no remediation or workaround was implemented.',
+      service_management_flags: []
+    };
+
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const generateBtn = document.getElementById('generate-btn');
+    const sampleBtn = document.getElementById('sample-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const copyMdBtn = document.getElementById('copy-md-btn');
+    const copyHtmlBtn = document.getElementById('copy-html-btn');
+    const downloadMdBtn = document.getElementById('download-md-btn');
+    const printBtn = document.getElementById('print-btn');
+    const analysisMode = document.getElementById('analysis-mode');
+    const serviceActionsCheckbox = document.getElementById('service-actions');
+    const showRawCheckbox = document.getElementById('show-raw');
+    const customInstruction = document.getElementById('custom-instruction');
+    const statusNote = document.getElementById('status-note');
+    const metadataPanel = document.getElementById('metadata-panel');
+    const flagsPanel = document.getElementById('flags-panel');
+    const rawPanel = document.getElementById('raw-panel');
+    const rawOutput = document.getElementById('raw-output');
+    const reportCard = document.getElementById('report-card');
+
+    let currentTicketData = null;
+    let currentExtractedText = '';
+    let currentReportHtml = '';
+    let currentReportMarkdown = '';
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', event => { if (event.target.files.length) handleFile(event.target.files[0]); });
+    dropzone.addEventListener('dragover', event => { event.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+    dropzone.addEventListener('drop', event => { event.preventDefault(); dropzone.classList.remove('dragover'); if (event.dataTransfer.files.length) handleFile(event.dataTransfer.files[0]); });
+
+    generateBtn.addEventListener('click', () => {
+      if (currentTicketData) {
+        renderReport(currentTicketData, analysisMode.value);
+      } else if (currentExtractedText) {
+        const ticketData = parseTicketData(currentExtractedText);
+        currentTicketData = ticketData;
+        renderParsedData(ticketData);
+        renderReport(ticketData, analysisMode.value);
+      } else {
+        statusNote.textContent = 'Load a PDF or sample data before generating the report.';
+      }
+    });
+
+    sampleBtn.addEventListener('click', () => loadSampleData());
+    resetBtn.addEventListener('click', resetApp);
+    copyMdBtn.addEventListener('click', () => copyText(currentReportMarkdown, 'Markdown copied.'));
+    copyHtmlBtn.addEventListener('click', () => copyText(currentReportHtml, 'HTML copied.'));
+    downloadMdBtn.addEventListener('click', () => downloadMarkdown());
+    printBtn.addEventListener('click', () => printReport());
+    showRawCheckbox.addEventListener('change', () => rawPanel.classList.toggle('hidden', !showRawCheckbox.checked));
+
+    async function handleFile(file) {
+      resetApp(true);
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        statusNote.textContent = 'Please provide a PDF file.';
+        return;
+      }
+      statusNote.textContent = `Reading ${file.name} ...`;
+      try {
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        const pages = [];
+        for (let pageIndex = 1; pageIndex <= pdf.numPages; pageIndex++) {
+          const page = await pdf.getPage(pageIndex);
+          const content = await page.getTextContent();
+          pages.push(extractPageText(content.items));
+        }
+        currentExtractedText = pages.join('\n\n');
+        rawOutput.textContent = currentExtractedText;
+        rawPanel.classList.toggle('hidden', !showRawCheckbox.checked);
+        statusNote.textContent = `Parsed ${pdf.numPages} page(s). Ready to generate report.`;
+        const ticketData = parseTicketData(currentExtractedText);
+        currentTicketData = ticketData;
+        renderParsedData(ticketData);
+      } catch (error) {
+        statusNote.textContent = `PDF parsing failed: ${error.message}`;
+      }
+    }
+
+    function extractPageText(items) {
+      const rows = [];
+      items.filter(item => item.str && item.str.trim()).forEach(item => {
+        const text = item.str.trim();
+        const y = Math.round(item.transform[5]);
+        const x = Math.round(item.transform[4]);
+        let row = rows.find(row => Math.abs(row.y - y) <= 4);
+        if (!row) { row = { y, items: [] }; rows.push(row); }
+        row.items.push({ x, text });
+      });
+      return rows.sort((a, b) => b.y - a.y).map(row => row.items.sort((a, b) => a.x - b.x).map(item => item.text).join(' ')).join('\n');
+    }
+
+    function normalizeText(rawText) {
+      return rawText
+        .replace(/\r\n/g, '\n')
+        .replace(/\t/g, ' ')
+        .replace(/ {2,}/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function parseTicketData(text) {
+      const normalized = normalizeText(text);
+      const lines = normalized.split(/\n+/).map(line => line.trim()).filter(Boolean);
+      const joined = lines.join('\n');
+      const findValue = patterns => {
+        for (const pattern of patterns) {
+          const match = joined.match(pattern);
+          if (match) return match[1].trim();
+        }
+        return null;
+      };
+
+      const ticket_id_internal = findValue([/\b(I-\d{6,})\b/i, /Internal Ticket(?: ID)?[:\s]+(I-\d{6,})/i]);
+      const ticket_id_customer = findValue([/\b(C-\d{6,})\b/i, /Customer Ticket(?: ID)?[:\s]+(C-\d{6,})/i]);
+      const title = findValue([/\bTitle[:\s]+(.+)/i, /Subject[:\s]+(.+)/i]);
+      const service = findValue([/\bService[:\s]+(.+)/i]);
+      const category = findValue([/\bCategory[:\s]+(.+)/i]);
+      const created_at = normalizeDate(findValue([/\bCreated(?: on)?[:\s]+(.+)/i, /\bCreated Date[:\s]+(.+)/i]));
+      const closed_at = normalizeDate(findValue([/\bClosed(?: on)?[:\s]+(.+)/i, /\bClosed Date[:\s]+(.+)/i]));
+      const status = findValue([/\bStatus[:\s]+(.+)/i]);
+      const priority = findValue([/\bPriority[:\s]+(.+)/i]);
+      const customer_priority = findValue([/\bCustomer Priority[:\s]+(.+)/i]);
+      const reporting_person = findValue([/\bReporting Person[:\s]+(.+)/i, /\bReported by[:\s]+(.+)/i, /\bReporter[:\s]+(.+)/i]);
+      const responsible_group = findValue([/\bResponsible Group[:\s]+(.+)/i, /\bSupport Group[:\s]+(.+)/i]);
+      const responsible_person = findValue([/\bResponsible Person[:\s]+(.+)/i, /\bOwner[:\s]+(.+)/i, /\bAssigned to[:\s]+(.+)/i]);
+      const closure_reason = findValue([/\bClosure Reason[:\s]+(.+)/i, /\bClosed due to[:\s]+(.+)/i, /\bReason for closure[:\s]+(.+)/i]);
+      const workaround = findValue([/\bWorkaround[:\s]+(.+)/i, /\bWork-around[:\s]+(.+)/i]);
+      const escalation_indicators = findValue([/\bEscalation Indicators[:\s]+(.+)/i, /\bEscalation[:\s]+(.+)/i]);
+      const problem_statement = findBlock(lines, [/\bProblem Statement[:\s]*/i, /\bIssue Description[:\s]*/i, /\bProblem[:\s]*/i, /\bIssue[:\s]*/i]);
+      const technical_findings = extractKeyLines(lines, [/\b(ST12|HTTP_POST_FILES|SAPHTTP|trace|latency|bottleneck|root cause|technical finding|analysis)\b/i]);
+      const communications = extractCommunications(lines);
+      const root_cause_assessment = inferRootCauseAssessment(technical_findings, closure_reason, escalation_indicators);
+      const service_management_flags = buildFlags({ status, closure_reason, technical_findings, workaround, communications, responsible_group, responsible_person, escalation_indicators });
+
+      return {
+        ticket_id_internal,
+        ticket_id_customer,
+        title,
+        service,
+        category,
+        created_at,
+        closed_at,
+        status,
+        priority,
+        customer_priority,
+        reporting_person,
+        responsible_group,
+        responsible_person,
+        problem_statement,
+        technical_findings,
+        communications,
+        closure_reason,
+        workaround,
+        escalation_indicators,
+        root_cause_assessment,
+        service_management_flags
+      };
+    }
+
+    function normalizeDate(value) {
+      if (!value) return null;
+      const cleaned = value.replace(/\./g, '-').replace(/\s+/, ' ').trim();
+      const match = cleaned.match(/(\d{1,2})-(\d{1,2})-(\d{2,4})/);
+      if (!match) return cleaned;
+      const day = match[1].padStart(2, '0');
+      const month = match[2].padStart(2, '0');
+      let year = match[3];
+      if (year.length === 2) { year = '20' + year; }
+      return `${year}-${month}-${day}`;
+    }
+
+    function findBlock(lines, triggers) {
+      for (let i = 0; i < lines.length; i += 1) {
+        for (const trigger of triggers) {
+          if (trigger.test(lines[i])) {
+            const content = lines[i].replace(trigger, '').trim();
+            if (content) return content;
+            if (i + 1 < lines.length) return lines[i + 1];
+          }
+        }
+      }
+      return null;
+    }
+
+    function extractKeyLines(lines, regex) {
+      const findings = [];
+      lines.forEach(line => {
+        if (regex.test(line) && line.length > 20) {
+          const cleaned = line.replace(/\b(Technical Findings|Technical Findings:|Technical Findings\.|Finding|Findings)\b/i, '');
+          findings.push(cleaned.trim());
+        }
+      });
+      return findings.length ? findings : [];
+    }
+
+    function extractCommunications(lines) {
+      const communications = [];
+      const dateRegex = /(\d{1,2}[./]\d{1,2}[./]\d{2,4})(?:\s+(\d{1,2}:\d{2}(?::\d{2})?))?/;
+      for (const line of lines) {
+        const dateMatch = line.match(dateRegex);
+        const authorMatch = line.match(/^(?:From|Author|By)[:\s]*(.+?)(?:[-–]|\(|:|$)/i);
+        const type = inferCommunicationType(line);
+        if (dateMatch || type) {
+          communications.push({
+            date: dateMatch ? normalizeDate(dateMatch[1]) : null,
+            author: authorMatch ? authorMatch[1].trim() : 'Support',
+            type,
+            summary: line.replace(dateRegex, '').replace(/^(?:From|Author|By)[:\s]*/i, '').trim()
+          });
+        }
+      }
+      if (!communications.length) {
+        communications.push({ date: null, author: null, type: 'update', summary: 'No communication timeline could be parsed from the ticket export.' });
+      }
+      return communications;
+    }
+
+    function inferCommunicationType(line) {
+      const normalized = line.toLowerCase();
+      if (/(closed|ticket closed|closure|closed due)/i.test(line)) return 'closure';
+      if (/(please confirm|can you confirm|confirmation|still occurs|still persists|user response)/i.test(normalized)) return 'follow_up';
+      if (/(identified|analysis|trace|finding|investigation|root cause)/i.test(normalized)) return 'analysis';
+      return 'update';
+    }
+
+    function inferRootCauseAssessment(findings, closure_reason, escalation_indicators) {
+      if (findings.length) {
+        return findings.join(' ');
+      }
+      if (closure_reason) {
+        return closure_reason;
+      }
+      if (escalation_indicators) {
+        return escalation_indicators;
+      }
+      return null;
+    }
+
+    function buildFlags(ticketData) {
+      const flags = [];
+      const { status, closure_reason, technical_findings, workaround, communications, responsible_group, responsible_person, escalation_indicators } = ticketData;
+      const lowerClosure = closure_reason ? closure_reason.toLowerCase() : '';
+      const hasNoResponse = /no response|customer non-response|customer silence|no customer response|timeout/i.test(lowerClosure);
+      const hasWorkaround = workaround && !/none|not documented|n\/a|n.a.|no workaround/i.test(workaround.toLowerCase());
+      const confirmationLoop = communications.some(item => /please confirm|can you confirm|confirm.*still|still persists|waiting for response/i.test(item.summary.toLowerCase()));
+      const multipleOwners = /,|\/|and|multiple/i.test(responsible_group || '') && !responsible_person;
+      if (technical_findings.length && !hasWorkaround) flags.push('diagnosis_without_resolution');
+      if (status && /closed/i.test(status) && hasNoResponse) flags.push('closed_without_confirmed_resolution');
+      if (confirmationLoop) flags.push('customer_confirmation_loop');
+      if (multipleOwners || (/escalation/i.test(escalation_indicators || '') && !responsible_person)) flags.push('unclear_ownership');
+      if (hasNoResponse || (!hasWorkaround && technical_findings.length) || confirmationLoop || multipleOwners) flags.push('csat_risk_high');
+      return [...new Set(flags)];
+    }
+
+    function renderParsedData(ticketData) {
+      metadataPanel.innerHTML = '';
+      const fields = [
+        ['Internal ticket ID', ticketData.ticket_id_internal],
+        ['Customer ticket ID', ticketData.ticket_id_customer],
+        ['Title', ticketData.title],
+        ['Service', ticketData.service],
+        ['Category', ticketData.category],
+        ['Created', ticketData.created_at],
+        ['Closed', ticketData.closed_at],
+        ['Status', ticketData.status],
+        ['Priority', ticketData.priority],
+        ['Customer priority', ticketData.customer_priority],
+        ['Reporter', ticketData.reporting_person],
+        ['Responsible group', ticketData.responsible_group],
+        ['Responsible person', ticketData.responsible_person]
+      ];
+      fields.forEach(([label, value]) => {
+        const item = document.createElement('div');
+        item.className = 'meta-item';
+        item.innerHTML = `<strong>${label}</strong><span>${value || 'Not found'}</span>`;
+        metadataPanel.appendChild(item);
+      });
+      flagsPanel.innerHTML = '';
+      if (ticketData.service_management_flags.length) {
+        ticketData.service_management_flags.forEach(flag => {
+          const pill = document.createElement('div');
+          pill.className = 'flag-pill';
+          pill.textContent = flag.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          flagsPanel.appendChild(pill);
+        });
+      } else {
+        const pill = document.createElement('div');
+        pill.className = 'flag-pill';
+        pill.textContent = 'No high-risk flags detected';
+        flagsPanel.appendChild(pill);
+      }
+      rawOutput.textContent = currentExtractedText || sampleTicketText;
+      rawPanel.classList.toggle('hidden', !showRawCheckbox.checked);
+    }
+
+    function renderReport(ticketData, mode) {
+      const includeSM = serviceActionsCheckbox.checked;
+      const customText = customInstruction.value.trim();
+      const reportSections = [];
+
+      reportSections.push({ title: 'Improvement Actions', content: generateImprovementActions(ticketData, mode, includeSM) });
+      reportSections.push({ title: 'Ticket Analysis Summary', content: generateExecutiveSummary(ticketData, mode, customText) });
+      reportSections.push({ title: 'Issue Overview', content: generateIssueOverview(ticketData) });
+      reportSections.push({ title: 'Root Cause', content: generateRootCause(ticketData) });
+      reportSections.push({ title: 'Why CSAT May Be Impacted', content: generateCSATTable(ticketData) });
+      reportSections.push({ title: 'Key Issues in Handling', content: generateKeyIssues(ticketData) });
+      reportSections.push({ title: 'Bottom Line for CSAT', content: generateBottomLine(ticketData) });
+
+      currentReportHtml = reportSections.map(section => `
+        <section class="report-section">
+          <h3>${section.title}</h3>
+          ${section.content}
+        </section>
+      `).join('');
+      reportCard.innerHTML = currentReportHtml;
+      currentReportMarkdown = reportSections.map(section => `### ${section.title}\n\n${stripHtml(section.content)}\n`).join('\n');
+      statusNote.textContent = 'Report generated successfully.';
+      if (!ticketData.service_management_flags.length) {
+        ticketData.service_management_flags = buildFlags(ticketData);
+        renderParsedData(ticketData);
+      }
+    }
+
+    function generateExecutiveSummary(ticketData, mode, customText) {
+      const duration = formatDuration(ticketData.created_at, ticketData.closed_at);
+      let summary = `This analysis review is prepared as a ${analysisMode.options[analysisMode.selectedIndex].text.toLowerCase()}. It focuses on the ticket lifecycle, root cause clarity, handling gaps, and customer impact.`;
+      if (customText) {
+        summary += ` ${customText}`;
+      }
+      summary += ` The ticket shows a service incident identified in ${ticketData.service || 'the reported service area'}.`;
+      if (duration) {
+        summary += ` The elapsed ticket duration was ${duration}.`;
+      }
+      if (ticketData.status) {
+        summary += ` The final status is recorded as ${ticketData.status}.`;
+      }
+      return `<p>${escapeHtml(summary)}</p>`;
+    }
+
+    function generateIssueOverview(ticketData) {
+      const rows = [
+        ['Ticket ID', ticketData.ticket_id_internal || ticketData.ticket_id_customer || 'Not found'],
+        ['Title', ticketData.title || 'Not found'],
+        ['Service', ticketData.service || 'Not found'],
+        ['Duration', formatDuration(ticketData.created_at, ticketData.closed_at) || 'Not available'],
+        ['Final Status', ticketData.status || 'Not available']
+      ];
+      return `<table>${rows.map(([label, value]) => `<tr><th>${label}</th><td>${escapeHtml(value)}</td></tr>`).join('')}</table><p>${escapeHtml(ticketData.problem_statement ? `The ticket describes ${ticketData.problem_statement.toLowerCase()}` : 'The ticket contains limited problem detail and requires verification of the root cause and scope.')}</p>`;
+    }
+
+    function generateRootCause(ticketData) {
+      const issue = ticketData.problem_statement || 'Problem details were not fully extracted from the ticket text.';
+      const behavior = ticketData.technical_findings.length ? ticketData.technical_findings[0] : 'Technical findings were not clearly captured in the ticket export.';
+      const symptom = ticketData.problem_statement ? ticketData.problem_statement : 'Symptom details were not available.';
+      const evidence = ticketData.technical_findings.length ? ticketData.technical_findings.join(' ') : ticketData.closure_reason || 'No technical evidence was available from the extracted ticket.';
+      return `<p><strong>Issue:</strong> ${escapeHtml(issue)}</p>
+              <p><strong>Behavior:</strong> ${escapeHtml(behavior)}</p>
+              <p><strong>Symptom:</strong> ${escapeHtml(symptom)}</p>
+              <p><strong>Evidence:</strong> ${escapeHtml(evidence)}</p>`;
+    }
+
+    function generateCSATTable(ticketData) {
+      const factors = [
+        ['Resolution Time', evaluateResolutionTime(ticketData)],
+        ['Resolution Quality', evaluateResolutionQuality(ticketData)],
+        ['Communication Quality', evaluateCommunicationQuality(ticketData)],
+        ['Workaround Support', evaluateWorkaroundSupport(ticketData)],
+        ['Closure Logic', evaluateClosureLogic(ticketData)],
+        ['Customer Effort', evaluateCustomerEffort(ticketData)]
+      ];
+      return `<table><thead><tr><th>Factor</th><th>Impact</th></tr></thead><tbody>${factors.map(([factor, impact]) => `<tr><td>${escapeHtml(factor)}</td><td>${escapeHtml(impact)}</td></tr>`).join('')}</tbody></table>`;
+    }
+
+    function generateKeyIssues(ticketData) {
+      const diagnosis = ticketData.technical_findings.length && (!ticketData.workaround || /none|not documented|no workaround/i.test((ticketData.workaround || '').toLowerCase()));
+      const engagement = /please confirm|can you confirm|still persists|no response|confirmation/i.test((ticketData.closure_reason + ' ' + ticketData.communications.map(c => c.summary).join(' ')).toLowerCase());
+      const closureGap = /closed|closure/i.test((ticketData.status || '').toLowerCase()) && /no response|customer non-response|no customer response|timeout/i.test((ticketData.closure_reason || '').toLowerCase());
+      const ownership = ticketData.service_management_flags.includes('unclear_ownership');
+      return `<div><h3>1. Diagnosis vs. Resolution Gap</h3><p>${escapeHtml(diagnosis ? 'The ticket contains technical findings without documented remediation or workaround, creating a clear diagnosis-versus-resolution gap.' : 'The ticket does not show a strong diagnosis versus resolution gap based on the extracted records.')}</p></div>
+              <div><h3>2. Insufficient User Engagement</h3><p>${escapeHtml(engagement ? 'Repeated confirmation requests and missing follow-up suggest insufficient customer engagement, which weakens confidence and delays closure.' : 'Customer engagement appears adequate based on the extracted timeline, though this should be validated against the full ticket history.')}</p></div>
+              <div><h3>3. Ticket Closure Without Resolution</h3><p>${escapeHtml(closureGap ? 'The record indicates the ticket was closed because the customer did not respond, not because the underlying problem was resolved.' : 'Closure was recorded with a resolution state, but the extracted data should still be checked for formal confirmation of fix implementation.')}</p></div>
+              <div><h3>4. Escalation Path Unclear</h3><p>${escapeHtml(ownership ? 'The ticket crossed multiple support groups without a clearly documented final owner, suggesting escalation and accountability were unclear.' : 'Ownership and escalation appear reasonably defined in the extracted content, though full handover notes should be reviewed.' )}</p></div>`;
+    }
+
+    function generateImprovementActions(ticketData, mode, includeSM) {
+      const hasWorkaround = ticketData.workaround && !/none|not documented|no workaround|n\/a/i.test(ticketData.workaround);
+      const immediate = hasWorkaround ? 'Confirm and document the existing workaround clearly for the customer, including system-specific steps where available.' : 'Document the absence of a workaround and provide interim operational guidance while the permanent fix is investigated.';
+      const shortTerm = 'Define a communication plan for tickets where technical findings are identified but customer confirmation is pending.';
+      const mediumTerm = 'Create a standardized handover process when incidents move between L4 CS and L4 Basis to maintain accountability and reduce ownership ambiguity.';
+      const longTerm = 'Formalize a CSAT-linked escalation trigger for tickets closed after customer non-response to ensure follow-up and process improvement.';
+      if (includeSM) {
+        return `<h4>Immediate Actions (Ticket-Level Control)</h4><p>${escapeHtml(immediate)}</p>
+                <h4>Short-Term Actions (Process Governance)</h4><p>${escapeHtml(shortTerm)}</p>
+                <h4>Medium-Term Actions (Management Governance)</h4><p>${escapeHtml(mediumTerm)}</p>
+                <h4>Long-Term Actions (Strategic Service Improvement)</h4><p>${escapeHtml(longTerm)}</p>`;
+      }
+      return `<h4>Immediate</h4><p>${escapeHtml(immediate)}</p>
+              <h4>Short-term</h4><p>${escapeHtml(shortTerm)}</p>
+              <h4>Medium-term</h4><p>${escapeHtml(mediumTerm)}</p>
+              <h4>Long-term</h4><p>${escapeHtml(longTerm)}</p>`;
+    }
+
+    function generateBottomLine(ticketData) {
+      const issues = ticketData.service_management_flags.length ? ticketData.service_management_flags.map(flag => flag.replace(/_/g, ' ')) : ['no immediate flags'];
+      const bottom = `This ticket appears to have been identified technically while customer confirmation and remediation were still pending. The most critical risk for CSAT is closure without a confirmed resolution, coupled with unclear ownership and missing formal workaround documentation.`;
+      return `<p>${escapeHtml(bottom)}</p><p>${escapeHtml('Key review focus: connect technical findings back to clear customer communication, ownership, and a defined next step before closing the ticket.')}</p>`;
+    }
+
+    function formatDuration(createdAt, closedAt) {
+      if (!createdAt || !closedAt) return null;
+      const start = new Date(createdAt);
+      const end = new Date(closedAt);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return null;
+      const days = Math.round((end - start) / (1000 * 60 * 60 * 24));
+      return `${createdAt} – ${closedAt} (${days} day${days === 1 ? '' : 's'})`;
+    }
+
+    function evaluateResolutionTime(ticketData) {
+      if (!ticketData.closed_at || !ticketData.created_at) return 'Duration could not be determined from parsed content.';
+      const duration = formatDuration(ticketData.created_at, ticketData.closed_at);
+      return `Long duration from creation to closure (${duration}), increasing customer dissatisfaction risk.`;
+    }
+
+    function evaluateResolutionQuality(ticketData) {
+      if (ticketData.technical_findings.length && (!ticketData.workaround || /none|not documented/i.test(ticketData.workaround))) {
+        return 'Technical issue was identified, but no formal remediation or workaround was confirmed in the ticket.';
+      }
+      return 'Resolution quality appears acceptable based on extracted findings and closure details.';
+    }
+
+    function evaluateCommunicationQuality(ticketData) {
+      const repeated = ticketData.communications.some(item => /please confirm|can you confirm|confirmation/i.test(item.summary.toLowerCase()));
+      if (repeated) {
+        return 'Repeated confirmation requests were present, which can erode confidence and delay closure.';
+      }
+      return 'Communication appears functional, but documentation of next steps and customer updates should be confirmed.';
+    }
+
+    function evaluateWorkaroundSupport(ticketData) {
+      if (ticketData.workaround && !/none|not documented/i.test(ticketData.workaround)) {
+        return `A workaround was documented: ${ticketData.workaround}`;
+      }
+      return 'No formal workaround was documented, leaving users without a temporary mitigation path.';
+    }
+
+    function evaluateClosureLogic(ticketData) {
+      if (/no response|customer non-response|closed after no response|closed due to/i.test((ticketData.closure_reason || '').toLowerCase())) {
+        return 'Closure was administrative after no response, rather than resolution-based, which carries CSAT risk.';
+      }
+      return 'Closure logic appears consistent with normal service resolution practice.';
+    }
+
+    function evaluateCustomerEffort(ticketData) {
+      if (ticketData.communications.some(c => /please confirm|still persists|duplicate|follow[- ]up/i.test(c.summary.toLowerCase()))) {
+        return 'The customer experienced repeated requests for confirmation and likely had to invest extra effort in the incident.';
+      }
+      return 'Customer effort is not flagged as excessive from the extracted timeline.';
+    }
+
+    function escapeHtml(value) {
+      if (!value) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function stripHtml(html) {
+      return html.replace(/<[^>]*>/g, '').replace(/\s{2,}/g, ' ').trim();
+    }
+
+    function copyText(text, message) {
+      if (!text) { statusNote.textContent = 'Generate a report first before copying.'; return; }
+      navigator.clipboard.writeText(text).then(() => {
+        statusNote.textContent = message;
+      }).catch(() => {
+        statusNote.textContent = 'Clipboard copy failed. Try again.';
+      });
+    }
+
+    function downloadMarkdown() {
+      if (!currentReportMarkdown) { statusNote.textContent = 'Generate a report first before downloading.'; return; }
+      const blob = new Blob([currentReportMarkdown], { type: 'text/markdown;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'ticket-analysis-report.md';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      statusNote.textContent = 'Markdown downloaded.';
+    }
+
+    function printReport() {
+      if (!currentReportHtml) { statusNote.textContent = 'Generate a report first before printing.'; return; }
+      window.print();
+    }
+
+    function loadSampleData() {
+      currentExtractedText = sampleTicketText;
+      currentTicketData = { ...sampleTicketData, service_management_flags: sampleTicketData.service_management_flags.length ? sampleTicketData.service_management_flags : buildFlags(sampleTicketData) };
+      renderParsedData(currentTicketData);
+      renderReport(currentTicketData, analysisMode.value);
+      statusNote.textContent = 'Sample data loaded. Report generated.';
+    }
+
+    function resetApp(keepText = false) {
+      fileInput.value = '';
+      if (!keepText) {
+        currentExtractedText = '';
+        currentTicketData = null;
+        currentReportHtml = '';
+        currentReportMarkdown = '';
+        reportCard.innerHTML = '';
+        metadataPanel.innerHTML = '';
+        flagsPanel.innerHTML = '';
+        rawOutput.textContent = '';
+      }
+      statusNote.textContent = 'Ready. Upload a PDF or load the sample data to begin.';
+    }
+
+    // Optional AI integration placeholder
+    /*
+    function generateWithLLM(ticketData, mode) {
+      // System prompt template:
+      // You are a senior IT service management analyst. Create a leadership-ready ticket review.
+      // User prompt template:
+      // Analyze this ticket data for CSAT risk, root cause clarity, escalation ownership, and improvement actions.
+      // Ticket payload: ${JSON.stringify(ticketData)}
+      // Mode: ${mode}
+      // Return a structured report with the required sections.
+      return null;
+    }
+    */
+  </script>
+</body>
+</html>

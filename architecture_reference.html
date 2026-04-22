@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Architecture Reference</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --primary: #00ffcc;
+      --accent: #8a2be2;
+      --text: #e2e8f0;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at 15% 50%, rgba(0, 255, 204, 0.15), transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.15), transparent 40%),
+        var(--bg-color);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Ambient animated background elements */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      animation: orbit 20s linear infinite;
+    }
+
+    .orb-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 255, 204, 0.15);
+      top: 10%;
+      left: 20%;
+    }
+
+    .orb-2 {
+      width: 500px;
+      height: 500px;
+      background: rgba(138, 43, 226, 0.15);
+      bottom: 10%;
+      right: 10%;
+      animation-direction: reverse;
+      animation-duration: 25s;
+    }
+
+    @keyframes orbit {
+      0% {
+        transform: rotate(0deg) translateX(50px) rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg) translateX(50px) rotate(-360deg);
+      }
+    }
+
+    header {
+      width: 100%;
+      padding: 60px 20px 40px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(90deg, #fff, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 15px auto 0;
+      line-height: 1.6;
+    }
+
+    .architecture-container {
+      width: 90%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 40px;
+      padding: 40px 0 100px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Connection Lines */
+    .architecture-container::before {
+      content: '';
+      position: absolute;
+      top: 100px;
+      left: 16%;
+      right: 16%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 204, 0.3), rgba(138, 43, 226, 0.3), transparent);
+      z-index: 0;
+    }
+
+    .node {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .node:nth-child(even) {
+      animation-delay: -4s;
+    }
+
+    .node:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 255, 204, 0.4);
+    }
+
+    .node-icon {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+      padding: 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .node h3 {
+      font-size: 1.4rem;
+      margin: 0 0 15px 0;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .node ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.95rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    .node ul li {
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .node ul li::before {
+      content: '⚡';
+      position: absolute;
+      left: 0;
+      top: 1px;
+      font-size: 0.8rem;
+      color: var(--primary);
+    }
+
+    /* Specific Node Animations & Styles */
+    .ingestion {
+      animation-duration: 7s;
+    }
+
+    .orchestration {
+      transform: translateY(20px);
+      animation-duration: 9s;
+      animation-delay: -2s;
+      border-color: rgba(138, 43, 226, 0.2);
+    }
+
+    .rendering {
+      animation-duration: 8s;
+      animation-delay: -5s;
+    }
+
+    .glow-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: rgba(0, 255, 204, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(0, 255, 204, 0.2);
+      margin-top: 15px;
+    }
+
+    .glow-tag.purple {
+      background: rgba(138, 43, 226, 0.1);
+      color: #d8b4fe;
+      border-color: rgba(138, 43, 226, 0.2);
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-15px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .architecture-container {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+      }
+
+      .architecture-container::before {
+        display: none;
+      }
+
+      .orchestration {
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <header>
+    <h1>Architecture</h1>
+    <p class="subtitle">Complete technical pipeline and module interaction topography for the Modernized ITSM Ticket
+      Intelligence Application.</p>
+  </header>
+
+  <div class="architecture-container">
+
+    <!-- Node 1: Ingestion -->
+    <div class="node ingestion">
+      <div class="node-icon">📥</div>
+      <h3>Phase 1: Zero-Trust Ingestion</h3>
+      <ul>
+        <li><strong>PDF.js Vectorization:</strong> Local-only text extraction. Zero data leaves the browser until
+          authorized.</li>
+        <li><strong>Actor Sweeping Prompt:</strong> Pre-analysis LLM call to identify distinct, active human
+          participants.</li>
+        <li><strong>Human-in-the-Loop (HITL):</strong> System halts to project a dynamic Role-Mapping UI derived from
+          Config schema.</li>
+      </ul>
+      <div class="glow-tag">Client-Side Isolation</div>
+    </div>
+
+    <!-- Node 2: The Core Engine -->
+    <div class="node orchestration">
+      <div class="node-icon">🧠</div>
+      <h3>Phase 2: LLM Orchestration</h3>
+      <ul>
+        <li><strong>Config Injection:</strong> `config.js` arrays merged into runtime System Prompts securely.</li>
+        <li><strong>Strict Sentiment Ring-Fencing:</strong> Uses Deny-by-Default prompt ultimatums to prevent AI Support
+          Team hallucinations.</li>
+        <li><strong>Tri-Phasic Parallel Processing:</strong> LLM evaluates Timeline Audit, ITIL Service UX, and
+          Architectural Root Cause concurrently.</li>
+      </ul>
+      <div class="glow-tag purple">Multi-Model LLM API</div>
+    </div>
+
+    <!-- Node 3: DOM Mutator -->
+    <div class="node rendering">
+      <div class="node-icon">✨</div>
+      <h3>Phase 3: Rendering</h3>
+      <ul>
+        <li><strong>Algorithmic Scrubber:</strong> JavaScript aggressively intercepts LLM arrays to hard-delete
+          unauthorized sentiment violations.</li>
+        <li><strong>Collapsible Chronology:</strong> Smart DOM injection calculates weekend gaps to enforce operational
+          visibility.</li>
+        <li><strong>Mermaid Interaction Generator:</strong> Translates verified JSON directly into standard sequence
+          diagram swimlanes dynamically.</li>
+      </ul>
+      <div class="glow-tag">Mathematical UI Generation</div>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
