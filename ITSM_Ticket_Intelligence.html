@@ -2014,17 +2014,6 @@
     let currentFileName = "";
     let analysisComplete = false;
     let pendingReanalyzeModel = null;
-    let currentSanitizedText = "";
-
-    const runtimeCfg = (window.CONFIG && window.CONFIG.RUNTIME) || {};
-    const MAX_PDF_SIZE_BYTES = Number(runtimeCfg.max_pdf_size_mb || 25) * 1024 * 1024;
-    const MAX_PDF_PAGES = Number(runtimeCfg.max_pdf_pages || 120);
-    const REQUEST_TIMEOUT_MS = Number(runtimeCfg.request_timeout_ms || 60000);
-    const REQUEST_MAX_RETRIES = Number(runtimeCfg.request_max_retries || 2);
-    const REQUEST_BACKOFF_BASE_MS = Number(runtimeCfg.request_backoff_base_ms || 1200);
-    const REDACT_PII_BEFORE_LLM = runtimeCfg.redact_pii_before_llm !== false;
-    const USE_BACKEND_BROKER = runtimeCfg.use_backend_broker === true;
-    const BACKEND_BROKER_URL = String(runtimeCfg.backend_broker_url || '').trim();
 
     // ─── DOM ───
     const $ = id => document.getElementById(id);
@@ -2650,28 +2639,6 @@
       });
     }
 
-    function isLikelyPdfArrayBuffer(ab) {
-      try {
-        const sig = new Uint8Array(ab, 0, 5);
-        return sig[0] === 0x25 && sig[1] === 0x50 && sig[2] === 0x44 && sig[3] === 0x46 && sig[4] === 0x2D; // %PDF-
-      } catch (_) {
-        return false;
-      }
-    }
-
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function redactPII(text) {
-      if (!REDACT_PII_BEFORE_LLM) return String(text || '');
-      return String(text || '')
-        .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, '[REDACTED_EMAIL]')
-        .replace(/\b(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{2,5}\)?[-.\s]?)\d{3,5}[-.\s]?\d{3,6}\b/g, '[REDACTED_PHONE]')
-        .replace(/\b[A-Z]{2,}-\d{3,}\b/g, '[REDACTED_TICKET_REF]')
-        .replace(/\b(?:employee|user|person|caller)\s*id[:\s-]*[A-Z0-9_-]+\b/gi, '[REDACTED_ID]');
-    }
-
     // ─── File Handling ───
     $('btn-browse').addEventListener('click', e => { e.stopPropagation(); elFileInput.click(); });
     elDropzone.addEventListener('click', () => elFileInput.click());
@@ -2775,14 +2742,6 @@
     // ─── Main Pipeline ───
     async function runPipeline(file) {
       if (!file.name.toLowerCase().endsWith('.pdf')) { showError("Please select a .pdf file."); return; }
-      if (file.size > MAX_PDF_SIZE_BYTES) {
-        showError(`PDF too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Max allowed is ${(MAX_PDF_SIZE_BYTES / (1024 * 1024)).toFixed(0)} MB.`);
-        return;
-      }
-      if (file.type && file.type !== 'application/pdf') {
-        showError(`Invalid file type "${file.type}". Please upload a valid PDF export.`);
-        return;
-      }
 
       // Validate active model exists and has a key
       const activeModel = getActiveModel();
@@ -2790,7 +2749,7 @@
         showError("No AI model configured. Click 'Configure Models' to set one up.");
         return;
       }
-      if (!USE_BACKEND_BROKER && (!activeModel.apiKey || activeModel.apiKey.startsWith('YOUR_') || activeModel.apiKey.trim() === '')) {
+      if (!activeModel.apiKey || activeModel.apiKey.startsWith('YOUR_') || activeModel.apiKey.trim() === '') {
         showError(`No API key for "${activeModel.label}". Click 'Configure Models' \u2192 Edit to add your key.`);
         return;
       }
@@ -2807,13 +2766,7 @@
 
       try {
         const ab = await file.arrayBuffer();
-        if (!isLikelyPdfArrayBuffer(ab)) {
-          throw new Error('Uploaded file does not appear to be a valid PDF (missing PDF signature).');
-        }
         const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
-        if (pdf.numPages > MAX_PDF_PAGES) {
-          throw new Error(`PDF has ${pdf.numPages} pages, exceeding limit of ${MAX_PDF_PAGES}. Please split the export and retry.`);
-        }
         let pages = [];
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
@@ -2822,7 +2775,6 @@
         }
         pdfPages = pages;
         pdfText = pages.join("\n\n");
-        currentSanitizedText = redactPII(pdfText);
         setStep('extract', 'done');
         elFileStatus.innerHTML = `✅ <strong>${esc(file.name)}</strong> — ${pdf.numPages} pages extracted`;
 
@@ -2848,7 +2800,7 @@
       if (!modelDef) { showError(`Model "${modelKey}" not found in registry.`); return; }
       const apiKey = modelDef.apiKey || '';
       const endpointConf = { url: modelDef.url, model: modelDef.modelId };
-      if (!USE_BACKEND_BROKER && (!apiKey || apiKey.startsWith('YOUR_') || apiKey.trim() === '')) {
+      if (!apiKey || apiKey.startsWith('YOUR_') || apiKey.trim() === '') {
         showError(`No API key configured for "${modelDef.label}". Open Configure Models to add one.`);
         return;
       }
@@ -2858,7 +2810,7 @@
       elResults.style.display = 'none';
       
         try {
-          const userRaw = await callLLM(endpointConf, apiKey, currentSanitizedText || pdfText, getUserExtractionPrompt());
+          const userRaw = await callLLM(endpointConf, apiKey, pdfText, getUserExtractionPrompt());
           const userObj = safeParseJSON(userRaw);
           extractedUsers = userObj.users || [];
         
@@ -2907,7 +2859,7 @@
       if (!modelDef) { showError(`Model "${modelKey}" not found in registry.`); return; }
       const apiKey = modelDef.apiKey || '';
       const endpointConf = { url: modelDef.url, model: modelDef.modelId };
-      if (!USE_BACKEND_BROKER && (!apiKey || apiKey.startsWith('YOUR_') || apiKey.trim() === '')) {
+      if (!apiKey || apiKey.startsWith('YOUR_') || apiKey.trim() === '') {
         showError(`No API key configured for "${modelDef.label}". Open Configure Models to add one.`);
         return;
       }
@@ -2953,8 +2905,8 @@ ${activeMappingString}
         switchTab('review');
         
         try {
-          const reviewRaw = await callLLM(endpointConf, apiKey, currentSanitizedText || pdfText, modReviewPrompt);
-          reviewTranslations = safeParseJSON(reviewRaw, 'review');
+          const reviewRaw = await callLLM(endpointConf, apiKey, pdfText, modReviewPrompt);
+          reviewTranslations = safeParseJSON(reviewRaw);
           // --- FRONT-END ENFORCEMENT FILTER FOR SENTIMENT ---
           // Enforce role-based sentiment config by stripping sentiments from non-allowed roles
           if (reviewTranslations && reviewTranslations.timeline && window.CONFIG && window.CONFIG.role_sentiment_config) {
@@ -3002,12 +2954,8 @@ ${activeMappingString}
         setStep('review', 'done');
 
         setStep('sm', 'active');
-        setStep('arch', 'active');
-        const [smRaw, archRaw] = await Promise.all([
-          callLLM(endpointConf, apiKey, currentSanitizedText || pdfText, modSmPrompt),
-          callLLM(endpointConf, apiKey, currentSanitizedText || pdfText, ARCH_SYSTEM_PROMPT)
-        ]);
-        smData = safeParseJSON(smRaw, 'sm');
+        const smRaw = await callLLM(endpointConf, apiKey, pdfText, modSmPrompt);
+        smData = safeParseJSON(smRaw);
         
         // --- FRONT-END ENFORCEMENT FILTER FOR SM TAB --- 
         // Forcefully wipe service team sentiments that the LLM hallucinates
@@ -3056,7 +3004,9 @@ ${activeMappingString}
           const smHits = secDeepScan(smData);
           if (smHits.length > 0) showSecurityWarning(smHits, 'AI service manager output');
         }
-        archData = safeParseJSON(archRaw, 'arch');
+        setStep('arch', 'active');
+        const archRaw = await callLLM(endpointConf, apiKey, pdfText, ARCH_SYSTEM_PROMPT);
+        archData = safeParseJSON(archRaw);
         // Security: scan arch output for shell patterns
         if (archData) {
           const archHits = secDeepScan(archData);
@@ -3419,104 +3369,61 @@ OUTPUT: STRICT JSON ONLY. No markdown fences. No prose.
     // ─── LLM Call (OpenAI-compatible format) ───
     async function callLLM(endpointConf, apiKey, text, systemPrompt) {
       const safeKey = (apiKey || '').trim();
-      const payload = {
-        model: endpointConf.model,
-        temperature: 0.1,
-        max_tokens: 4096,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: `Analyze this OmniTracker ITSM ticket export and return strict JSON:\n\n${text}` }
-        ]
-      };
-      const targetUrl = USE_BACKEND_BROKER && BACKEND_BROKER_URL ? BACKEND_BROKER_URL : endpointConf.url;
 
-      for (let attempt = 0; attempt <= REQUEST_MAX_RETRIES; attempt++) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-        let response;
-
-        try {
-          response = await fetch(targetUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(USE_BACKEND_BROKER && BACKEND_BROKER_URL
-                ? { 'X-Provider-Model': endpointConf.model, 'X-Provider-Url': endpointConf.url }
-                : { 'Authorization': `Bearer ${safeKey}` }),
-            },
-            body: JSON.stringify(payload),
-            signal: controller.signal
-          });
-          clearTimeout(timeoutId);
-        } catch (fetchErr) {
-          clearTimeout(timeoutId);
-          const transient = fetchErr?.name === 'AbortError' || /network|failed|timeout/i.test(String(fetchErr?.message || ''));
-          if (transient && attempt < REQUEST_MAX_RETRIES) {
-            await sleep(REQUEST_BACKOFF_BASE_MS * Math.pow(2, attempt));
-            continue;
-          }
-          const reason = fetchErr?.name === 'AbortError' ? `Request timed out after ${REQUEST_TIMEOUT_MS / 1000}s` : fetchErr.message;
-          throw new Error(`Network error — could not reach ${targetUrl}.\n${reason}`);
-        }
-
-        if (!response.ok) {
-          const rawText = await response.text().catch(() => '');
-          let errBody = {};
-          try { errBody = JSON.parse(rawText); } catch (_) {}
-
-          const apiMsg =
-            errBody?.error?.message ||
-            errBody?.message ||
-            (typeof errBody?.error === 'string' ? errBody.error : null) ||
-            rawText.slice(0, 300) ||
-            `HTTP ${response.status}`;
-
-          const retryable = [408, 429, 500, 502, 503, 504].includes(response.status);
-          if (retryable && attempt < REQUEST_MAX_RETRIES) {
-            await sleep(REQUEST_BACKOFF_BASE_MS * Math.pow(2, attempt));
-            continue;
-          }
-
-          const hint401 = response.status === 401
-            ? '\n→ 401: check your API key and confirm it has access to the selected model.'
-            : '';
-
-          throw new Error(`[HTTP ${response.status}] ${apiMsg}${hint401}\n→ Model: "${endpointConf.model}"  Endpoint: ${targetUrl}`);
-        }
-
-        const data = await response.json();
-        const content = data?.choices?.[0]?.message?.content;
-        if (!content) throw new Error('Model response was empty or malformed.');
-        return content;
+      let response;
+      try {
+        response = await fetch(endpointConf.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type':  'application/json',
+            'Authorization': `Bearer ${safeKey}`,
+          },
+          body: JSON.stringify({
+            model:       endpointConf.model,
+            temperature: 0.1,
+            max_tokens:  4096,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user',   content: `Analyze this OmniTracker ITSM ticket export and return strict JSON:\n\n${text}` }
+            ]
+          })
+        });
+      } catch (fetchErr) {
+        throw new Error(`Network error — could not reach ${endpointConf.url}.\n${fetchErr.message}`);
       }
 
-      throw new Error('LLM request failed after retries.');
-    }
+      if (!response.ok) {
+        const rawText = await response.text().catch(() => '');
+        let errBody = {};
+        try { errBody = JSON.parse(rawText); } catch (_) {}
+        console.error('[callLLM] API error:', { status: response.status, model: endpointConf.model, url: endpointConf.url, body: errBody });
 
-    function validateSchema(obj, mode) {
-      if (!obj || typeof obj !== 'object') throw new Error('AI returned non-object JSON.');
-      if (mode === 'review') {
-        if (!obj.incident || !Array.isArray(obj.timeline)) {
-          throw new Error('Review payload missing required fields (incident/timeline).');
-        }
-      } else if (mode === 'sm') {
-        const hasAnyExpected = ['executive_summary', 'sentiment_summary', 'csat_impact_score'].some(k => Object.prototype.hasOwnProperty.call(obj, k));
-        if (!hasAnyExpected) throw new Error('Service Manager payload did not match expected structure.');
-      } else if (mode === 'arch') {
-        const hasAnyExpected = ['executive_technical_summary', 'root_cause_analysis', 'recommendations_for_engineering'].some(k => Object.prototype.hasOwnProperty.call(obj, k));
-        if (!hasAnyExpected) throw new Error('Architect payload did not match expected structure.');
+        const apiMsg =
+          errBody?.error?.message ||
+          errBody?.message ||
+          (typeof errBody?.error === 'string' ? errBody.error : null) ||
+          rawText.slice(0, 300) ||
+          `HTTP ${response.status}`;
+
+        const hint401 = response.status === 401
+          ? '\n→ 401: check your API key and confirm it has access to the selected model.'
+          : '';
+
+        throw new Error(`[HTTP ${response.status}] ${apiMsg}${hint401}\n→ Model: "${endpointConf.model}"  Endpoint: ${endpointConf.url}`);
       }
-      return obj;
+
+      const data = await response.json();
+      return data.choices[0].message.content;
     }
 
-    function safeParseJSON(str, mode = 'generic') {
+    function safeParseJSON(str) {
       let c = str.trim();
       if (c.startsWith('```json')) c = c.replace(/^```json/, '');
       else if (c.startsWith('```')) c = c.replace(/^```/, '');
       if (c.endsWith('```')) c = c.replace(/```$/, '');
       c = c.trim();
-      try { return validateSchema(JSON.parse(c), mode); }
-      catch (e) { throw new Error(`AI returned invalid JSON or schema for ${mode} analysis. ${e.message}`); }
+      try { return JSON.parse(c); }
+      catch (e) { throw new Error("AI returned invalid JSON. Please try again."); }
     }
 
     function generateDaySummary(events) {
