@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM Connection Tester</title>
+  <style>
+    :root { color-scheme: light dark; color: #111; background: #f7f8fb; font-family: Inter, system-ui, sans-serif; }
+    body { margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 32px; }
+    .panel { width: min(980px,100%); background: #fff; border: 1px solid #dde1e9; border-radius: 18px; box-shadow: 0 22px 45px rgba(15,23,42,.08); padding: 28px; }
+    h1 { margin: 0 0 8px; font-size: 1.9rem; }
+    .subtitle { margin: 0 0 24px; color: #5f6c87; line-height: 1.6; }
+    .field { margin-bottom: 20px; }
+    .field label { display: block; margin-bottom: 10px; font-weight: 700; font-size: 1rem; letter-spacing: 0.02em; }
+    .field input, .field select, .field textarea { width: 100%; border: 1px solid #d2d7e0; border-radius: 16px; padding: 16px 18px; font-size: 1.05rem; background: #f8fafc; color: #111827; box-sizing: border-box; box-shadow: inset 0 1px 3px rgba(15,23,42,.06); transition: border-color .2s ease, box-shadow .2s ease, transform .15s ease; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,.12); transform: translateY(-1px); }
+    textarea { min-height: 170px; resize: vertical; }
+    .form-fields { display: grid; gap: 20px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; }
+    button { border: none; border-radius: 16px; padding: 16px 20px; font-size: 1rem; font-weight: 700; cursor: pointer; background: linear-gradient(135deg,#2563eb,#4f46e5); color: white; transition: transform .15s ease, background .25s ease, box-shadow .25s ease; box-shadow: 0 16px 30px rgba(37,99,235,.18); }
+    button:hover { transform: translateY(-2px); background: linear-gradient(135deg,#1d4ed8,#4338ca); }
+    .note { margin: 8px 0 20px; color: #4b5563; font-size: 0.94rem; line-height: 1.5; }
+    .result { margin-top: 24px; padding: 20px; border-radius: 16px; background: #f3f4f6; border: 1px solid #e5e7eb; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .error { color: #b91c1c; }
+    .success { color: #047857; }
+    .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 12px; font-size: 0.82rem; font-weight: 700; background: #eef2ff; color: #3730a3; }
+    a { color: #2563eb; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>LLM Connection Tester</h1>
+    <p class="subtitle">Use this page to verify whether your OpenAI-compatible endpoint and model can be reached from the browser. It reads `config.js` and lets you test an endpoint immediately.</p>
+
+    <div class="field">
+      <label for="provider-select">Configured provider</label>
+      <select id="provider-select"></select>
+    </div>
+
+    <div class="form-fields">
+      <div class="field">
+        <label for="endpoint-url">Endpoint URL</label>
+        <input id="endpoint-url" type="url" placeholder="https://api.Company.com/llm/v1/chat/completions" />
+      </div>
+      <div class="field">
+        <label for="model-id">Model ID</label>
+        <input id="model-id" type="text" placeholder="mistral-7b-instruct" />
+      </div>
+      <div class="field">
+        <label for="api-key">API Key</label>
+        <input id="api-key" type="text" placeholder="Bearer token for endpoint" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="prompt-text">Test prompt</label>
+      <textarea id="prompt-text">Say this in one sentence: "Hello from the LLM connection tester."</textarea>
+    </div>
+
+    <div class="button-row">
+      <button id="run-test">Run test</button>
+      <button id="load-config" type="button">Reload config.js</button>
+    </div>
+
+    <p class="note">If you are using gateway mode, make sure the endpoint is the full OpenAI-compatible chat completions URL and the model matches your gateway model name.</p>
+
+    <div id="status-message" class="note"></div>
+    <div id="result-output" class="result"></div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    const providerSelect = document.getElementById('provider-select');
+    const endpointUrl = document.getElementById('endpoint-url');
+    const modelId = document.getElementById('model-id');
+    const apiKey = document.getElementById('api-key');
+    const promptText = document.getElementById('prompt-text');
+    const runTest = document.getElementById('run-test');
+    const loadConfig = document.getElementById('load-config');
+    const statusMessage = document.getElementById('status-message');
+    const resultOutput = document.getElementById('result-output');
+
+    function getConfig() {
+      return window.CONFIG || { KEYS: {}, ENDPOINTS: {} };
+    }
+
+    function populateProviderOptions() {
+      const cfg = getConfig();
+      providerSelect.innerHTML = '';
+      const ids = Object.keys(cfg.ENDPOINTS || {});
+      if (ids.length === 0) {
+        providerSelect.innerHTML = '<option value="custom">Custom</option>';
+        return;
+      }
+      ids.forEach(id => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = `${id} (${cfg.ENDPOINTS[id].model || 'no model configured'})`;
+        providerSelect.appendChild(opt);
+      });
+      const customOpt = document.createElement('option');
+      customOpt.value = 'custom';
+      customOpt.textContent = 'Custom endpoint';
+      providerSelect.appendChild(customOpt);
+      providerSelect.value = ids[0] || 'custom';
+      updateFromProvider();
+    }
+
+    function updateFromProvider() {
+      const cfg = getConfig();
+      const selected = providerSelect.value;
+      if (selected && cfg.ENDPOINTS && cfg.ENDPOINTS[selected]) {
+        endpointUrl.value = cfg.ENDPOINTS[selected].url || '';
+        modelId.value = cfg.ENDPOINTS[selected].model || '';
+        apiKey.value = cfg.KEYS ? (cfg.KEYS[selected] || '') : '';
+        statusMessage.textContent = `Loaded provider ${selected} from config.js`;
+        statusMessage.className = 'note success';
+      } else {
+        statusMessage.textContent = 'Using custom values. Fill endpoint, model, and API key manually.';
+        statusMessage.className = 'note';
+      }
+    }
+
+    function showResult(text, type = 'info') {
+      resultOutput.textContent = text;
+      statusMessage.textContent = type === 'error' ? 'Test failed.' : 'Test succeeded.';
+      statusMessage.className = type === 'error' ? 'note error' : 'note success';
+    }
+
+    async function sendTestRequest() {
+      const url = endpointUrl.value.trim();
+      const model = modelId.value.trim();
+      const key = apiKey.value.trim();
+      const prompt = promptText.value.trim();
+      if (!url || !model || !key || !prompt) {
+        showResult('Please provide endpoint URL, model ID, API key, and prompt.', 'error');
+        return;
+      }
+      resultOutput.textContent = 'Running test request…';
+      statusMessage.textContent = 'Sending request...';
+      statusMessage.className = 'note';
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${key}`
+          },
+          body: JSON.stringify({
+            model,
+            temperature: 0,
+            max_tokens: 200,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+
+        const rawText = await response.text();
+        let data;
+        try {
+          data = JSON.parse(rawText);
+        } catch (error) {
+          throw new Error(`Non-JSON response received:\n${rawText}`);
+        }
+
+        if (!response.ok) {
+          const message = data?.error?.message || data?.message || rawText || `HTTP ${response.status}`;
+          throw new Error(message);
+        }
+
+        const content = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.text || JSON.stringify(data, null, 2);
+        showResult(`Response:\n${content}`);
+      } catch (error) {
+        showResult(`Error: ${error.message}`, 'error');
+      }
+    }
+
+    providerSelect.addEventListener('change', updateFromProvider);
+    runTest.addEventListener('click', sendTestRequest);
+    loadConfig.addEventListener('click', () => {
+      populateProviderOptions();
+      showResult('Config reloaded from config.js.', 'success');
+    });
+
+    populateProviderOptions();
+  </script>
+</body>
+</html>
