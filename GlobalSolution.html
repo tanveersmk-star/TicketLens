@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgenticIQ — Agentic AI for Enterprise ITSM | 1000+ Application Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./GlobalSolution_files/css2" rel="stylesheet">
+<style>
+:root {
+  --bg:           #050815;
+  --surface:      #0b1022;
+  --surface2:     #0f172a;
+  --border:       rgba(99,102,241,0.18);
+  --border-dim:   rgba(255,255,255,0.06);
+  --glass:        rgba(255,255,255,0.025);
+  --primary:      #6366f1;
+  --primary-lt:   #818cf8;
+  --secondary:    #0ea5e9;
+  --accent:       #f59e0b;
+  --success:      #10b981;
+  --danger:       #ef4444;
+  --text:         #f1f5f9;
+  --text-muted:   #94a3b8;
+  --text-dim:     #475569;
+  --gp:  linear-gradient(135deg,#6366f1,#0ea5e9);
+  --gw:  linear-gradient(135deg,#f59e0b,#ef4444);
+  --gg:  linear-gradient(135deg,#10b981,#0ea5e9);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.65;overflow-x:hidden}
+h1,h2,h3,h4,h5{font-family:'Plus Jakarta Sans',sans-serif;line-height:1.15}
+h1{font-size:clamp(2.4rem,5vw,3.8rem);font-weight:800}
+h2{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:700}
+h3{font-size:1.2rem;font-weight:700}
+h4{font-size:0.95rem;font-weight:700}
+p{color:var(--text-muted)}
+a{text-decoration:none}
+
+/* ── UTIL ────────────────────────────────────── */
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+.section{padding:96px 0}
+.section-alt{background:var(--surface)}
+.grad-text{background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.grad-text-warm{background:var(--gw);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.28);color:var(--primary-lt);padding:4px 14px;border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.pill{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:700;letter-spacing:.04em}
+.pill-green{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.pill-amber{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.pill-blue{background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:#7dd3fc}
+.pill-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+
+/* ── BUTTONS ──────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none}
+.btn-primary{background:var(--gp);color:#fff}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(99,102,241,.4)}
+.btn-secondary{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.12)}
+.btn-secondary:hover{border-color:var(--primary);color:var(--primary-lt)}
+
+/* ── NAV ──────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;backdrop-filter:blur(24px) saturate(180%);background:rgba(5,8,21,.82);border-bottom:1px solid rgba(255,255,255,.05)}
+.nav-inner{max-width:1180px;margin:0 auto;padding:0 24px;width:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--text-muted);font-size:.875rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--gp);color:#fff;border:none;cursor:pointer;padding:8px 18px;border-radius:8px;font-size:.85rem;font-weight:600;transition:all .2s}
+.nav-cta:hover{opacity:.88;transform:translateY(-1px)}
+
+/* ── HERO ─────────────────────────────────────── */
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:64px}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 90% 70% at 50% -10%, rgba(99,102,241,.28) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 50% at 85% 60%,  rgba(14,165,233,.14) 0%,transparent 55%),
+  radial-gradient(ellipse 40% 40% at 15% 80%,  rgba(245,158,11,.08) 0%,transparent 50%);
+  animation:aurora 14s ease-in-out infinite alternate}
+@keyframes aurora{0%{opacity:.7;transform:scale(1)}100%{opacity:1;transform:scale(1.06) translateY(-18px)}}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(99,102,241,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.03) 1px,transparent 1px);background-size:64px 64px}
+.floating-orb{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;animation:float-orb 8s ease-in-out infinite alternate}
+.orb1{width:500px;height:500px;background:rgba(99,102,241,.08);top:-100px;right:-100px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:rgba(14,165,233,.06);bottom:-50px;left:-80px;animation-delay:-4s}
+@keyframes float-orb{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.1)}}
+.hero-content{position:relative;z-index:2;padding:60px 0}
+.hero-eyebrow{margin-bottom:20px}
+.hero-title{margin-bottom:22px}
+.hero-sub{font-size:1.15rem;max-width:580px;margin-bottom:36px;color:var(--text-muted);line-height:1.7}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px}
+.hero-metrics{display:flex;gap:40px;flex-wrap:wrap;padding:24px 0;border-top:1px solid rgba(255,255,255,.06)}
+.hm{}.hm .num{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.4rem;font-weight:800;background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.hm .lbl{font-size:.8rem;color:var(--text-dim);margin-top:4px}
+.hero-img{position:relative;z-index:2}
+.hero-card{background:rgba(255,255,255,.03);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:24px;backdrop-filter:blur(20px)}
+.hero-card-title{font-size:.8rem;font-weight:700;color:var(--primary-lt);margin-bottom:16px;letter-spacing:.05em;text-transform:uppercase}
+.hero-chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.hero-chip{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:500;display:flex;align-items:center;gap:6px}
+
+/* ── CHALLENGE ────────────────────────────────── */
+#challenge{background:linear-gradient(180deg,var(--bg) 0%,var(--surface) 100%)}
+.challenge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.chal-card{padding:28px;border-radius:14px;background:rgba(239,68,68,.03);border:1px solid rgba(239,68,68,.1);transition:all .3s}
+.chal-card:hover{border-color:rgba(239,68,68,.3);transform:translateY(-3px)}
+.chal-icon{width:46px;height:46px;border-radius:12px;background:rgba(239,68,68,.12);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
+.chal-card h3{color:var(--text);margin-bottom:8px;font-size:1rem}
+.chal-card p{font-size:.875rem}
+
+/* ── SOLUTIONS ────────────────────────────────── */
+.solutions-bento{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto auto;gap:18px;margin-top:56px}
+.sol{position:relative;padding:26px;border-radius:16px;background:rgba(255,255,255,.018);border:1px solid rgba(255,255,255,.07);cursor:pointer;transition:all .3s;overflow:hidden}
+.sol::after{content:'';position:absolute;inset:0;background:var(--sc,var(--gp));opacity:0;transition:opacity .3s;border-radius:inherit}
+.sol:hover{transform:translateY(-4px);border-color:var(--sb,var(--primary))}
+.sol:hover::after{opacity:.04}
+.sol.wide{grid-column:span 2}
+.sol .demo-tag{position:absolute;top:14px;right:14px;z-index:2}
+.sol-num{font-size:.65rem;font-weight:700;letter-spacing:.1em;color:var(--text-dim);margin-bottom:10px;position:relative;z-index:2}
+.sol-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:14px;position:relative;z-index:2}
+.sol h3{color:var(--text);margin-bottom:6px;position:relative;z-index:2}
+.sol .tag-line{font-size:.875rem;margin-bottom:14px;position:relative;z-index:2}
+.sol-chips{display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:2}
+.sol-chip{font-size:.68rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--text-muted);padding:3px 9px;border-radius:5px}
+
+.sol:nth-child(1){--sb:#6366f1;--sc:linear-gradient(135deg,#6366f1,#818cf8)}.sol:nth-child(1) .sol-ico{background:rgba(99,102,241,.15)}
+.sol:nth-child(2){--sb:#0ea5e9;--sc:linear-gradient(135deg,#0ea5e9,#38bdf8)}.sol:nth-child(2) .sol-ico{background:rgba(14,165,233,.15)}
+.sol:nth-child(3){--sb:#10b981;--sc:linear-gradient(135deg,#10b981,#34d399)}.sol:nth-child(3) .sol-ico{background:rgba(16,185,129,.15)}
+.sol:nth-child(4){--sb:#f59e0b;--sc:linear-gradient(135deg,#f59e0b,#fcd34d)}.sol:nth-child(4) .sol-ico{background:rgba(245,158,11,.15)}
+.sol:nth-child(5){--sb:#ef4444;--sc:linear-gradient(135deg,#ef4444,#f87171)}.sol:nth-child(5) .sol-ico{background:rgba(239,68,68,.15)}
+
+/* ── ARCHITECTURE ─────────────────────────────── */
+#architecture{background:var(--bg)}
+.arch-shell{border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:32px 16px 24px;margin-top:52px;position:relative;background:rgba(255,255,255,.008);overflow:hidden}
+.arch-shell::before{content:'';position:absolute;top:-160px;left:50%;transform:translateX(-50%);width:700px;height:320px;background:radial-gradient(ellipse,rgba(99,102,241,.12) 0%,transparent 70%);pointer-events:none}
+.arch-svg{width:100%;height:auto;display:block;max-height:700px}
+
+/* ── AUDIENCE TABS ────────────────────────────── */
+#audience{background:var(--surface)}
+.tabs-wrap{display:flex;justify-content:center;margin-bottom:44px}
+.tabs{display:flex;gap:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:4px}
+.tab-btn{padding:10px 22px;border-radius:8px;border:none;background:transparent;color:var(--text-muted);font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;font-family:inherit}
+.tab-btn.active{background:var(--gp);color:#fff}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+.aud-intro{max-width:720px;margin:0 auto 32px;text-align:center;font-size:1.05rem}
+.aud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.aud-card{padding:22px;border-radius:12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07)}
+.aud-card h4{color:var(--text);margin-bottom:6px;font-size:.95rem}
+.aud-card p{font-size:.84rem}
+.aud-pills{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px}
+.aud-wide{padding:24px;border-radius:12px;background:rgba(99,102,241,.05);border:1px solid rgba(99,102,241,.2)}
+.aud-wide h4{color:var(--primary-lt);margin-bottom:12px}
+.aud-steps{display:flex;gap:0;overflow-x:auto;padding-bottom:8px}
+.aud-step{flex:1;min-width:160px;padding:16px;border-right:1px solid rgba(255,255,255,.06)}
+.aud-step:last-child{border-right:none}
+.aud-step .step-n{font-size:1.5rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;background:var(--gp);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.aud-step h5{color:var(--text);font-size:.85rem;margin:4px 0}
+.aud-step p{font-size:.78rem}
+
+/* ── ROI ──────────────────────────────────────── */
+#roi{background:var(--bg)}
+.roi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:52px}
+.roi-card{padding:28px;border-radius:16px;text-align:center;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);transition:all .3s}
+.roi-card:hover{border-color:rgba(99,102,241,.3);transform:translateY(-3px)}
+.roi-n{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.8rem;font-weight:800;line-height:1;margin-bottom:8px}
+.roi-l{font-size:.875rem;color:var(--text-muted)}
+.roi-s{font-size:.75rem;color:var(--text-dim);margin-top:4px}
+.roi-table{width:100%;border-collapse:collapse;margin-top:40px;border-radius:12px;overflow:hidden}
+.roi-table th,.roi-table td{padding:14px 18px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05)}
+.roi-table th{background:rgba(255,255,255,.03);font-size:.8rem;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em}
+.roi-table tr:last-child td{border-bottom:none}
+.roi-table td{font-size:.875rem;color:var(--text-muted)}
+.roi-table .strong{color:var(--text);font-weight:600}
+.roi-table .em{color:#6ee7b7;font-weight:700}
+
+/* ── DEMO TIMELINE ────────────────────────────── */
+#demo{background:var(--surface)}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:52px;position:relative}
+.timeline::after{content:'';position:absolute;top:44px;left:12%;right:12%;height:2px;background:linear-gradient(90deg,#6366f1,#0ea5e9 33%,#10b981 66%,#f59e0b)}
+.tl-step{text-align:center;padding:0 12px;position:relative;z-index:1}
+.tl-dot{width:56px;height:56px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:2px solid transparent;position:relative;z-index:2}
+.tl-step:nth-child(1) .tl-dot{background:rgba(99,102,241,.15);border-color:#6366f1;box-shadow:0 0 20px rgba(99,102,241,.3)}
+.tl-step:nth-child(2) .tl-dot{background:rgba(14,165,233,.15);border-color:#0ea5e9;box-shadow:0 0 20px rgba(14,165,233,.3)}
+.tl-step:nth-child(3) .tl-dot{background:rgba(16,185,129,.15);border-color:#10b981;box-shadow:0 0 20px rgba(16,185,129,.3)}
+.tl-step:nth-child(4) .tl-dot{background:rgba(245,158,11,.15);border-color:#f59e0b;box-shadow:0 0 20px rgba(245,158,11,.3)}
+.tl-duration{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-dim);margin-bottom:6px}
+.tl-step h4{color:var(--text);margin-bottom:6px;font-size:.95rem}
+.tl-step p{font-size:.82rem}
+.tl-items{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.tl-item{font-size:.75rem;color:var(--text-dim);display:flex;align-items:center;gap:5px;justify-content:center}
+.tl-item::before{content:'→';color:var(--primary-lt)}
+
+/* ── COMPARISON ───────────────────────────────── */
+#compare{background:var(--bg)}
+.comp-table{width:100%;border-collapse:collapse;margin-top:48px;border-radius:14px;overflow:hidden}
+.comp-table th,.comp-table td{padding:15px 18px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);font-size:.875rem}
+.comp-table th{background:rgba(255,255,255,.03);font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text)}
+.comp-table .col-us{background:rgba(99,102,241,.04)}
+.comp-table .col-us th{color:var(--primary-lt)}
+.comp-table tr:hover td{background:rgba(255,255,255,.01)}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table td{color:var(--text-muted)}
+.comp-table td.strong{color:var(--text);font-weight:500}
+.yes{color:#10b981;font-weight:700}
+.no{color:#ef4444}
+.part{color:#f59e0b}
+
+/* ── CTA ──────────────────────────────────────── */
+#cta{background:radial-gradient(ellipse 80% 60% at 50% 50%,rgba(99,102,241,.18) 0%,transparent 70%),var(--surface);text-align:center;padding:110px 0}
+#cta h2{margin-bottom:14px}
+#cta p{font-size:1.05rem;max-width:480px;margin:0 auto 36px}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ───────────────────────────────────── */
+footer{background:var(--bg);border-top:1px solid rgba(255,255,255,.05);padding:36px 0;text-align:center}
+footer p{font-size:.82rem;color:var(--text-dim)}
+
+/* ── SCROLL REVEAL ────────────────────────────── */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .7s ease,transform .7s ease}
+.reveal.left{transform:translateX(-36px)}
+.reveal.right{transform:translateX(36px)}
+.reveal.visible{opacity:1;transform:translate(0)}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media(max-width:960px){
+  .challenge-grid,.solutions-bento{grid-template-columns:1fr}
+  .sol.wide{grid-column:span 1}
+  .roi-grid{grid-template-columns:repeat(2,1fr)}
+  .timeline{grid-template-columns:1fr 1fr}
+  .timeline::after{display:none}
+  .aud-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+@media(max-width:600px){
+  .roi-grid{grid-template-columns:1fr}
+  .timeline{grid-template-columns:1fr}
+  .tabs{flex-wrap:wrap}
+  .hero-metrics{gap:20px}
+  .cta-btns{flex-direction:column;align-items:center}
+}
+</style>
+<style>
+@keyframes particle-float {
+  0%  { transform: translateY(0) translateX(0) scale(1); opacity: 0.4; }
+  100%{ transform: translateY(-40px) translateX(20px) scale(1.4); opacity: 0.9; }
+}</style></head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">AgenticIQ</div>
+    <ul class="nav-links">
+      <li><a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#challenge" style="">Challenge</a></li>
+      <li><a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#solutions" style="">Solutions</a></li>
+      <li><a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#architecture" style="color: var(--text);">Architecture</a></li>
+      <li><a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#roi" style="">ROI</a></li>
+      <li><a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#demo" style="">Demo Path</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById(&#39;cta&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">Book Demo</button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="floating-orb orb1"></div>
+  <div class="floating-orb orb2"></div>
+  <div class="container">
+    <div class="hero-content reveal visible">
+      <div class="hero-eyebrow"><span class="badge">⚡ Agentic AI &amp; RAG &nbsp;·&nbsp; Enterprise ITSM</span></div>
+      <h1 class="hero-title">
+        Autonomous Intelligence<br>for Your <span class="grad-text">1,000+</span><br>Application Estate
+      </h1>
+      <p class="hero-sub">Five production-ready Agentic AI automations — grounded in your own CMDB, tickets, and knowledge — that cut MTTR, prevent incidents, and protect SLAs across every application you manage.</p>
+      <div class="hero-ctas">
+        <a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#solutions" class="btn btn-primary">↓ Explore Solutions</a>
+        <a href="file:///C:/AI%20Projects/TicketLensIQ/agentic-solutions.html#demo" class="btn btn-secondary">▶ Demo-First Path</a>
+      </div>
+      <div class="hero-metrics">
+        <div class="hm"><div class="num" data-count="65" data-counted="1">65</div><div class="lbl">% MTTR Reduction</div></div>
+        <div class="hm"><div class="num" data-count="80" data-counted="1">80</div><div class="lbl">% Request Auto-Fulfillment</div></div>
+        <div class="hm"><div class="num" data-count="45" data-counted="1">45</div><div class="lbl">% Fewer Recurring Incidents</div></div>
+        <div class="hm"><div class="num" data-count="70" data-counted="1">70</div><div class="lbl">% SLA Breach Prevention</div></div>
+      </div>
+    </div>
+  </div>
+<div style="position: absolute; width: 1.11623px; height: 1.11623px; border-radius: 50%; background: rgba(14, 165, 233, 0.55); left: 21.5209%; top: 9.96679%; animation: 12.0898s ease-in-out 0.301s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.96855px; height: 2.96855px; border-radius: 50%; background: rgba(14, 165, 233, 0.25); left: 49.811%; top: 8.4376%; animation: 6.92037s ease-in-out 3.12931s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.96564px; height: 2.96564px; border-radius: 50%; background: rgba(99, 102, 241, 0.33); left: 60.8016%; top: 97.0042%; animation: 8.97029s ease-in-out 1.04258s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.47776px; height: 1.47776px; border-radius: 50%; background: rgba(99, 102, 241, 0.486); left: 27.9016%; top: 47.1414%; animation: 8.84242s ease-in-out 1.84132s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.98275px; height: 1.98275px; border-radius: 50%; background: rgba(99, 102, 241, 0.33); left: 69.751%; top: 79.6529%; animation: 9.25213s ease-in-out 3.99301s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.52471px; height: 1.52471px; border-radius: 50%; background: rgba(14, 165, 233, 0.698); left: 17.8488%; top: 56.9209%; animation: 12.2756s ease-in-out 3.14368s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.3428px; height: 2.3428px; border-radius: 50%; background: rgba(99, 102, 241, 0.643); left: 0.015965%; top: 15.9691%; animation: 13.1256s ease-in-out 5.14229s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.65275px; height: 3.65275px; border-radius: 50%; background: rgba(14, 165, 233, 0.24); left: 21.7746%; top: 58.5965%; animation: 13.2659s ease-in-out 1.64978s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.85211px; height: 1.85211px; border-radius: 50%; background: rgba(99, 102, 241, 0.51); left: 17.2387%; top: 96.3411%; animation: 7.14566s ease-in-out 0.312265s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.22222px; height: 2.22222px; border-radius: 50%; background: rgba(14, 165, 233, 0.427); left: 15.9551%; top: 37.3483%; animation: 10.6967s ease-in-out 1.54392s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.30488px; height: 2.30488px; border-radius: 50%; background: rgba(99, 102, 241, 0.345); left: 0.232867%; top: 55.0824%; animation: 10.7499s ease-in-out 4.52207s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.0626px; height: 2.0626px; border-radius: 50%; background: rgba(14, 165, 233, 0.545); left: 40.3028%; top: 56.6489%; animation: 11.6192s ease-in-out 5.27266s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.01481px; height: 3.01481px; border-radius: 50%; background: rgba(99, 102, 241, 0.525); left: 70.0661%; top: 44.3926%; animation: 8.9397s ease-in-out 4.49075s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.97061px; height: 1.97061px; border-radius: 50%; background: rgba(14, 165, 233, 0.294); left: 4.42217%; top: 58.9165%; animation: 13.5822s ease-in-out 2.75003s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.71057px; height: 1.71057px; border-radius: 50%; background: rgba(14, 165, 233, 0.58); left: 60.8463%; top: 19.268%; animation: 10.1953s ease-in-out 0.428234s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.7238px; height: 3.7238px; border-radius: 50%; background: rgba(99, 102, 241, 0.384); left: 66.7699%; top: 67.8349%; animation: 13.4148s ease-in-out 2.93276s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.72209px; height: 3.72209px; border-radius: 50%; background: rgba(99, 102, 241, 0.404); left: 66.5834%; top: 86.6111%; animation: 6.30451s ease-in-out 5.72502s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.92907px; height: 3.92907px; border-radius: 50%; background: rgba(99, 102, 241, 0.553); left: 89.8324%; top: 67.4785%; animation: 12.9205s ease-in-out 5.66135s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.79339px; height: 1.79339px; border-radius: 50%; background: rgba(99, 102, 241, 0.565); left: 44.0294%; top: 24.0227%; animation: 13.1462s ease-in-out 1.41539s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 3.75655px; height: 3.75655px; border-radius: 50%; background: rgba(99, 102, 241, 0.58); left: 29.3195%; top: 6.48596%; animation: 10.5209s ease-in-out 3.70489s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.26667px; height: 1.26667px; border-radius: 50%; background: rgba(14, 165, 233, 0.376); left: 72.2838%; top: 99.5154%; animation: 6.0629s ease-in-out 1.03698s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 2.70277px; height: 2.70277px; border-radius: 50%; background: rgba(99, 102, 241, 0.686); left: 1.26715%; top: 1.43259%; animation: 11.4377s ease-in-out 1.30816s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.62685px; height: 1.62685px; border-radius: 50%; background: rgba(99, 102, 241, 0.494); left: 84.2618%; top: 53.474%; animation: 10.8473s ease-in-out 0.86811s infinite alternate none running particle-float; pointer-events: none;"></div><div style="position: absolute; width: 1.92069px; height: 1.92069px; border-radius: 50%; background: rgba(99, 102, 241, 0.27); left: 52.7495%; top: 55.0457%; animation: 7.06913s ease-in-out 4.55691s infinite alternate none running particle-float; pointer-events: none;"></div></section>
+
+<!-- ══ CHALLENGE ══════════════════════════════════ -->
+<section id="challenge" class="section">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center;margin-bottom:8px"><span class="badge">The Problem</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin-bottom:0">Managing scale without intelligent automation<br>is a burning platform</h2>
+    <div class="challenge-grid">
+      <div class="chal-card reveal d1 visible">
+        <div class="chal-icon">🔥</div>
+        <h3>Reactive Operations at Scale</h3>
+        <p>With 1,000+ applications under maintenance, L1 agents spend 70% of time on tickets that pattern-match to known solutions. Human triage at this volume is financially unsustainable and SLA-hostile.</p>
+      </div>
+      <div class="chal-card reveal d2 visible">
+        <div class="chal-icon">🔄</div>
+        <h3>Recurring Incidents, Never Solved</h3>
+        <p>The same SAP basis errors, Salesforce sync failures, and middleware timeouts recur monthly. No team has bandwidth to connect patterns across 1,000 apps. Problem management is post-mortem only.</p>
+      </div>
+      <div class="chal-card reveal d3 visible">
+        <div class="chal-icon">⏱️</div>
+        <h3>SLA Exposure Is Structural</h3>
+        <p>Breaches are predictable but unseen. Service managers discover them after the fact. Manual escalations are slow. For managed service contracts, every breach is a commercial and reputational event.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SOLUTIONS ══════════════════════════════════ -->
+<section id="solutions" class="section section-alt">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">Five Automations</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 8px">Agentic AI that acts, not just answers</h2>
+    <p class="reveal visible" style="text-align:center;max-width:580px;margin:0 auto">Each automation is independently deployable, demo-ready in 2–4 weeks, and architecturally designed to scale to your full estate.</p>
+
+    <div class="solutions-bento">
+
+      <!-- 1 -->
+      <div class="sol wide reveal d1 visible">
+        <span class="demo-tag pill pill-green">Demo: 2 Weeks</span>
+        <div class="sol-num">AUTOMATION 01</div>
+        <div class="sol-ico">🔍</div>
+        <h3>Intelligent Ticket Analyzer &amp; Service Manager Copilot</h3>
+        <p class="tag-line">Any ticket. Any ITSM tool. Any application. Full SM analysis in 30 seconds — timeline, SLA health, team response quality, and improvement actions grounded in your own knowledge base.</p>
+        <div class="sol-chips">
+          <span class="sol-chip">SAP / Oracle / Dynamics</span>
+          <span class="sol-chip">ServiceNow / BMC / Omnitracker</span>
+          <span class="sol-chip">Salesforce / Workday</span>
+          <span class="sol-chip">Custom Apps</span>
+          <span class="sol-chip">↓ 65% Review Time</span>
+          <span class="sol-chip">100% Knowledge Capture</span>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="sol reveal d2 visible">
+        <span class="demo-tag pill pill-green">Demo: 3 Weeks</span>
+        <div class="sol-num">AUTOMATION 02</div>
+        <div class="sol-ico">📊</div>
+        <h3>Cross-Application Incident Pattern Intelligence</h3>
+        <p class="tag-line">Mines 6–12 months of closed tickets across all applications. Surfaces your top recurring problem candidates with pre-populated Problem Records — work nobody had time to do.</p>
+        <div class="sol-chips">
+          <span class="sol-chip">↓ 45% Recurring Incidents</span>
+          <span class="sol-chip">All App Categories</span>
+          <span class="sol-chip">$500K P1 Avoidance</span>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="sol reveal d1 visible">
+        <span class="demo-tag pill pill-green">Demo: 2 Weeks</span>
+        <div class="sol-num">AUTOMATION 03</div>
+        <div class="sol-ico">🤖</div>
+        <h3>Conversational Service Request &amp; Fulfillment Agent</h3>
+        <p class="tag-line">Natural language requests — "I need Dynamics 365 access for a new hire starting Monday" — understood, validated against policy, routed or auto-fulfilled without a service desk call.</p>
+        <div class="sol-chips">
+          <span class="sol-chip">80% Auto-Fulfillment</span>
+          <span class="sol-chip">Same-Day Provisioning</span>
+          <span class="sol-chip">↓ 50% Ticket Volume</span>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="sol reveal d2 visible">
+        <span class="demo-tag pill pill-amber">Demo: 3–4 Weeks</span>
+        <div class="sol-num">AUTOMATION 04</div>
+        <div class="sol-ico">⚡</div>
+        <h3>Agentic Change Risk Advisor</h3>
+        <p class="tag-line">Every change request — ERP upgrades, cloud infra patches, middleware deployments, custom app releases — auto-scored for risk with CMDB impact analysis and a CAB-ready briefing in minutes.</p>
+        <div class="sol-chips">
+          <span class="sol-chip">↓ 40% Change Incidents</span>
+          <span class="sol-chip">↓ 70% CAB Prep Time</span>
+          <span class="sol-chip">SAP Transport Aware</span>
+          <span class="sol-chip">All Platform Changes</span>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="sol reveal d3 visible">
+        <span class="demo-tag pill pill-green">Demo: 2 Weeks</span>
+        <div class="sol-num">AUTOMATION 05</div>
+        <div class="sol-ico">🚨</div>
+        <h3>Real-Time SLA Risk &amp; Escalation Intelligence Agent</h3>
+        <p class="tag-line">Calculates breach probability for every open ticket continuously. When a ticket crosses threshold, the agent acts — reassigns, escalates with pre-written brief, notifies stakeholders — before the clock runs out.</p>
+        <div class="sol-chips">
+          <span class="sol-chip">↓ 70% Post-Fact Breaches</span>
+          <span class="sol-chip">All Contracts / Apps</span>
+          <span class="sol-chip">+25pt SLA Compliance</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ ARCHITECTURE ════════════════════════════════ -->
+<section id="architecture" class="section">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">Technical Architecture</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 8px">How Agentic RAG works end-to-end</h2>
+    <p class="reveal visible" style="text-align:center;max-width:600px;margin:0 auto">Five layers from raw enterprise signal to intelligent action — grounded in your organization's own data, not generic training.</p>
+
+    <div class="arch-shell reveal visible">
+      <svg class="arch-svg" viewBox="0 0 1100 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Agentic AI Architecture Diagram">
+        <defs>
+          <!-- Gradients -->
+          <lineargradient id="gMain" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6366f1"></stop>
+            <stop offset="100%" stop-color="#0ea5e9"></stop>
+          </lineargradient>
+          <lineargradient id="gCore" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1" stop-opacity="0.25"></stop>
+            <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.1"></stop>
+          </lineargradient>
+          <lineargradient id="gHub" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#6366f1" stop-opacity="0.15"></stop>
+            <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.08"></stop>
+          </lineargradient>
+          <lineargradient id="gRag" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#818cf8" stop-opacity="0.08"></stop>
+          </lineargradient>
+          <lineargradient id="gOrch" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.3"></stop>
+            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.15"></stop>
+          </lineargradient>
+          <lineargradient id="gMem" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.15"></stop>
+            <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.07"></stop>
+          </lineargradient>
+          <lineargradient id="gA1" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#6366f1" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#6366f1" stop-opacity="0.05"></stop>
+          </lineargradient>
+          <lineargradient id="gA2" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.05"></stop>
+          </lineargradient>
+          <lineargradient id="gA3" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#10b981" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#10b981" stop-opacity="0.05"></stop>
+          </lineargradient>
+          <lineargradient id="gA4" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.05"></stop>
+          </lineargradient>
+          <lineargradient id="gA5" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"></stop>
+            <stop offset="100%" stop-color="#ef4444" stop-opacity="0.05"></stop>
+          </lineargradient>
+          <!-- Glow filter -->
+          <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <fegaussianblur in="SourceGraphic" stdDeviation="5" result="blur"></fegaussianblur>
+            <femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+          </filter>
+          <filter id="strongGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <fegaussianblur in="SourceGraphic" stdDeviation="10" result="blur"></fegaussianblur>
+            <femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+          </filter>
+          <!-- Flow animation paths (hidden, used for animateMotion) -->
+          <!-- Source to Hub paths -->
+          <path id="fp1" d="M150,75 Q150,105 270,130" fill="none"></path>
+          <path id="fp2" d="M295,75 Q295,105 360,130" fill="none"></path>
+          <path id="fp3" d="M440,75 Q440,105 460,130" fill="none"></path>
+          <path id="fp4" d="M585,75 Q585,105 570,130" fill="none"></path>
+          <path id="fp5" d="M730,75 Q730,105 700,130" fill="none"></path>
+          <path id="fp6" d="M875,75 Q875,105 820,130" fill="none"></path>
+          <!-- Hub to Core -->
+          <path id="fp7" d="M550,183 L550,240" fill="none"></path>
+          <!-- Core to Agents -->
+          <path id="fp8" d="M550,370 Q400,390 150,430" fill="none"></path>
+          <path id="fp9" d="M550,370 Q500,390 350,430" fill="none"></path>
+          <path id="fp10" d="M550,370 L550,430" fill="none"></path>
+          <path id="fp11" d="M550,370 Q600,390 750,430" fill="none"></path>
+          <path id="fp12" d="M550,370 Q700,390 950,430" fill="none"></path>
+          <!-- Agents to Outputs -->
+          <path id="fp13" d="M150,487 L150,545" fill="none"></path>
+          <path id="fp14" d="M350,487 L350,545" fill="none"></path>
+          <path id="fp15" d="M550,487 L550,545" fill="none"></path>
+          <path id="fp16" d="M750,487 L750,545" fill="none"></path>
+          <path id="fp17" d="M950,487 L950,545" fill="none"></path>
+        </defs>
+
+        <!-- ─── LAYER LABELS ─── -->
+        <text x="550" y="16" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="10" font-weight="700" fill="#475569" letter-spacing="1.5">ENTERPRISE APPLICATION ESTATE</text>
+
+        <!-- ─── LAYER 1: SOURCE SYSTEMS ─── -->
+        <!-- ITSM -->
+        <rect x="80" y="22" width="140" height="53" rx="8" fill="rgba(99,102,241,0.08)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="150" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#818cf8">📋 ITSM Platform</text>
+        <text x="150" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">ServiceNow · BMC · OmniTracker</text>
+        <!-- ERP -->
+        <rect x="235" y="22" width="140" height="53" rx="8" fill="rgba(14,165,233,0.08)" stroke="#0ea5e9" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="305" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#38bdf8">🏢 ERP / SAP</text>
+        <text x="305" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">SAP · Oracle · Dynamics</text>
+        <!-- CRM -->
+        <rect x="390" y="22" width="140" height="53" rx="8" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="460" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#34d399">💼 CRM</text>
+        <text x="460" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">Salesforce · Dynamics CRM</text>
+        <!-- HR -->
+        <rect x="545" y="22" width="140" height="53" rx="8" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="615" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#fcd34d">👥 HR Systems</text>
+        <text x="615" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">Workday · SuccessFactors</text>
+        <!-- Cloud -->
+        <rect x="700" y="22" width="140" height="53" rx="8" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="770" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#a78bfa">☁️ Cloud &amp; Infra</text>
+        <text x="770" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">Azure · AWS · On-Prem</text>
+        <!-- Custom Apps -->
+        <rect x="855" y="22" width="165" height="53" rx="8" fill="rgba(239,68,68,0.06)" stroke="#ef4444" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="937" y="44" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="600" fill="#f87171">⚙️ 1000+ Custom Apps</text>
+        <text x="937" y="60" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">Middleware · Bespoke · Legacy</text>
+
+        <!-- Animated flow lines: Sources → Hub (dashed, animated) -->
+        <path d="M150,75 Q150,105 270,130" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.8s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M305,75 Q305,105 370,130" fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.9s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M460,75 Q460,105 460,130" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.75s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M615,75 Q615,105 590,130" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.85s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M770,75 Q770,105 730,130" fill="none" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.95s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M937,75 Q937,105 840,130" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.7s" repeatCount="indefinite"></animate>
+        </path>
+
+        <!-- Data packets: Sources → Hub -->
+        <circle r="3.5" fill="#6366f1" filter="url(#glow)"><animatemotion dur="1.6s" repeatCount="indefinite" begin="0s"><mpath href="#fp1"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#6366f1" filter="url(#glow)"><animatemotion dur="1.6s" repeatCount="indefinite" begin="0.8s"><mpath href="#fp1"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="1.5s" repeatCount="indefinite" begin="0.3s"><mpath href="#fp2"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="1.5s" repeatCount="indefinite" begin="1.0s"><mpath href="#fp2"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#10b981" filter="url(#glow)"><animatemotion dur="1.4s" repeatCount="indefinite" begin="0.1s"><mpath href="#fp3"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#10b981" filter="url(#glow)"><animatemotion dur="1.4s" repeatCount="indefinite" begin="0.9s"><mpath href="#fp3"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#f59e0b" filter="url(#glow)"><animatemotion dur="1.7s" repeatCount="indefinite" begin="0.5s"><mpath href="#fp4"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#8b5cf6" filter="url(#glow)"><animatemotion dur="1.6s" repeatCount="indefinite" begin="0.2s"><mpath href="#fp5"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#ef4444" filter="url(#glow)"><animatemotion dur="1.5s" repeatCount="indefinite" begin="0.7s"><mpath href="#fp6"></mpath></animatemotion></circle>
+
+        <!-- ─── LAYER 2: HUB ─── -->
+        <text x="550" y="123" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="1.2">DATA &amp; SIGNAL AGGREGATION</text>
+        <rect x="80" y="130" width="940" height="53" rx="10" fill="url(#gHub)" stroke="url(#gMain)" stroke-width="1" stroke-opacity="0.35"></rect>
+        <text x="550" y="153" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="12" font-weight="700" fill="#94a3b8">⚡ Unified Data Pipeline</text>
+        <text x="550" y="171" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9.5" fill="#475569">Tickets  ·  CMDB  ·  Change History  ·  SLA Contracts  ·  Knowledge Base  ·  Monitoring Alerts  ·  Audit Logs</text>
+
+        <!-- Hub → Core animated -->
+        <path d="M550,183 L550,240" fill="none" stroke="url(#gMain)" stroke-width="2" stroke-dasharray="6,4" opacity="0.7">
+          <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="0.6s" repeatCount="indefinite"></animate>
+        </path>
+        <circle r="4" fill="#6366f1" filter="url(#glow)"><animatemotion dur="1.0s" repeatCount="indefinite" begin="0s"><mpath href="#fp7"></mpath></animatemotion></circle>
+        <circle r="4" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="1.0s" repeatCount="indefinite" begin="0.5s"><mpath href="#fp7"></mpath></animatemotion></circle>
+
+        <!-- ─── LAYER 3: AGENTIC AI CORE ─── -->
+        <text x="550" y="233" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="1.2">AGENTIC AI CORE</text>
+        <!-- Outer glow -->
+        <rect x="70" y="240" width="960" height="130" rx="14" fill="none" stroke="url(#gMain)" stroke-width="2" stroke-opacity="0.6" filter="url(#strongGlow)"></rect>
+        <rect x="70" y="240" width="960" height="130" rx="14" fill="url(#gCore)" stroke="url(#gMain)" stroke-width="1.5" stroke-opacity="0.5">
+          <animate attributeName="stroke-opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"></animate>
+        </rect>
+        <!-- Pulsing glow overlay -->
+        <rect x="70" y="240" width="960" height="130" rx="14" fill="none" stroke="url(#gMain)" stroke-width="3" stroke-opacity="0">
+          <animate attributeName="stroke-opacity" values="0;0.3;0" dur="2.5s" repeatCount="indefinite"></animate>
+          <animate attributeName="stroke-width" values="2;6;2" dur="2.5s" repeatCount="indefinite"></animate>
+        </rect>
+
+        <!-- RAG Engine -->
+        <rect x="90" y="256" width="270" height="98" rx="10" fill="url(#gRag)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.4"></rect>
+        <text x="225" y="280" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="11" font-weight="700" fill="#818cf8">🧠 RAG Engine</text>
+        <text x="225" y="298" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Vector Store · Semantic Search</text>
+        <text x="225" y="314" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">KB Articles · SOPs · Past Tickets</text>
+        <text x="225" y="330" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Policies · Runbooks · CMDB Data</text>
+        <text x="225" y="346" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Org-specific knowledge — not public web</text>
+
+        <!-- Orchestrator (highlighted) -->
+        <rect x="380" y="250" width="340" height="110" rx="12" fill="url(#gOrch)" stroke="url(#gMain)" stroke-width="1.5" stroke-opacity="0.7"></rect>
+        <rect x="380" y="250" width="340" height="110" rx="12" fill="none" stroke="url(#gMain)" stroke-width="1" stroke-opacity="0">
+          <animate attributeName="stroke-opacity" values="0;0.5;0" dur="2s" repeatCount="indefinite"></animate>
+        </rect>
+        <text x="550" y="278" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="13" font-weight="800" fill="url(#gMain)">⚙️ AI Orchestrator</text>
+        <text x="550" y="298" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9.5" fill="#94a3b8">Plan → Retrieve → Reason → Act → Verify</text>
+        <text x="550" y="316" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Multi-step agent pipeline · Tool calling</text>
+        <text x="550" y="332" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">ITSM process awareness · ITIL aligned</text>
+        <text x="550" y="348" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Audit trail · Role-based actions</text>
+
+        <!-- Memory & Context -->
+        <rect x="740" y="256" width="270" height="98" rx="10" fill="url(#gMem)" stroke="#10b981" stroke-width="1" stroke-opacity="0.35"></rect>
+        <text x="875" y="280" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="11" font-weight="700" fill="#34d399">💾 Memory &amp; Context</text>
+        <text x="875" y="298" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Organizational Learning</text>
+        <text x="875" y="314" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">Ticket patterns · Resolution history</text>
+        <text x="875" y="330" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#64748b">SLA performance · Team velocity</text>
+        <text x="875" y="346" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Improves with every action taken</text>
+
+        <!-- Core → Agents animated lines -->
+        <path d="M550,370 Q400,395 150,430" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.7s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M550,370 Q500,395 350,430" fill="none" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.75s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M550,370 L550,430" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.65s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M550,370 Q600,395 750,430" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.8s" repeatCount="indefinite"></animate>
+        </path>
+        <path d="M550,370 Q700,395 950,430" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="0.72s" repeatCount="indefinite"></animate>
+        </path>
+        <!-- Packets Core → Agents -->
+        <circle r="4" fill="#6366f1" filter="url(#glow)"><animatemotion dur="1.4s" repeatCount="indefinite" begin="0s"><mpath href="#fp8"></mpath></animatemotion></circle>
+        <circle r="4" fill="#6366f1" filter="url(#glow)"><animatemotion dur="1.4s" repeatCount="indefinite" begin="0.7s"><mpath href="#fp8"></mpath></animatemotion></circle>
+        <circle r="4" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="1.3s" repeatCount="indefinite" begin="0.2s"><mpath href="#fp9"></mpath></animatemotion></circle>
+        <circle r="4" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="1.3s" repeatCount="indefinite" begin="0.85s"><mpath href="#fp9"></mpath></animatemotion></circle>
+        <circle r="4" fill="#10b981" filter="url(#glow)"><animatemotion dur="1.2s" repeatCount="indefinite" begin="0.4s"><mpath href="#fp10"></mpath></animatemotion></circle>
+        <circle r="4" fill="#10b981" filter="url(#glow)"><animatemotion dur="1.2s" repeatCount="indefinite" begin="1.0s"><mpath href="#fp10"></mpath></animatemotion></circle>
+        <circle r="4" fill="#f59e0b" filter="url(#glow)"><animatemotion dur="1.4s" repeatCount="indefinite" begin="0.15s"><mpath href="#fp11"></mpath></animatemotion></circle>
+        <circle r="4" fill="#ef4444" filter="url(#glow)"><animatemotion dur="1.5s" repeatCount="indefinite" begin="0.6s"><mpath href="#fp12"></mpath></animatemotion></circle>
+
+        <!-- ─── LAYER 4: SPECIALIZED AGENTS ─── -->
+        <text x="550" y="423" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="1.2">SPECIALIZED AGENTS</text>
+        <!-- Agent 1 -->
+        <rect x="60" y="430" width="180" height="57" rx="10" fill="url(#gA1)" stroke="#6366f1" stroke-width="1.2" stroke-opacity="0.5"></rect>
+        <text x="150" y="453" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="700" fill="#818cf8">🔍 Ticket Analyzer</text>
+        <text x="150" y="470" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">SM Copilot · Timeline · Quality</text>
+        <!-- Agent 2 -->
+        <rect x="260" y="430" width="180" height="57" rx="10" fill="url(#gA2)" stroke="#0ea5e9" stroke-width="1.2" stroke-opacity="0.5"></rect>
+        <text x="350" y="453" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="700" fill="#38bdf8">📊 Pattern Intel</text>
+        <text x="350" y="470" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Problem Mining · Root Cause</text>
+        <!-- Agent 3 -->
+        <rect x="460" y="430" width="180" height="57" rx="10" fill="url(#gA3)" stroke="#10b981" stroke-width="1.2" stroke-opacity="0.5"></rect>
+        <text x="550" y="453" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="700" fill="#34d399">🤖 Service Request</text>
+        <text x="550" y="470" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">NL Intake · Policy · Fulfillment</text>
+        <!-- Agent 4 -->
+        <rect x="660" y="430" width="180" height="57" rx="10" fill="url(#gA4)" stroke="#f59e0b" stroke-width="1.2" stroke-opacity="0.5"></rect>
+        <text x="750" y="453" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="700" fill="#fcd34d">⚡ Change Risk</text>
+        <text x="750" y="470" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Impact Analysis · CAB Briefing</text>
+        <!-- Agent 5 -->
+        <rect x="860" y="430" width="180" height="57" rx="10" fill="url(#gA5)" stroke="#ef4444" stroke-width="1.2" stroke-opacity="0.5"></rect>
+        <text x="950" y="453" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="11" font-weight="700" fill="#f87171">🚨 SLA Monitor</text>
+        <text x="950" y="470" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Breach Prediction · Escalation</text>
+
+        <!-- Agents → Outputs animated lines -->
+        <line x1="150" y1="487" x2="150" y2="545" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.6s" repeatCount="indefinite"></animate>
+        </line>
+        <line x1="350" y1="487" x2="350" y2="545" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.65s" repeatCount="indefinite"></animate>
+        </line>
+        <line x1="550" y1="487" x2="550" y2="545" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.55s" repeatCount="indefinite"></animate>
+        </line>
+        <line x1="750" y1="487" x2="750" y2="545" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.7s" repeatCount="indefinite"></animate>
+        </line>
+        <line x1="950" y1="487" x2="950" y2="545" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,4" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="0.62s" repeatCount="indefinite"></animate>
+        </line>
+        <!-- Packets Agents → Outputs -->
+        <circle r="3.5" fill="#6366f1" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0s"><mpath href="#fp13"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#6366f1" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0.45s"><mpath href="#fp13"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#0ea5e9" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0.15s"><mpath href="#fp14"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#10b981" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0.3s"><mpath href="#fp15"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#f59e0b" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0.6s"><mpath href="#fp16"></mpath></animatemotion></circle>
+        <circle r="3.5" fill="#ef4444" filter="url(#glow)"><animatemotion dur="0.9s" repeatCount="indefinite" begin="0.75s"><mpath href="#fp17"></mpath></animatemotion></circle>
+
+        <!-- ─── LAYER 5: OUTPUTS ─── -->
+        <text x="550" y="538" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="9.5" font-weight="700" fill="#475569" letter-spacing="1.2">INTELLIGENT OUTPUTS &amp; ACTIONS</text>
+        <!-- Output 1 -->
+        <rect x="60" y="545" width="180" height="50" rx="8" fill="rgba(99,102,241,0.06)" stroke="#6366f1" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="150" y="566" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="10" font-weight="600" fill="#818cf8">📋 SM Dashboard</text>
+        <text x="150" y="582" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Live analysis · Quality scores</text>
+        <!-- Output 2 -->
+        <rect x="260" y="545" width="180" height="50" rx="8" fill="rgba(14,165,233,0.06)" stroke="#0ea5e9" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="350" y="566" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="10" font-weight="600" fill="#38bdf8">📝 Problem Records</text>
+        <text x="350" y="582" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Auto-raised · Evidence-backed</text>
+        <!-- Output 3 -->
+        <rect x="460" y="545" width="180" height="50" rx="8" fill="rgba(16,185,129,0.06)" stroke="#10b981" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="550" y="566" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="10" font-weight="600" fill="#34d399">✅ Auto-Fulfillment</text>
+        <text x="550" y="582" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Zero-touch provisioning</text>
+        <!-- Output 4 -->
+        <rect x="660" y="545" width="180" height="50" rx="8" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="750" y="566" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="10" font-weight="600" fill="#fcd34d">📊 CAB Briefings</text>
+        <text x="750" y="582" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Risk-scored · Ready to approve</text>
+        <!-- Output 5 -->
+        <rect x="860" y="545" width="180" height="50" rx="8" fill="rgba(239,68,68,0.06)" stroke="#ef4444" stroke-width="1" stroke-opacity="0.3"></rect>
+        <text x="950" y="566" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="10" font-weight="600" fill="#f87171">🚨 SLA Escalations</text>
+        <text x="950" y="582" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="8.5" fill="#475569">Predictive · Pre-written brief</text>
+
+        <!-- Legend bar -->
+        <rect x="80" y="620" width="940" height="56" rx="10" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.06)" stroke-width="1"></rect>
+        <text x="550" y="636" text-anchor="middle" font-family="&#39;Plus Jakarta Sans&#39;,sans-serif" font-size="9" font-weight="700" fill="#334155" letter-spacing="1">GROUNDED IN YOUR ORGANIZATION'S OWN DATA — NOT PUBLIC WEB TRAINING</text>
+        <text x="180" y="657" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">🏢 CMDB &amp; CI Topology</text>
+        <text x="370" y="657" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">📋 Closed Ticket History</text>
+        <text x="550" y="657" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">📚 SOPs &amp; Knowledge Base</text>
+        <text x="730" y="657" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">📄 SLA Contracts &amp; Policies</text>
+        <text x="920" y="657" text-anchor="middle" font-family="&#39;Inter&#39;,sans-serif" font-size="9" fill="#475569">⚙️ Change &amp; Audit History</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AUDIENCE TABS ══════════════════════════════ -->
+<section id="audience" class="section section-alt">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">For Every Stakeholder</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 32px">The right depth for every audience</h2>
+
+    <div class="tabs-wrap reveal visible">
+      <div class="tabs">
+        <button class="tab-btn" onclick="switchTab(this,&#39;exec&#39;)">🎯 Executive / CTO</button>
+        <button class="tab-btn" onclick="switchTab(this,&#39;sm&#39;)">🛠️ Service Manager</button>
+        <button class="tab-btn active" onclick="switchTab(this,&#39;dev&#39;)">⚙️ Architect / Developer</button>
+      </div>
+    </div>
+
+    <!-- Executive Tab -->
+    <div class="tab-pane" id="tab-exec">
+      <p class="aud-intro">Investment logic, commercial impact, and competitive positioning — without the technical detail.</p>
+      <div class="aud-grid">
+        <div class="aud-card reveal d1 visible">
+          <h4>Commercial Protection</h4>
+          <p>SLA breaches in a 1,000+ app estate are a revenue-at-risk event. Automation #5 reduces breach exposure by 70%, protecting service credits and contract renewals worth millions annually.</p>
+          <div class="aud-pills">
+            <span class="pill pill-green">$2M–$8M annual savings</span>
+            <span class="pill pill-amber">SLA protection</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d2 visible">
+          <h4>Workforce Redirection</h4>
+          <p>80% of L1/L2 activity is pattern-matching work that agents execute better and faster. Your engineers move from reactive ticket processing to strategic improvement and innovation.</p>
+          <div class="aud-pills">
+            <span class="pill pill-blue">30–40% capacity freed</span>
+            <span class="pill pill-green">Higher-value work</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d3 visible">
+          <h4>Competitive Differentiation</h4>
+          <p>Clients choosing a managed service partner now evaluate AI maturity as a contract criterion. A demonstrated, working agentic platform — not a roadmap — is a procurement advantage.</p>
+          <div class="aud-pills">
+            <span class="pill pill-amber">Demo-first evidence</span>
+            <span class="pill pill-green">Win rate lift</span>
+          </div>
+        </div>
+      </div>
+      <div class="aud-wide reveal visible">
+        <h4>Investment-to-Return Timeline</h4>
+        <div class="aud-steps">
+          <div class="aud-step">
+            <div class="step-n">Wk 4</div>
+            <h5>Demo Live</h5>
+            <p>Working prototype on real data. Show clients. Win conversations.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">Mo 4</div>
+            <h5>Pilot ROI</h5>
+            <p>First 1–2 automations in production. Measured MTTR and SLA improvement.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">Mo 9</div>
+            <h5>Full Deployment</h5>
+            <p>All 5 automations live. Estate-wide coverage. Monthly cost avoidance visible.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">Mo 18</div>
+            <h5>Continuous Learning</h5>
+            <p>Agents improving with your data. Self-optimizing service delivery.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Manager Tab -->
+    <div class="tab-pane" id="tab-sm">
+      <p class="aud-intro">The operational metrics, ITIL alignment, and day-to-day workflow changes that matter to you.</p>
+      <div class="aud-grid">
+        <div class="aud-card reveal d1 visible">
+          <h4>Incident Management</h4>
+          <p>Agent #1 reads every ticket like a senior SM would — spotting late triage, poor routing, missed escalation windows. You get a consistent quality view across all 1,000+ apps without reading every ticket.</p>
+          <div class="aud-pills">
+            <span class="pill pill-green">↓ 65% MTTR</span>
+            <span class="pill pill-blue">↑ 35% FCR</span>
+            <span class="pill pill-amber">100% quality visibility</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d2 visible">
+          <h4>Problem Management</h4>
+          <p>Agent #2 does the mine-and-cluster work that never gets done. It surfaces your top 10 recurring problem candidates monthly — pre-populated Problem Records ready for your review and approval.</p>
+          <div class="aud-pills">
+            <span class="pill pill-green">↓ 45% recurring incidents</span>
+            <span class="pill pill-blue">70% prep time saved</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d3 visible">
+          <h4>Change &amp; SLA Governance</h4>
+          <p>Change risk is auto-scored before it reaches CAB. SLA breach probability is calculated in real-time — and when risk is high, the agent escalates with a pre-written brief, not a blank alert.</p>
+          <div class="aud-pills">
+            <span class="pill pill-green">↓ 40% change incidents</span>
+            <span class="pill pill-amber">+25pt SLA compliance</span>
+          </div>
+        </div>
+      </div>
+      <div class="aud-wide reveal visible">
+        <h4>ITIL 4 Alignment: Where Each Agent Fits</h4>
+        <div class="aud-steps">
+          <div class="aud-step">
+            <div class="step-n">01</div>
+            <h5>Incident Mgmt</h5>
+            <p>Ticket Analyzer — quality gates, FCR analysis, improvement triggers</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">02</div>
+            <h5>Problem Mgmt</h5>
+            <p>Pattern Intel — reactive → proactive, Known Error DB population</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">03</div>
+            <h5>Service Request</h5>
+            <p>Fulfillment Agent — catalog to completion, entitlement-aware</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">04</div>
+            <h5>Change Enablement</h5>
+            <p>Risk Advisor — CAB support, standard change automation</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">05</div>
+            <h5>SLA Management</h5>
+            <p>SLA Monitor — breach prevention, escalation automation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Developer/Architect Tab -->
+    <div class="tab-pane active" id="tab-dev">
+      <p class="aud-intro">Integration patterns, agent architecture, and the technical stack behind each automation.</p>
+      <div class="aud-grid">
+        <div class="aud-card reveal d1 visible">
+          <h4>Agent Architecture</h4>
+          <p>Each automation is a multi-step agentic pipeline: Plan → Retrieve (RAG) → Reason (LLM) → Act (Tool calls) → Verify → Store. Agents are stateful, auditable, and retry-safe. Orchestration via LangGraph or equivalent.</p>
+          <div class="aud-pills">
+            <span class="pill pill-blue">LangGraph / CrewAI</span>
+            <span class="pill pill-green">Claude Sonnet / GPT-4o</span>
+            <span class="pill pill-amber">Tool calling + MCP</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d2 visible">
+          <h4>RAG Stack</h4>
+          <p>Vector store (Chroma / Pinecone / Azure AI Search) ingests ticket exports, KB articles, SOPs, CMDB dumps, and policy documents. Hybrid retrieval (dense + sparse). Chunking strategy tuned for ITSM domain structure.</p>
+          <div class="aud-pills">
+            <span class="pill pill-blue">Pinecone / Chroma</span>
+            <span class="pill pill-green">Hybrid retrieval</span>
+            <span class="pill pill-amber">ITSM-aware chunking</span>
+          </div>
+        </div>
+        <div class="aud-card reveal d3 visible">
+          <h4>Integration Layer</h4>
+          <p>Demo phase: file/API export ingestion. Production: webhooks or polling from ITSM APIs (ServiceNow, BMC, Jira). Agent actions write back via REST. All tool calls logged with actor, timestamp, reasoning chain for audit.</p>
+          <div class="aud-pills">
+            <span class="pill pill-blue">REST / Webhooks</span>
+            <span class="pill pill-green">ServiceNow · BMC · Jira</span>
+            <span class="pill pill-amber">Full audit trail</span>
+          </div>
+        </div>
+      </div>
+      <div class="aud-wide reveal visible">
+        <h4>Demo → Production Upgrade Path (same codebase)</h4>
+        <div class="aud-steps">
+          <div class="aud-step">
+            <div class="step-n">D1</div>
+            <h5>File Ingestion</h5>
+            <p>PDF / CSV exports → RAG vector store → agents → UI output. No live integrations needed.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">D2</div>
+            <h5>API Read</h5>
+            <p>Replace file ingestion with live ITSM API polling. Same agent logic, live data.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">D3</div>
+            <h5>Webhook Push</h5>
+            <p>ITSM pushes events to agent endpoint. Near real-time processing. SLA monitoring live.</p>
+          </div>
+          <div class="aud-step">
+            <div class="step-n">D4</div>
+            <h5>Bidirectional</h5>
+            <p>Agents write back to ITSM — auto-routing, auto-creating records, auto-escalating. Full loop closed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ROI ════════════════════════════════════════ -->
+<section id="roi" class="section">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">Business Impact</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 8px">Quantified value across your estate</h2>
+    <p class="reveal visible" style="text-align:center;max-width:560px;margin:0 auto">Conservative estimates for a 1,000+ application estate with 50,000 tickets/year and a 5,000-user organization.</p>
+
+    <div class="roi-grid">
+      <div class="roi-card reveal d1 visible">
+        <div class="roi-n grad-text" data-count="55" data-counted="1">55</div><div style="font-size:.8rem;font-weight:700;color:var(--primary-lt)">%</div>
+        <div class="roi-l">Reduction in MTTR</div>
+        <div class="roi-s">Across all incident categories</div>
+      </div>
+      <div class="roi-card reveal d2 visible">
+        <div class="roi-n" style="background:var(--gg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-count="80" data-counted="1">80</div><div style="font-size:.8rem;font-weight:700;color:#34d399">%</div>
+        <div class="roi-l">Requests Auto-Fulfilled</div>
+        <div class="roi-s">Without human intervention</div>
+      </div>
+      <div class="roi-card reveal d3 visible">
+        <div class="roi-n" style="background:var(--gw);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-count="40" data-counted="1">40</div><div style="font-size:.8rem;font-weight:700;color:#fcd34d">%</div>
+        <div class="roi-l">Fewer Change Incidents</div>
+        <div class="roi-s">Through proactive risk scoring</div>
+      </div>
+      <div class="roi-card reveal d4 visible">
+        <div class="roi-n" style="background:linear-gradient(135deg,#ef4444,#f87171);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" data-count="3" data-counted="1">3</div><div style="font-size:.8rem;font-weight:700;color:#f87171">M+</div>
+        <div class="roi-l">Annual Cost Avoidance</div>
+        <div class="roi-s">USD, combined across 5 automations</div>
+      </div>
+    </div>
+
+    <table class="roi-table reveal visible" style="margin-top:48px">
+      <thead>
+        <tr>
+          <th>Automation</th>
+          <th>Metric Improved</th>
+          <th>Volume Baseline</th>
+          <th>Annual Saving</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="strong">01 — Ticket Analyzer</td>
+          <td>SM review time: 30 min → 3 min</td>
+          <td>500 reviewed/month</td>
+          <td class="em">~$350K labor</td>
+        </tr>
+        <tr>
+          <td class="strong">02 — Pattern Intelligence</td>
+          <td>P1 prevention, problem prep time</td>
+          <td>3–5 P1s prevented/year</td>
+          <td class="em">$500K–$2M impact</td>
+        </tr>
+        <tr>
+          <td class="strong">03 — Service Request</td>
+          <td>2,000 requests/month, 80% auto</td>
+          <td>25 min avg handling time</td>
+          <td class="em">~$800K labor</td>
+        </tr>
+        <tr>
+          <td class="strong">04 — Change Risk</td>
+          <td>Fewer failed changes, less rollback</td>
+          <td>200 changes/month</td>
+          <td class="em">~$400K avoidance</td>
+        </tr>
+        <tr>
+          <td class="strong">05 — SLA Monitor</td>
+          <td>Service credits, contract protection</td>
+          <td>$50M contract portfolio</td>
+          <td class="em">$500K–$2M protected</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ DEMO TIMELINE ══════════════════════════════ -->
+<section id="demo" class="section section-alt">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">Demo-First Strategy</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 8px">Show first. Sell the evidence, not the promise.</h2>
+    <p class="reveal visible" style="text-align:center;max-width:580px;margin:0 auto">Every other vendor shows slides. You show a working prototype on the client's own data. That changes the conversation.</p>
+
+    <div class="timeline">
+      <div class="tl-step reveal d1 visible">
+        <div class="tl-dot">🚀</div>
+        <div class="tl-duration">Weeks 1–4</div>
+        <h4>Demo MVP</h4>
+        <p>All 5 automations running on exported ticket data. No live integrations needed.</p>
+        <div class="tl-items">
+          <div class="tl-item">Ticket Analyzer live</div>
+          <div class="tl-item">Pattern report generated</div>
+          <div class="tl-item">Chat agent demo</div>
+          <div class="tl-item">Change risk scoring</div>
+          <div class="tl-item">SLA risk dashboard</div>
+        </div>
+      </div>
+      <div class="tl-step reveal d2 visible">
+        <div class="tl-dot">🔬</div>
+        <div class="tl-duration">Months 2–4</div>
+        <h4>Pilot: Live Data</h4>
+        <p>1–2 automations connected to live ITSM API. Real tickets, measurable results.</p>
+        <div class="tl-items">
+          <div class="tl-item">Live ITSM integration</div>
+          <div class="tl-item">Baseline KPIs set</div>
+          <div class="tl-item">ROI measured weekly</div>
+          <div class="tl-item">Agent tuning on real data</div>
+        </div>
+      </div>
+      <div class="tl-step reveal d3 visible">
+        <div class="tl-dot">📈</div>
+        <div class="tl-duration">Months 5–9</div>
+        <h4>Full Deployment</h4>
+        <p>All 5 automations in production. Coverage expanded to full application estate.</p>
+        <div class="tl-items">
+          <div class="tl-item">All agents live</div>
+          <div class="tl-item">Bidirectional ITSM writes</div>
+          <div class="tl-item">Executive dashboard</div>
+          <div class="tl-item">Client-visible SLA board</div>
+        </div>
+      </div>
+      <div class="tl-step reveal d4 visible">
+        <div class="tl-dot">🧠</div>
+        <div class="tl-duration">Months 10–18</div>
+        <h4>Continuous Learning</h4>
+        <p>Agents learn from your estate. Self-improving accuracy. New patterns auto-discovered.</p>
+        <div class="tl-items">
+          <div class="tl-item">Model fine-tuning on org data</div>
+          <div class="tl-item">New automation discovery</div>
+          <div class="tl-item">Multi-client replication</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ COMPARISON ══════════════════════════════════ -->
+<section id="compare" class="section">
+  <div class="container">
+    <div class="reveal visible" style="text-align:center"><span class="badge">Competitive Position</span></div>
+    <h2 class="reveal visible" style="text-align:center;margin:12px 0 8px">Not all AI is the same</h2>
+    <p class="reveal visible" style="text-align:center;max-width:560px;margin:0 auto">Generic AI platforms answer questions. Agentic AI acts — grounded in your data, aligned to your process, accountable to your contracts.</p>
+
+    <table class="comp-table reveal visible">
+      <thead>
+        <tr>
+          <th style="width:30%">Capability</th>
+          <th class="col-us" style="width:25%">AgenticIQ Platform</th>
+          <th style="width:22%">Generic LLM (ChatGPT / Gemini)</th>
+          <th style="width:23%">Basic ITSM AI Add-on</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="strong">Knowledge source</td>
+          <td class="col-us strong">Your CMDB, tickets, SOPs, contracts</td>
+          <td>Public internet training</td>
+          <td>Limited ITSM module data</td>
+        </tr>
+        <tr>
+          <td class="strong">Multi-step reasoning</td>
+          <td class="col-us"><span class="yes">✓ Full agentic pipeline</span></td>
+          <td><span class="part">~ Single-turn response</span></td>
+          <td><span class="no">✗ Rule-based only</span></td>
+        </tr>
+        <tr>
+          <td class="strong">Takes autonomous action</td>
+          <td class="col-us"><span class="yes">✓ Reassigns, escalates, creates records</span></td>
+          <td><span class="no">✗ Suggests only</span></td>
+          <td><span class="part">~ Routing rules only</span></td>
+        </tr>
+        <tr>
+          <td class="strong">ITIL 4 process alignment</td>
+          <td class="col-us"><span class="yes">✓ Built-in across all 5 agents</span></td>
+          <td><span class="no">✗ Generic task completion</span></td>
+          <td><span class="part">~ Basic ticket lifecycle</span></td>
+        </tr>
+        <tr>
+          <td class="strong">SAP / ERP domain depth</td>
+          <td class="col-us"><span class="yes">✓ Transport, BASIS, authorization-aware</span></td>
+          <td><span class="no">✗ No org context</span></td>
+          <td><span class="no">✗ Application-agnostic</span></td>
+        </tr>
+        <tr>
+          <td class="strong">Demo ready (weeks not months)</td>
+          <td class="col-us"><span class="yes">✓ 2–4 weeks on export data</span></td>
+          <td><span class="part">~ Prompt demo only</span></td>
+          <td><span class="no">✗ 6–12 month implementation</span></td>
+        </tr>
+        <tr>
+          <td class="strong">Learns from your estate</td>
+          <td class="col-us"><span class="yes">✓ Persistent memory, continuous improvement</span></td>
+          <td><span class="no">✗ Stateless per session</span></td>
+          <td><span class="part">~ Basic pattern rules</span></td>
+        </tr>
+        <tr>
+          <td class="strong">Audit trail for every action</td>
+          <td class="col-us"><span class="yes">✓ Actor · Timestamp · Reasoning chain</span></td>
+          <td><span class="no">✗ Not applicable</span></td>
+          <td><span class="part">~ Basic workflow log</span></td>
+        </tr>
+        <tr>
+          <td class="strong">Cross-application estate coverage</td>
+          <td class="col-us"><span class="yes">✓ 1,000+ apps, any ITSM tool</span></td>
+          <td><span class="no">✗ No ITSM integration</span></td>
+          <td><span class="no">✗ Single-tool scoped</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ══ CTA ════════════════════════════════════════ -->
+<section id="cta">
+  <div class="container">
+    <span class="badge reveal visible" style="margin-bottom:20px;display:inline-block">Get Started</span>
+    <h2 class="reveal visible">Ready to see your own data analyzed by Agentic AI?</h2>
+    <p class="reveal visible">Export 20 tickets from your ITSM tool. We run the demo. You see your estate intelligently analyzed in 30 minutes. No integration required.</p>
+    <div class="cta-btns reveal visible">
+      <button class="btn btn-primary" onclick="alert(&#39;Contact your AgenticIQ representative to schedule a demo session.&#39;)">📋 Request Demo with Your Data</button>
+      <button class="btn btn-secondary" onclick="document.getElementById(&#39;architecture&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">🔍 Explore Architecture</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>AgenticIQ — Agentic AI &amp; RAG for Enterprise ITSM &nbsp;·&nbsp; Built on 20+ years of service management expertise &nbsp;·&nbsp; ITIL 4 Aligned &nbsp;·&nbsp; Demo-First &nbsp;·&nbsp; Enterprise-Ready</p>
+    <p style="margin-top:8px">Solutions grounded in your organizational data — CMDB · Ticket History · SOPs · SLA Contracts · Change History</p>
+  </div>
+</footer>
+
+<script>
+// ── SCROLL REVEAL ──────────────────────────────────
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── COUNTER ANIMATION ─────────────────────────────
+function animateCounter(el, target, suffix = '') {
+  const duration = 1800;
+  const start = performance.now();
+  const update = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  };
+  requestAnimationFrame(update);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = '1';
+      const target = parseInt(e.target.dataset.count);
+      const suffix = e.target.textContent.includes('%') ? '%' : '';
+      animateCounter(e.target, target, '');
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('[data-count]').forEach(el => {
+  el.textContent = '0';
+  counterObserver.observe(el);
+});
+
+// ── TAB SWITCHING ─────────────────────────────────
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+  // re-trigger reveals in newly visible pane
+  document.querySelectorAll('#tab-' + id + ' .reveal').forEach(el => {
+    el.classList.remove('visible');
+    setTimeout(() => el.classList.add('visible'), 60);
+  });
+}
+
+// ── SMOOTH ACTIVE NAV LINK ────────────────────────
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+  });
+}, { passive: true });
+
+// ── HERO PARTICLES ───────────────────────────────
+(function() {
+  const hero = document.getElementById('hero');
+  for (let i = 0; i < 24; i++) {
+    const p = document.createElement('div');
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `
+      position:absolute;
+      width:${size}px;height:${size}px;
+      border-radius:50%;
+      background:rgba(${Math.random() > 0.5 ? '99,102,241' : '14,165,233'},${Math.random() * 0.5 + 0.2});
+      left:${Math.random() * 100}%;
+      top:${Math.random() * 100}%;
+      animation:particle-float ${6 + Math.random() * 8}s ease-in-out ${Math.random() * 6}s infinite alternate;
+      pointer-events:none;
+    `;
+    hero.appendChild(p);
+  }
+})();
+
+// Keyframe for particles (injected dynamically)
+const particleStyle = document.createElement('style');
+particleStyle.textContent = `
+@keyframes particle-float {
+  0%  { transform: translateY(0) translateX(0) scale(1); opacity: 0.4; }
+  100%{ transform: translateY(-${40}px) translateX(${20}px) scale(1.4); opacity: 0.9; }
+}`;
+document.head.appendChild(particleStyle);
+</script>
+
+
+</body></html>
