@@ -1,0 +1,50 @@
+[
+  {
+    "id": "claude-sonnet",
+    "label": "Claude Sonnet",
+    "modelId": "claude-sonnet-4-6",
+    "url": "http://localhost:3001/v1/messages",
+    "apiKey": "",
+    "iconText": "CL",
+    "iconBg": "linear-gradient(135deg,#d63d2f,#a02818)",
+    "enabled": true,
+    "isDefault": false,
+    "_note": "Requires proxy/proxy.js running locally. Endpoint: http://localhost:3001/v1/messages"
+  },
+  {
+    "id": "openai",
+    "label": "OpenAI",
+    "modelId": "gpt-4o-mini",
+    "url": "https://api.openai.com/v1/chat/completions",
+    "apiKey": "",
+    "iconText": "AI",
+    "iconBg": "linear-gradient(135deg,#00a67e,#007a5e)",
+    "enabled": true,
+    "isDefault": true,
+    "_note": "OpenAI API. Set KEYS.openai in config.js"
+  },
+  {
+    "id": "glm5",
+    "label": "GLM",
+    "modelId": "glm-4-flash",
+    "url": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+    "apiKey": "",
+    "iconText": "GL",
+    "iconBg": "linear-gradient(135deg,#5b6af0,#3a47d5)",
+    "enabled": true,
+    "isDefault": false,
+    "_note": "ZhipuAI BigModel. Free tier available. Try glm-4-flash-250414 if model error."
+  },
+  {
+    "id": "qwen",
+    "label": "Qwen",
+    "modelId": "qwen-max",
+    "url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    "apiKey": "",
+    "iconText": "QW",
+    "iconBg": "linear-gradient(135deg,#f07030,#c0501e)",
+    "enabled": true,
+    "isDefault": false,
+    "_note": "Alibaba DashScope. Set KEYS.qwen in config.js"
+  }
+]

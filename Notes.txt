@@ -1,0 +1,3 @@
+: ~45-72% (from ~232K → ~66-128K input tokens per analysis).
+
+Please test with a PDF to verify the output quality and check the token usage in the Admin panel. The SM and EA tabs should produce equivalent (or better) analysis since they're now working from cleaner, structured data.

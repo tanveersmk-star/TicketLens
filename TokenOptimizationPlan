@@ -1,0 +1,177 @@
+# Token Optimization — ITSM Ticket Intelligence Pipeline
+
+## Problem Statement
+
+A single PDF analysis consumes **~238K input tokens** across **4 sequential LLM calls**, each sending the **full raw PDF text** (~58K tokens per call). The token burn is:
+
+| Call # | Purpose | Input | Output | Notes |
+|--------|---------|-------|--------|-------|
+| 1 | **User Extraction** | ~58K | ~0.5K | Extracts actor names → tiny JSON output |
+| 2 | **Review/Timeline** | ~58K | ~2K | Full structured timeline extraction |
+| 3 | **Service Manager** | ~58K | ~1.5K | SM insights from raw PDF |
+| 4 | **Enterprise Architect** | ~58K | ~1K | EA technical analysis from raw PDF |
+| **Total** | | **~233K** | **~5K** | **4× full PDF re-read** |
+
+The raw PDF text is sent verbatim to all 4 calls. Calls 3 and 4 (SM + EA) are re-reading the entire raw document even though Call 2 already extracted a complete structured representation of the ticket.
+
+## Root Cause Analysis
+
+```mermaid
+flowchart LR
+    PDF["📄 Raw PDF<br>~58K tokens"] --> C1["Call 1: User Extract"]
+    PDF --> C2["Call 2: Review/Timeline"]
+    PDF --> C3["Call 3: SM Analysis"]
+    PDF --> C4["Call 4: EA Analysis"]
+    
+    style PDF fill:#fef3c7,stroke:#d97706
+    style C1 fill:#fee2e2,stroke:#ef4444
+    style C2 fill:#fee2e2,stroke:#ef4444
+    style C3 fill:#fee2e2,stroke:#ef4444
+    style C4 fill:#fee2e2,stroke:#ef4444
+```
+
+**Current**: 4 calls × ~58K = **~232K input tokens**
+
+## Proposed Architecture — Two-Phase Pipeline
+
+> [!IMPORTANT]
+> The core optimization is: **extract once, analyze twice**. Calls 3 (SM) and 4 (EA) should work from the **structured JSON output of Call 2**, not from the raw PDF. This eliminates 2 full PDF re-reads (~116K tokens saved, ~50% reduction).
+
+```mermaid
+flowchart LR
+    PDF["📄 Raw PDF<br>~58K tokens"] --> C1["Call 1: User Extract<br>+ Merge into Call 2"]
+    PDF --> C2["Call 2: Review/Timeline<br>~58K input"]
+    C2 --> JSON["📊 Structured JSON<br>~4-6K tokens"]
+    JSON --> C3["Call 3: SM Analysis<br>~6K input"]
+    JSON --> C4["Call 4: EA Analysis<br>~6K input"]
+    
+    style PDF fill:#fef3c7,stroke:#d97706
+    style C2 fill:#dcfce7,stroke:#16a34a
+    style JSON fill:#dbeafe,stroke:#2563eb
+    style C3 fill:#dcfce7,stroke:#16a34a
+    style C4 fill:#dcfce7,stroke:#16a34a
+    style C1 fill:#dcfce7,stroke:#16a34a
+```
+
+**Proposed**: 2 × ~58K + 2 × ~6K = **~128K input tokens** (**~45% reduction**)
+
+### Phase 1 — Extraction (raw PDF required)
+
+| Call | Input | What happens |
+|------|-------|-------------|
+| Call 1: User Extract | Raw PDF (~58K) | Extract actor names + suggested roles |
+| Call 2: Review/Timeline | Raw PDF (~58K) + role mapping | Full structured JSON: incident metadata, timeline, communications, work notes, quality data |
+
+### Phase 2 — Analysis (structured JSON only)
+
+| Call | Input | What happens |
+|------|-------|-------------|
+| Call 3: SM Analysis | Structured JSON from Call 2 (~4-6K) + role mapping | Service Manager insights, sentiment analysis, improvement recommendations |
+| Call 4: EA Analysis | Structured JSON from Call 2 (~4-6K) + role mapping | Technical root cause, tech stack, architectural gaps |
+
+## Detailed Optimizations
+
+### Optimization 1: Merge Call 1 into Call 2 (Optional — saves 1 full call)
+
+> [!WARNING]
+> This is the most impactful optimization but has a **UX trade-off**: the user currently sees the role-mapping wizard *before* the full analysis runs. Merging Call 1+2 would require either:
+> - **(A)** Pre-extracting users with client-side regex (already partially implemented via `extractActorCandidatesFromText`) — **no LLM call needed**
+> - **(B)** Keeping Call 1 separate but making it cheaper via text truncation (only send first ~2 pages for actor extraction)
+>
+> **Recommendation**: Option (B) — truncate input for Call 1 to first ~3000 tokens (the header/metadata section where actors are listed). This preserves the existing UX flow while cutting Call 1 input by ~95%.
+
+### Optimization 2: Feed SM + EA from extracted JSON (Primary — saves ~116K tokens)
+
+Instead of sending `pdfText` to Calls 3 and 4, send `JSON.stringify(reviewTranslations)` (the output of Call 2). This is the structured timeline + incident data the AI already extracted — it contains all the information SM and EA need.
+
+**Changes required:**
+- Modify the SM system prompt to clarify it's analyzing **pre-extracted structured data**, not raw PDF
+- Modify the EA system prompt similarly
+- Change `callLLM` invocation for SM and EA to pass the JSON string instead of `pdfText`
+
+### Optimization 3: Client-side PDF text preprocessing (saves ~5-15K per call)
+
+OmniTracker PDF exports contain significant boilerplate:
+- Repeated page headers/footers
+- Empty lines and whitespace
+- Duplicated field labels across pages
+- CSS/formatting artifacts from PDF extraction
+
+**Add a `preprocessPdfText()` function** that:
+1. Collapses multiple blank lines into single separators
+2. Strips repeated header/footer patterns (page numbers, export timestamps)
+3. Removes duplicate field labels that appear on every page
+4. Trims excessive whitespace
+
+Estimated savings: **5-15%** per raw PDF send.
+
+### Optimization 4: Truncate Call 1 input (saves ~55K tokens)
+
+The User Extraction call only needs the ticket header (actors, reporting person, affected person, history section headers). Send only the first ~3000 tokens + last ~1000 tokens of the PDF instead of the full text.
+
+## Token Projection
+
+| Scenario | Call 1 | Call 2 | Call 3 | Call 4 | **Total Input** | **Savings** |
+|----------|--------|--------|--------|--------|----------------|-------------|
+| **Current** | 58K | 58K | 58K | 58K | **~232K** | — |
+| **Opt 2 only** (SM+EA from JSON) | 58K | 58K | 6K | 6K | **~128K** | **~45%** |
+| **Opt 2 + Opt 4** (truncate Call 1) | 4K | 58K | 6K | 6K | **~74K** | **~68%** |
+| **Opt 2 + Opt 3 + Opt 4** (all) | 4K | 50K | 6K | 6K | **~66K** | **~72%** |
+
+## Proposed Changes
+
+---
+
+### Core Pipeline
+
+#### [MODIFY] [ITSM_Ticket_Intelligence.html](file:///c:/AI%20Projects/Build%20phase/CSATNextV2/ITSM_Ticket_Intelligence.html)
+
+**1. Add `preprocessPdfText()` function** (Optimization 3)
+- Collapse whitespace, strip repeated headers/footers, deduplicate field labels
+- Applied once after PDF extraction, before any LLM calls
+
+**2. Add `truncateForActorExtraction()` function** (Optimization 4)
+- Extract first ~3000 tokens + last ~1000 tokens for Call 1
+- Preserves header metadata + history section beginnings
+
+**3. Modify `runPreAnalysis()`** (Optimization 4)
+- Change: `callLLM(endpointConf, apiKey, pdfText, ...)` → `callLLM(endpointConf, apiKey, truncateForActorExtraction(pdfText), ...)`
+
+**4. Modify `runAIPipeline()`** (Optimization 2 — the big win)
+- Call 2 (Review/Timeline): stays as-is — needs raw PDF
+- Call 3 (SM): change input from `pdfText` → `JSON.stringify(reviewTranslations)`
+- Call 4 (EA): change input from `pdfText` → `JSON.stringify(reviewTranslations)`
+
+**5. Update SM and EA system prompts**
+- Add a preamble clarifying the input is pre-extracted structured JSON, not raw PDF
+- SM prompt: "You are analyzing ALREADY-EXTRACTED incident timeline data in JSON format" (already partially says this)
+- EA prompt: Same adjustment — "Analyze the following pre-extracted ITSM incident data"
+
+---
+
+## Quality Safeguards
+
+> [!NOTE]
+> - **No data loss**: Call 2 (Review/Timeline) still reads the full raw PDF — all information is captured
+> - **SM and EA get richer input**: The structured JSON from Call 2 includes translated content, normalized timelines, and sentiment flags — actually *better* context than raw PDF for analysis
+> - **Sentiment enforcement**: Still applied client-side after SM output — no change needed
+> - **Security scanning**: Still applied to all outputs — no change needed
+
+## Open Questions
+
+> [!IMPORTANT]
+> 1. **SM/EA output quality**: Do you want me to implement this and compare the SM/EA analysis quality before vs. after? We could run one test with the current raw-PDF approach and one with the JSON-fed approach.
+> 2. **Call 1 truncation aggressiveness**: The actor extraction prompt currently scans the full PDF. Are your tickets typically structured with all actors listed in the header/first page, or do some actors only appear deep in the history? This determines how aggressively we can truncate Call 1.
+> 3. **Parallel execution**: Currently Calls 3 and 4 run sequentially. Since they're now independent (both read from the same JSON), should I run them in parallel (`Promise.all`) to also reduce wall-clock time?
+
+## Verification Plan
+
+### Automated Tests
+- Run a PDF analysis before and after changes
+- Compare token usage from the admin panel
+- Verify SM and EA tab outputs are complete and accurate
+
+### Manual Verification
+- Side-by-side comparison of SM/EA output quality
+- Confirm timeline, sentiment, and actor data are preserved
+- Verify the token usage tracker shows the expected ~45-72% reduction

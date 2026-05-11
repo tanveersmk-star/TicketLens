@@ -1,0 +1,1703 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITSM Ticket Intelligence Hub — AI Solution Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ─── Reset & Base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:         #060912;
+  --bg2:        #0c1120;
+  --bg3:        #111827;
+  --border:     rgba(255,255,255,0.07);
+  --border2:    rgba(255,255,255,0.12);
+  --text:       #e2e8f0;
+  --muted:      #64748b;
+  --blue:       #3b82f6;
+  --blue-glow:  #1d4ed8;
+  --purple:     #8b5cf6;
+  --purple-glow:#6d28d9;
+  --cyan:       #06b6d4;
+  --green:      #10b981;
+  --orange:     #f59e0b;
+  --red:        #ef4444;
+  --pink:       #ec4899;
+  --agent1:     #06b6d4;
+  --agent2:     #8b5cf6;
+  --agent3:     #10b981;
+  --agent4:     #f59e0b;
+  --human:      #ec4899;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ─── Animated Background ─────────────────────────────────────────────────── */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.12;
+  animation: floatOrb 20s ease-in-out infinite;
+}
+.orb-1 { width: 600px; height: 600px; background: var(--purple); top: -200px; left: -100px; animation-delay: 0s; }
+.orb-2 { width: 500px; height: 500px; background: var(--blue);   bottom: -100px; right: -100px; animation-delay: -7s; }
+.orb-3 { width: 400px; height: 400px; background: var(--cyan);   top: 40%; left: 40%; animation-delay: -14s; }
+
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33%       { transform: translate(40px,-60px) scale(1.08); }
+  66%       { transform: translate(-30px,40px) scale(0.95); }
+}
+
+/* Grid noise texture */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* ─── Layout ────────────────────────────────────────────────────────────────── */
+.wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+
+/* ─── Navigation ─────────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(6,9,18,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; font-size: 0.9rem; letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.nav-logo .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color .2s; }
+.nav-links a:hover { color: var(--text); }
+
+.nav-badge {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff; padding: 4px 12px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+.hero {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 4rem 2rem 4rem;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3);
+  color: var(--purple); padding: 6px 16px; border-radius: 20px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 2rem;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple); animation: pulse 2s ease-in-out infinite;
+}
+.hero-title {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #fff 0%, #94a3b8 50%, var(--purple) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--muted); max-width: 680px; margin: 0 auto 3rem;
+  font-weight: 400; line-height: 1.7;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-stats {
+  display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.hero-stat { text-align: center; }
+.hero-stat .val {
+  font-size: 2.5rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--cyan), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'JetBrains Mono', monospace;
+}
+.hero-stat .lbl { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-top: 4px; }
+
+.scroll-hint { display: none; }
+.scroll-arrow {
+  width: 24px; height: 24px; border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted); transform: rotate(45deg);
+  animation: bounce 2s ease-in-out infinite;
+}
+@keyframes bounce { 0%,100%{transform:rotate(45deg) translateY(0)} 50%{transform:rotate(45deg) translateY(6px)} }
+
+@keyframes fadeUp { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+
+/* ─── Section Headers ─────────────────────────────────────────────────────── */
+.section { padding: 6rem 0; }
+.section-label {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--purple); margin-bottom: 1rem;
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800;
+  line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 1rem;
+}
+.section-desc { color: var(--muted); max-width: 600px; font-size: 1.05rem; line-height: 1.7; }
+
+/* ─── Glass Card ─────────────────────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  transition: border-color .3s, transform .3s, box-shadow .3s;
+}
+.glass:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+/* ─── Pipeline Section ────────────────────────────────────────────────────── */
+#pipeline { padding: 6rem 0; }
+
+.pipeline-flow {
+  display: flex; flex-direction: column; gap: 0; margin-top: 4rem;
+  position: relative;
+}
+
+/* Vertical connector line */
+.pipeline-flow::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 60px;
+  bottom: 60px;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom,
+    transparent,
+    var(--border2) 5%,
+    var(--border2) 95%,
+    transparent
+  );
+  z-index: 0;
+}
+
+.pipeline-step {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0;
+}
+.pipeline-step:nth-child(odd)  .step-card { order: 1; }
+.pipeline-step:nth-child(odd)  .step-node { order: 2; }
+.pipeline-step:nth-child(odd)  .step-spacer { order: 3; }
+.pipeline-step:nth-child(even) .step-spacer { order: 1; }
+.pipeline-step:nth-child(even) .step-node  { order: 2; }
+.pipeline-step:nth-child(even) .step-card  { order: 3; }
+
+.step-spacer { /* empty flex column */ }
+
+.step-node {
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.step-node-circle {
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; position: relative; z-index: 2;
+  box-shadow: 0 0 0 4px var(--bg), 0 0 40px var(--glow-color, var(--purple));
+  animation: nodeGlow 3s ease-in-out infinite;
+}
+@keyframes nodeGlow {
+  0%,100%{ box-shadow: 0 0 0 4px var(--bg), 0 0 30px var(--glow-color); }
+  50%    { box-shadow: 0 0 0 4px var(--bg), 0 0 60px var(--glow-color), 0 0 100px var(--glow-color); }
+}
+.step-node-line {
+  width: 2px; height: 60px;
+  background: linear-gradient(to bottom, var(--glow-color, var(--border2)), transparent);
+  opacity: 0.4;
+}
+
+.step-card {
+  padding: 1.8rem 2rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  transition: all .3s;
+  position: relative; overflow: hidden;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--card-color, rgba(255,255,255,0.1)), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.step-card:hover { border-color: var(--border2); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
+.step-tag {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; padding: 3px 10px; border-radius: 10px;
+  display: inline-block; margin-bottom: 0.8rem;
+}
+.step-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.step-card p  { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+.step-card .step-skills {
+  margin-top: 1rem; display: flex; gap: 6px; flex-wrap: wrap;
+}
+.skill-chip {
+  font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 8px;
+  border: 1px solid; letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.step-card .step-io {
+  margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+  display: flex; gap: 1.5rem;
+}
+.step-io-item { font-size: 0.75rem; color: var(--muted); }
+.step-io-item strong { color: var(--text); display: block; font-weight: 600; font-size: 0.8rem; }
+
+/* Color themes per agent */
+.theme-0 { --glow-color: var(--agent1); --card-color: rgba(6,182,212,0.2); }
+.theme-human { --glow-color: var(--human); --card-color: rgba(236,72,153,0.2); }
+.theme-1 { --glow-color: var(--agent2); --card-color: rgba(139,92,246,0.2); }
+.theme-2 { --glow-color: var(--agent3); --card-color: rgba(16,185,129,0.2); }
+.theme-3 { --glow-color: var(--agent4); --card-color: rgba(245,158,11,0.2); }
+
+/* ─── Parallel Badge ─────────────────────────────────────────────────────── */
+.parallel-wrapper {
+  display: flex; gap: 2rem; position: relative; z-index: 2; margin: 0 0 0;
+  padding: 2rem 0;
+}
+.parallel-wrapper::before {
+  content: 'PARALLEL EXECUTION';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3);
+  color: var(--orange); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+  padding: 4px 14px; border-radius: 10px; white-space: nowrap;
+}
+.parallel-card {
+  flex: 1; padding: 1.8rem 2rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  transition: all .3s; position: relative; overflow: hidden;
+}
+.parallel-card:hover { border-color: var(--border2); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+
+/* ─── Skills Section ─────────────────────────────────────────────────────── */
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 1.5rem; margin-top: 3rem;
+}
+.skill-card {
+  padding: 2rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  transition: all .3s; position: relative; overflow: hidden;
+}
+.skill-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--skill-color, var(--purple)), transparent);
+  border-radius: 16px 16px 0 0;
+}
+.skill-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); border-color: var(--border2); }
+.skill-icon { font-size: 2rem; margin-bottom: 1rem; }
+.skill-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
+.skill-card p  { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+.skill-tag {
+  display: inline-block; margin-top: 1rem; font-size: 0.7rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 8px; letter-spacing: 0.05em;
+  font-family: 'JetBrains Mono', monospace;
+}
+.skill-agents { margin-top: 0.75rem; font-size: 0.75rem; color: var(--muted); }
+
+/* ─── 3-Tier Loading ─────────────────────────────────────────────────────── */
+.tier-flow {
+  display: flex; align-items: center; gap: 0; margin-top: 3rem;
+  overflow-x: auto; padding-bottom: 1rem;
+}
+.tier-box {
+  flex: 1; min-width: 220px; padding: 1.5rem 1.8rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  position: relative;
+}
+.tier-box h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; }
+.tier-box p  { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+.tier-priority {
+  position: absolute; top: -12px; left: 1.5rem;
+  font-size: 0.7rem; font-weight: 700; padding: 2px 10px; border-radius: 8px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.tier-arrow {
+  padding: 0 1.2rem; font-size: 1.4rem; color: var(--muted);
+  flex-shrink: 0; opacity: 0.5;
+}
+.tier-miss { font-size: 0.68rem; color: var(--muted); display: block; margin-top: 4px; font-style: italic; }
+
+/* ─── LLM Router Section ─────────────────────────────────────────────────── */
+.router-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem;
+}
+.router-path {
+  padding: 2rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.router-path::before {
+  content: '';
+  position: absolute; inset: 0; border-radius: 16px;
+  background: radial-gradient(ellipse at top left, var(--path-glow, rgba(59,130,246,0.08)), transparent 70%);
+  pointer-events: none;
+}
+.router-path h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; }
+.router-path .route-tag {
+  font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 8px;
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+}
+.router-path ul { list-style: none; padding: 0; }
+.router-path li { font-size: 0.83rem; color: var(--muted); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+.router-path li::before { content: '▸'; color: var(--text); font-size: 0.7rem; flex-shrink: 0; }
+
+.providers-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem; margin-top: 3rem;
+}
+.provider-card {
+  padding: 1.2rem 1.5rem; border-radius: 12px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  text-align: center; transition: all .3s;
+}
+.provider-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.provider-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.provider-card h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem; }
+.provider-card p { font-size: 0.72rem; color: var(--muted); }
+
+/* ─── Token Optimization ─────────────────────────────────────────────────── */
+.token-bars { margin-top: 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
+.token-row { }
+.token-row-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.6rem;
+}
+.token-row-header .label { font-size: 0.85rem; font-weight: 600; }
+.token-row-header .count { font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; color: var(--muted); }
+.token-bar-track {
+  height: 10px; border-radius: 5px;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden; position: relative;
+}
+.token-bar-fill {
+  height: 100%; border-radius: 5px;
+  background: var(--fill-color, var(--purple));
+  width: 0;
+  transition: width 1.5s cubic-bezier(0.23,1,0.32,1);
+  position: relative; overflow: hidden;
+}
+.token-bar-fill::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{left:-100%} 100%{left:100%} }
+
+.savings-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 10px;
+  font-size: 0.8rem; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ─── Security Section ───────────────────────────────────────────────────── */
+.security-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+  gap: 1.5rem; margin-top: 3rem;
+}
+.security-card {
+  padding: 1.8rem 2rem; border-radius: 16px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  transition: all .3s; position: relative;
+}
+.security-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 2rem; right: 2rem; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(239,68,68,0.3), transparent);
+}
+.security-card:hover { border-color: rgba(239,68,68,0.3); transform: translateY(-2px); }
+.security-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+.security-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+.security-card p  { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+/* ─── Metrics Row ─────────────────────────────────────────────────────────── */
+.metrics-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap: 1.5rem; margin-top: 3rem;
+}
+.metric-card {
+  padding: 2rem 1.5rem; border-radius: 16px; text-align: center;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  transition: all .3s;
+}
+.metric-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.metric-val {
+  font-size: 2.4rem; font-weight: 900;
+  font-family: 'JetBrains Mono', monospace;
+  background: linear-gradient(135deg, var(--from, #fff), var(--to, var(--purple)));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.metric-lbl { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; font-weight: 500; }
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+footer {
+  padding: 4rem 0; border-top: 1px solid var(--border);
+  text-align: center;
+}
+footer p { color: var(--muted); font-size: 0.85rem; }
+footer .footer-logo {
+  font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #fff, var(--muted));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ─── Animations on scroll ───────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+.divider {
+  height: 1px; margin: 0;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .pipeline-step {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .pipeline-flow::before { display: none; }
+  .step-spacer { display: none; }
+  .pipeline-step .step-node { flex-direction: row; }
+  .step-node-line { display: none; }
+  .parallel-wrapper { flex-direction: column; }
+  .router-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-canvas">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="bg-grid"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <div class="dot"></div>
+      ITSM Intelligence Hub
+    </div>
+    <ul class="nav-links">
+      <li><a href="#pipeline">Pipeline</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#llm">LLM Router</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+      <li><a href="#security">Security</a></li>
+    </ul>
+    <div class="nav-badge">CSATNextV3</div>
+  </div>
+</nav>
+
+
+<!-- ════════════════════════ DIAGRAM HERO ══════════════════════════════════ -->
+<section id="diagram-hero" style="padding-top:60px;position:relative;z-index:1;background:linear-gradient(180deg,#060912 0%,#0a0f1e 100%);">
+<style>
+/* ─── Architecture Diagram ─────────────────────────────────────────────── */
+.arch-wrap { max-width:1300px;margin:0 auto;padding:3rem 1.5rem 2.5rem; }
+
+.arch-eyebrow {
+  text-align:center;font-size:.68rem;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:#8b5cf6;margin-bottom:.6rem;
+}
+.arch-headline {
+  text-align:center;
+  font-size:clamp(1.6rem,3.5vw,2.8rem);font-weight:800;
+  letter-spacing:-.03em;line-height:1.1;margin-bottom:.6rem;
+  background:linear-gradient(135deg,#fff 0%,#94a3b8 55%,#8b5cf6 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.arch-sub {
+  text-align:center;font-size:.88rem;color:#64748b;
+  max-width:600px;margin:0 auto 2.5rem;line-height:1.7;
+}
+
+/* Keyframes */
+@keyframes busFlow {
+  0%  { background-position:200% 0; }
+  100%{ background-position:0%   0; }
+}
+@keyframes vertFlow {
+  0%  { background-position:0 200%; }
+  100%{ background-position:0 0%;   }
+}
+@keyframes brainGlow {
+  0%,100%{
+    box-shadow:0 0 24px rgba(245,158,11,.25),0 0 60px rgba(245,158,11,.08),
+               inset 0 0 20px rgba(245,158,11,.06);
+  }
+  50%{
+    box-shadow:0 0 55px rgba(245,158,11,.55),0 0 110px rgba(245,158,11,.22),
+               inset 0 0 30px rgba(245,158,11,.12);
+  }
+}
+@keyframes ringPulse {
+  0%,100%{ transform:scale(1);  opacity:.5; }
+  50%    { transform:scale(1.06);opacity:1; }
+}
+@keyframes dotBlink {
+  0%,100%{ opacity:.4; transform:scale(1); }
+  50%    { opacity:1;  transform:scale(1.4); }
+}
+
+/* ── AGENT BAND (top row) ───────────────────────────────────────────────── */
+.agents-band {
+  display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;
+  margin-bottom:.4rem;
+}
+.agent-card {
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--ac-b,rgba(6,182,212,.3));
+  border-radius:14px;padding:1rem .95rem .95rem;
+  position:relative;overflow:hidden;
+  transition:transform .25s,box-shadow .25s;
+}
+.agent-card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 0 1px var(--ac-b,rgba(6,182,212,.5));
+}
+/* Left accent bar */
+.agent-card::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--ac,#06b6d4);border-radius:14px 0 0 14px;
+}
+/* Bottom connector dot */
+.agent-card::after {
+  content:'';
+  position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);
+  width:8px;height:8px;border-radius:50%;
+  background:var(--ac,#06b6d4);
+  box-shadow:0 0 10px var(--ac,#06b6d4);
+  z-index:3;
+  animation:dotBlink 2.5s ease-in-out infinite;
+}
+.ag-badge {
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.58rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ac,#06b6d4);
+  margin-bottom:.3rem;
+}
+.ag-badge-num {
+  width:18px;height:18px;border-radius:5px;
+  background:rgba(var(--ac-rgb,6,182,212),.15);
+  border:1px solid var(--ac-b,rgba(6,182,212,.4));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:900;
+  font-family:'JetBrains Mono',monospace;
+}
+.ag-title { font-size:.84rem;font-weight:700;color:#e2e8f0;margin-bottom:.25rem;line-height:1.3; }
+.ag-desc  { font-size:.7rem;color:#64748b;line-height:1.5;margin-bottom:.55rem; }
+.ag-tag   {
+  font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 7px;border-radius:5px;
+  background:rgba(var(--ac-rgb,6,182,212),.1);
+  border:1px solid var(--ac-b,rgba(6,182,212,.3));
+  color:var(--ac,#06b6d4);
+}
+
+/* Animated bus line */
+.agents-bus {
+  height:3px;
+  background:repeating-linear-gradient(90deg,
+    rgba(99,102,241,.8) 0,rgba(99,102,241,.8) 12px,
+    transparent 12px,transparent 22px);
+  background-size:200% 100%;
+  animation:busFlow 1.8s linear infinite;
+  border-radius:2px;margin:.4rem 0 0;
+}
+
+/* Vertical drop to brain */
+.bus-to-brain { display:flex;justify-content:center; }
+.vert-dash {
+  width:3px;height:34px;
+  background:repeating-linear-gradient(180deg,
+    rgba(245,158,11,.85) 0,rgba(245,158,11,.85) 8px,
+    transparent 8px,transparent 16px);
+  background-size:100% 200%;
+  animation:vertFlow 1.2s linear infinite;
+  border-radius:2px;
+}
+
+/* ── MIDDLE BAND ────────────────────────────────────────────────────────── */
+.middle-band {
+  display:grid;
+  grid-template-columns:1fr 52px 250px 52px 1fr;
+  gap:0;align-items:center;
+  padding:.15rem 0 .5rem;
+}
+
+/* Connector columns */
+.conn-col {
+  display:flex;align-items:center;justify-content:center;
+  align-self:center;padding:0 2px;
+}
+.h-flow {
+  flex:1;height:3px;
+  background:repeating-linear-gradient(90deg,
+    rgba(245,158,11,.65) 0,rgba(245,158,11,.65) 10px,
+    transparent 10px,transparent 18px);
+  background-size:200% 100%;
+  animation:busFlow 1.5s linear infinite;
+}
+.h-flow-out {
+  flex:1;height:3px;
+  background:repeating-linear-gradient(90deg,
+    rgba(16,185,129,.65) 0,rgba(16,185,129,.65) 10px,
+    transparent 10px,transparent 18px);
+  background-size:200% 100%;
+  animation:busFlow 1.5s linear infinite reverse;
+}
+.arr-r {
+  width:0;height:0;
+  border-top:6px solid transparent;border-bottom:6px solid transparent;
+  border-left:9px solid rgba(245,158,11,.65);flex-shrink:0;
+}
+.arr-l {
+  width:0;height:0;
+  border-top:6px solid transparent;border-bottom:6px solid transparent;
+  border-right:9px solid rgba(16,185,129,.65);flex-shrink:0;
+}
+
+/* INPUT ZONE */
+.input-zone {
+  display:flex;flex-direction:column;gap:.55rem;align-items:flex-end;
+}
+.iblock {
+  width:100%;max-width:268px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.085);
+  border-radius:11px;padding:.7rem .9rem;
+}
+.iblock.human {
+  border-color:rgba(236,72,153,.35);
+  background:rgba(236,72,153,.06);
+}
+.iblock-lbl {
+  font-size:.59rem;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:#64748b;margin-bottom:.22rem;
+}
+.iblock.human .iblock-lbl { color:rgba(236,72,153,.85); }
+.iblock-val {
+  font-size:.78rem;font-weight:600;color:#e2e8f0;
+  display:flex;align-items:center;gap:5px;
+}
+.iblock.human .iblock-val { color:#ec4899; }
+
+/* BRAIN ZONE */
+.brain-zone {
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+}
+.brain-rings {
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.brain-r1 {
+  position:absolute;width:198px;height:198px;border-radius:50%;
+  border:1px solid rgba(245,158,11,.16);
+  animation:ringPulse 4s ease-in-out infinite;
+}
+.brain-r2 {
+  position:absolute;width:176px;height:176px;border-radius:50%;
+  border:1px dashed rgba(245,158,11,.1);
+  animation:ringPulse 4s 1.2s ease-in-out infinite;
+}
+.brain-core {
+  width:154px;height:154px;border-radius:50%;
+  background:radial-gradient(ellipse at 35% 30%,#231a00,#100e00);
+  border:1.5px solid rgba(245,158,11,.42);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;position:relative;z-index:2;
+  animation:brainGlow 4s ease-in-out infinite;
+}
+.bc-icon  { font-size:2.1rem;line-height:1; }
+.bc-label {
+  font-size:.6rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(245,158,11,.9);margin-top:2px;
+}
+.bc-models {
+  font-size:.54rem;color:rgba(245,158,11,.5);
+  text-align:center;letter-spacing:.02em;line-height:1.5;
+  padding:0 8px;
+}
+
+.skill-tags-row {
+  display:flex;flex-wrap:wrap;gap:4px;justify-content:center;max-width:300px;
+}
+.sk-tag {
+  font-size:.57rem;font-weight:600;padding:2px 7px;border-radius:5px;
+  background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);
+  color:#a78bfa;letter-spacing:.03em;
+  font-family:'JetBrains Mono',monospace;
+}
+.parallel-badge {
+  font-size:.58rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:4px 11px;border-radius:8px;
+  background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.22);
+  color:#f59e0b;white-space:nowrap;text-align:center;line-height:1.5;
+}
+
+/* OUTPUT ZONE */
+.output-zone {
+  display:flex;flex-direction:column;gap:.55rem;align-items:flex-start;
+}
+.oblock {
+  width:100%;max-width:268px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.085);
+  border-radius:11px;padding:.7rem .9rem;
+  position:relative;overflow:hidden;
+}
+.oblock::before {
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--oc,#10b981);border-radius:11px 0 0 11px;
+}
+.oblock-lbl {
+  font-size:.59rem;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--oc,#10b981);margin-bottom:.22rem;
+  opacity:.85;
+}
+.oblock-val {
+  font-size:.78rem;font-weight:600;color:#e2e8f0;
+}
+
+/* Responsive */
+@media(max-width:960px){
+  .agents-band { grid-template-columns:repeat(2,1fr); }
+  .middle-band  { grid-template-columns:1fr;gap:.8rem;padding:.5rem 0; }
+  .conn-col     { display:none; }
+  .input-zone,.output-zone { align-items:center; }
+  .iblock,.oblock { max-width:100%; }
+}
+@media(max-width:540px){
+  .agents-band { grid-template-columns:1fr; }
+}
+</style>
+
+<div class="arch-wrap">
+
+  <!-- Title block -->
+  <div class="arch-eyebrow">Agentic AI Architecture</div>
+  <h2 class="arch-headline">How it works — end to end</h2>
+  <p class="arch-sub">Four specialised AI agents collaborate to turn an ITSM ticket PDF into three actionable intelligence views — with a human verification step built right in.</p>
+
+  <!-- ── AGENT BAND (top row) ─────────────────────────────────────────── -->
+  <div class="agents-band">
+
+    <!-- A1 -->
+    <div class="agent-card" style="--ac:#06b6d4;--ac-rgb:6,182,212;--ac-b:rgba(6,182,212,.35);">
+      <div class="ag-badge">
+        <div class="ag-badge-num">A1</div>
+        Zero AI Cost
+      </div>
+      <div class="ag-title">People Finder</div>
+      <div class="ag-desc">Identifies every person involved in the ticket instantly — no AI call needed. Six smart pattern types handle all communication formats across the PDF.</div>
+      <div class="ag-tag">No token spend</div>
+    </div>
+
+    <!-- A2 -->
+    <div class="agent-card" style="--ac:#8b5cf6;--ac-rgb:139,92,246;--ac-b:rgba(139,92,246,.35);">
+      <div class="ag-badge" style="color:#8b5cf6;">
+        <div class="ag-badge-num" style="color:#8b5cf6;border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.15);">A2</div>
+        Content Analyst
+      </div>
+      <div class="ag-title">Deep Ticket Reader</div>
+      <div class="ag-desc">Reads the full ticket and extracts a complete, structured timeline of every action, communication, and resolution step — the foundation for all subsequent views.</div>
+      <div class="ag-tag" style="background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.3);color:#8b5cf6;">Structured JSON output</div>
+    </div>
+
+    <!-- A3 -->
+    <div class="agent-card" style="--ac:#10b981;--ac-rgb:16,185,129;--ac-b:rgba(16,185,129,.35);">
+      <div class="ag-badge" style="color:#10b981;">
+        <div class="ag-badge-num" style="color:#10b981;border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.15);">A3</div>
+        Manager View ⚡
+      </div>
+      <div class="ag-title">Customer Experience Analyst</div>
+      <div class="ag-desc">Produces the service-manager report — sentiment trends, CSAT risk flags, experience gaps, and improvement recommendations. Runs simultaneously with A4.</div>
+      <div class="ag-tag" style="background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3);color:#10b981;">Parallel execution</div>
+    </div>
+
+    <!-- A4 -->
+    <div class="agent-card" style="--ac:#f59e0b;--ac-rgb:245,158,11;--ac-b:rgba(245,158,11,.35);">
+      <div class="ag-badge" style="color:#f59e0b;">
+        <div class="ag-badge-num" style="color:#f59e0b;border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.15);">A4</div>
+        Architect View ⚡
+      </div>
+      <div class="ag-title">Technical Root Cause</div>
+      <div class="ag-desc">Produces the technical deep-dive — affected systems, root cause analysis, tech stack, and architectural observations. Runs simultaneously with A3.</div>
+      <div class="ag-tag" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3);color:#f59e0b;">Parallel execution</div>
+    </div>
+
+  </div><!-- /agents-band -->
+
+  <!-- Animated bus + vertical drop to brain -->
+  <div class="agents-bus"></div>
+  <div class="bus-to-brain"><div class="vert-dash"></div></div>
+
+  <!-- ── MIDDLE BAND: Input | Brain | Output ──────────────────────────── -->
+  <div class="middle-band">
+
+    <!-- INPUT zone -->
+    <div class="input-zone">
+      <div class="iblock">
+        <div class="iblock-lbl">📄 Source Document</div>
+        <div class="iblock-val">OmniTracker PDF Export</div>
+      </div>
+      <div class="iblock">
+        <div class="iblock-lbl">⚙️ Preprocessing</div>
+        <div class="iblock-val">Clean, normalise &amp; extract text</div>
+      </div>
+      <div class="iblock human">
+        <div class="iblock-lbl">👤 Human Verification Gate</div>
+        <div class="iblock-val">Confirm people &amp; their roles</div>
+      </div>
+    </div>
+
+    <!-- Connector → brain -->
+    <div class="conn-col">
+      <div style="display:flex;align-items:center;width:100%;">
+        <div class="h-flow" style="flex:1;"></div>
+        <div class="arr-r"></div>
+      </div>
+    </div>
+
+    <!-- BRAIN zone -->
+    <div class="brain-zone">
+      <div class="brain-rings">
+        <div class="brain-r1"></div>
+        <div class="brain-r2"></div>
+        <div class="brain-core">
+          <div class="bc-icon">🧠</div>
+          <div class="bc-label">AI Reasoning</div>
+          <div class="bc-models">Claude · GPT-4 · GLM · Qwen</div>
+        </div>
+      </div>
+      <div class="skill-tags-row">
+        <span class="sk-tag">ITSM Expert</span>
+        <span class="sk-tag">Content Reviewer</span>
+        <span class="sk-tag">Service Manager</span>
+        <span class="sk-tag">Architect</span>
+        <span class="sk-tag">Parser</span>
+      </div>
+      <div class="parallel-badge">⚡ A3 + A4 run simultaneously &nbsp;·&nbsp; Configurable LLM</div>
+    </div>
+
+    <!-- Connector brain → output -->
+    <div class="conn-col">
+      <div style="display:flex;align-items:center;width:100%;">
+        <div class="arr-l"></div>
+        <div class="h-flow-out" style="flex:1;"></div>
+      </div>
+    </div>
+
+    <!-- OUTPUT zone -->
+    <div class="output-zone">
+      <div class="oblock" style="--oc:#ec4899;">
+        <div class="oblock-lbl">📊 Service Manager Dashboard</div>
+        <div class="oblock-val">Sentiment · CSAT · Recommendations</div>
+      </div>
+      <div class="oblock" style="--oc:#8b5cf6;">
+        <div class="oblock-lbl">📋 Content Review &amp; Audit</div>
+        <div class="oblock-val">Timeline · Communications · Audit trail</div>
+      </div>
+      <div class="oblock" style="--oc:#f59e0b;">
+        <div class="oblock-lbl">🏗️ Enterprise Architect View</div>
+        <div class="oblock-val">Root cause · Systems · Tech stack</div>
+      </div>
+    </div>
+
+  </div><!-- /middle-band -->
+
+</div><!-- /arch-wrap -->
+</section>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════════════════ -->
+<section class="hero" style="position:relative;">
+  <div class="wrap">
+    <div class="hero-badge">Agentic AI Architecture</div>
+    <h1 class="hero-title">ITSM Ticket<br>Intelligence Hub</h1>
+    <p class="hero-sub">
+      A self-contained multi-agent AI pipeline that transforms OmniTracker ITSM ticket PDF exports
+      into three specialist intelligence views — powered by Claude, GPT-4, GLM, and Qwen.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="val" data-count="4">0</div>
+        <div class="lbl">AI Agents</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val" data-count="5">0</div>
+        <div class="lbl">Skill Modules</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val" data-suffix="%">73</div>
+        <div class="lbl">Token Reduction</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val" data-suffix="K">62</div>
+        <div class="lbl">Tokens per Analysis</div>
+      </div>
+      <div class="hero-stat">
+        <div class="val" data-count="5">0</div>
+        <div class="lbl">LLM Providers</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ PIPELINE ════════════════════════════════════════ -->
+<div class="divider"></div>
+<section id="pipeline" class="section">
+  <div class="wrap">
+    <div class="section-label reveal">Multi-Agent Pipeline</div>
+    <h2 class="section-title reveal reveal-delay-1">Four agents.<br>One intelligent workflow.</h2>
+    <p class="section-desc reveal reveal-delay-2">
+      Each stage builds on the last — client-side regex feeds a human gate, which feeds a structured extractor,
+      whose compact JSON output fans out to two specialist LLM analysts running in parallel.
+    </p>
+
+    <!-- Pipeline steps -->
+    <div class="pipeline-flow">
+
+      <!-- INPUT -->
+      <div class="pipeline-step reveal" style="margin-bottom:2rem;">
+        <div class="step-card theme-0" style="--card-color:rgba(6,182,212,0.15);">
+          <div class="step-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan);">INPUT LAYER</div>
+          <h3>PDF Ingestion &amp; Preprocessing</h3>
+          <p>PDF.js extracts raw text from OmniTracker ticket exports. The pipeline strips whitespace, boilerplate, and normalises COMM identifiers (<code style="font-family:JetBrains Mono;font-size:0.8em;">COMM- 12345 → COMM-12345</code>) before any AI is involved.</p>
+          <div class="step-skills">
+            <span class="skill-chip" style="border-color:rgba(6,182,212,0.4);color:var(--cyan);">core/pdf-processor.js</span>
+            <span class="skill-chip" style="border-color:rgba(239,68,68,0.4);color:var(--red);">core/security.js</span>
+          </div>
+          <div class="step-io">
+            <div class="step-io-item"><strong>Input</strong>OmniTracker PDF</div>
+            <div class="step-io-item"><strong>Output</strong>Clean pdfText + pdfPages[]</div>
+            <div class="step-io-item"><strong>LLM cost</strong>0 tokens</div>
+          </div>
+        </div>
+        <div class="step-node theme-0">
+          <div class="step-node-circle" style="background:linear-gradient(135deg,#0e7490,#06b6d4);">📄</div>
+          <div class="step-node-line"></div>
+        </div>
+        <div class="step-spacer"></div>
+      </div>
+
+      <!-- AGENT 1 -->
+      <div class="pipeline-step reveal reveal-delay-1" style="margin-bottom:2rem;">
+        <div class="step-spacer"></div>
+        <div class="step-node theme-0">
+          <div class="step-node-line"></div>
+          <div class="step-node-circle" style="background:linear-gradient(135deg,#0e7490,#06b6d4);font-size:1rem;font-weight:900;font-family:'JetBrains Mono',monospace;">A1</div>
+          <div class="step-node-line"></div>
+        </div>
+        <div class="step-card theme-0">
+          <div class="step-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan);">AGENT 1 — ZERO LLM COST</div>
+          <h3>Actor Extractor</h3>
+          <p>Pure client-side regex scans only the PDF header and COMM blocks. Detects 6 structural formats (A–F) to extract every human actor's name and suggest their role from surrounding context — all without a single API call.</p>
+          <div class="step-skills">
+            <span class="skill-chip" style="border-color:rgba(6,182,212,0.4);color:var(--cyan);">agents/actor-agent.js</span>
+            <span class="skill-chip" style="border-color:rgba(255,255,255,0.2);color:var(--muted);">Format A–F detection</span>
+            <span class="skill-chip" style="border-color:rgba(255,255,255,0.2);color:var(--muted);">isStrictHumanActor()</span>
+          </div>
+          <div class="step-io">
+            <div class="step-io-item"><strong>Input</strong>pdfText (full)</div>
+            <div class="step-io-item"><strong>Output</strong>extractedUsers[ ]</div>
+            <div class="step-io-item"><strong>LLM cost</strong><span style="color:var(--green);font-weight:700;">0 tokens ✓</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUMAN GATE -->
+      <div class="pipeline-step reveal" style="margin-bottom:2rem;">
+        <div class="step-card theme-human">
+          <div class="step-tag" style="background:rgba(236,72,153,0.15);color:var(--pink);">👤 HUMAN-IN-THE-LOOP GATE</div>
+          <h3>Role Mapping Wizard</h3>
+          <p>The user confirms or overrides every actor's AI-suggested role. This human-verified role map controls which actors can receive sentiment flags (frustration, escalation, concern) — a critical data-quality gate before any LLM cost is incurred.</p>
+          <div class="step-skills">
+            <span class="skill-chip" style="border-color:rgba(236,72,153,0.4);color:var(--pink);">Customer / End-User</span>
+            <span class="skill-chip" style="border-color:rgba(236,72,153,0.4);color:var(--pink);">IT Service Manager</span>
+            <span class="skill-chip" style="border-color:rgba(255,255,255,0.2);color:var(--muted);">Support Team</span>
+            <span class="skill-chip" style="border-color:rgba(255,255,255,0.2);color:var(--muted);">Team Lead / SAP Basis</span>
+          </div>
+          <div class="step-io">
+            <div class="step-io-item"><strong>Input</strong>extractedUsers[ ]</div>
+            <div class="step-io-item"><strong>Output</strong>activeMappingString + sentimentRules</div>
+          </div>
+        </div>
+        <div class="step-node theme-human">
+          <div class="step-node-line"></div>
+          <div class="step-node-circle" style="background:linear-gradient(135deg,#9d174d,#ec4899);">🧑</div>
+          <div class="step-node-line"></div>
+        </div>
+        <div class="step-spacer"></div>
+      </div>
+
+      <!-- AGENT 2 -->
+      <div class="pipeline-step reveal reveal-delay-1" style="margin-bottom:2rem;">
+        <div class="step-spacer"></div>
+        <div class="step-node theme-1">
+          <div class="step-node-line"></div>
+          <div class="step-node-circle" style="background:linear-gradient(135deg,#5b21b6,#8b5cf6);font-size:1rem;font-weight:900;font-family:'JetBrains Mono',monospace;">A2</div>
+          <div class="step-node-line"></div>
+        </div>
+        <div class="step-card theme-1">
+          <div class="step-tag" style="background:rgba(139,92,246,0.15);color:var(--purple);">AGENT 2 — LLM CALL 1</div>
+          <h3>Content Reviewer</h3>
+          <p>The most token-intensive call: the full preprocessed PDF (~50K tokens) is submitted for structured extraction. The COMM Manifest forces completeness — every COMM-ID found in the PDF must appear in the output timeline. Also discovers additional actors missed by Agent 1.</p>
+          <div class="step-skills">
+            <span class="skill-chip" style="border-color:rgba(139,92,246,0.4);color:var(--purple);">content-reviewer SKILL</span>
+            <span class="skill-chip" style="border-color:rgba(239,68,68,0.4);color:var(--red);">SECURITY_CONSTRAINT</span>
+            <span class="skill-chip" style="border-color:rgba(255,255,255,0.2);color:var(--muted);">COMM Manifest injection</span>
+          </div>
+          <div class="step-io">
+            <div class="step-io-item"><strong>Input</strong>pdfText + mappingInjection</div>
+            <div class="step-io-item"><strong>Output</strong>reviewTranslations JSON</div>
+            <div class="step-io-item"><strong>LLM cost</strong>~50K tokens</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PARALLEL AGENTS 3 + 4 -->
+      <div class="reveal" style="position:relative;z-index:2;margin-top:1rem;">
+        <div style="text-align:center;margin-bottom:1.5rem;">
+          <span style="
+            background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3);
+            color:var(--orange); font-size:0.7rem; font-weight:700; letter-spacing:0.15em;
+            padding:6px 18px; border-radius:12px; text-transform:uppercase;
+          ">⚡ Promise.all — Parallel Execution — Wall time = max(Agent 3, Agent 4)</span>
+        </div>
+        <div class="parallel-wrapper" style="padding-top:0;">
+
+          <!-- Agent 3 -->
+          <div class="parallel-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#065f46,#10b981);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:900;font-family:'JetBrains Mono',monospace;box-shadow:0 0 30px rgba(16,185,129,0.4);">A3</div>
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);">AGENT 3 — LLM CALL 2</div>
+                <div style="font-size:1rem;font-weight:700;">SM Analyst</div>
+              </div>
+            </div>
+            <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;">
+              Receives the compact review JSON (~5-6K tokens). Applies ITIL-aware sentiment analysis, CSAT scoring, and customer experience gap identification using the human-verified role map for strict sentiment enforcement.
+            </p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;">
+              <span class="skill-chip" style="border-color:rgba(16,185,129,0.4);color:var(--green);">service-manager SKILL</span>
+              <span class="skill-chip" style="border-color:rgba(16,185,129,0.4);color:var(--green);">itsm-expert SKILL</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:0.75rem;">
+              Output → <strong style="color:var(--text);">smData</strong> (sentiment, CSAT, escalations, recommendations)
+            </div>
+          </div>
+
+          <!-- Agent 4 -->
+          <div class="parallel-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+              <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#92400e,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:0.9rem;font-weight:900;font-family:'JetBrains Mono',monospace;box-shadow:0 0 30px rgba(245,158,11,0.4);">A4</div>
+              <div>
+                <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);">AGENT 4 — LLM CALL 3</div>
+                <div style="font-size:1rem;font-weight:700;">EA Analyst</div>
+              </div>
+            </div>
+            <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:1rem;">
+              Independently analyses the same review JSON through a technical lens. Identifies root causes, affected systems, tech stack, architectural patterns, and produces observations across 5 EA dimensions.
+            </p>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;">
+              <span class="skill-chip" style="border-color:rgba(245,158,11,0.4);color:var(--orange);">enterprise-architect SKILL</span>
+              <span class="skill-chip" style="border-color:rgba(245,158,11,0.4);color:var(--orange);">itsm-expert SKILL</span>
+            </div>
+            <div style="font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:0.75rem;">
+              Output → <strong style="color:var(--text);">archData</strong> (root cause, tech stack, patterns, arch observations)
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- OUTPUT -->
+      <div class="pipeline-step reveal" style="margin-top:2rem;">
+        <div class="step-card" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.05);">
+          <div class="step-tag" style="background:rgba(16,185,129,0.15);color:var(--green);">OUTPUT — 3 SPECIALIST VIEWS</div>
+          <h3>Results Dashboard</h3>
+          <p>All outputs are security-scanned, HTML-escaped, and rendered into three interactive tabs for different professional audiences — simultaneously available the moment both parallel agents complete.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem;">
+            <div style="padding:1rem;border-radius:10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);">
+              <div style="font-size:0.7rem;font-weight:700;color:var(--purple);margin-bottom:0.3rem;">TAB 1</div>
+              <div style="font-size:0.85rem;font-weight:600;">Extracted Content Review</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">Timeline · COMM blocks · Work notes · Raw pages</div>
+            </div>
+            <div style="padding:1rem;border-radius:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);">
+              <div style="font-size:0.7rem;font-weight:700;color:var(--green);margin-bottom:0.3rem;">TAB 2</div>
+              <div style="font-size:0.85rem;font-weight:600;">IT Service Manager</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">Sentiment · CSAT · Gaps · Recommendations</div>
+            </div>
+            <div style="padding:1rem;border-radius:10px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);">
+              <div style="font-size:0.7rem;font-weight:700;color:var(--orange);margin-bottom:0.3rem;">TAB 3</div>
+              <div style="font-size:0.85rem;font-weight:600;">Enterprise Architect</div>
+              <div style="font-size:0.75rem;color:var(--muted);margin-top:0.3rem;">Root cause · Tech stack · Arch patterns</div>
+            </div>
+          </div>
+        </div>
+        <div class="step-node" style="--glow-color:var(--green);">
+          <div class="step-node-line"></div>
+          <div class="step-node-circle" style="background:linear-gradient(135deg,#065f46,#10b981);">✅</div>
+        </div>
+        <div class="step-spacer"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════ METRICS ══════════════════════════════════════ -->
+<div class="divider"></div>
+<section class="section">
+  <div class="wrap">
+    <div class="metrics-row">
+      <div class="metric-card reveal" style="--from:#fff;--to:var(--cyan);">
+        <div class="metric-val">4</div>
+        <div class="metric-lbl">Parallel-capable AI agents</div>
+      </div>
+      <div class="metric-card reveal reveal-delay-1" style="--from:#fff;--to:var(--purple);">
+        <div class="metric-val">5</div>
+        <div class="metric-lbl">Composable SKILL modules</div>
+      </div>
+      <div class="metric-card reveal reveal-delay-2" style="--from:#fff;--to:var(--green);">
+        <div class="metric-val">73%</div>
+        <div class="metric-lbl">Token reduction vs naive</div>
+      </div>
+      <div class="metric-card reveal reveal-delay-3" style="--from:#fff;--to:var(--orange);">
+        <div class="metric-val">3</div>
+        <div class="metric-lbl">Config tiers (no hardcode)</div>
+      </div>
+      <div class="metric-card reveal" style="--from:#fff;--to:var(--pink);">
+        <div class="metric-val">1</div>
+        <div class="metric-lbl">Human-in-loop gate</div>
+      </div>
+      <div class="metric-card reveal reveal-delay-1" style="--from:#fff;--to:var(--red);">
+        <div class="metric-val">0</div>
+        <div class="metric-lbl">Tokens for Agent 1 (regex)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════════════════ SKILLS ══════════════════════════════════════ -->
+<div class="divider"></div>
+<section id="skills" class="section">
+  <div class="wrap">
+    <div class="section-label reveal">Skills System</div>
+    <h2 class="section-title reveal reveal-delay-1">Composable AI expertise.<br>Live-editable prompts.</h2>
+    <p class="section-desc reveal reveal-delay-2">
+      Each SKILL is a physical Markdown file injected into the relevant agent's system prompt. Skills can be overridden live via the Admin Panel — no restart or deploy needed.
+    </p>
+
+    <div class="skills-grid">
+      <div class="skill-card reveal" style="--skill-color:var(--orange);">
+        <div class="skill-icon">🏛️</div>
+        <h3>ITSM Expert</h3>
+        <p>Foundation skill injected into Agents 2, 3 &amp; 4. Defines ITIL v4 constraints, PII handling rules, German-language awareness, and universal output quality standards.</p>
+        <span class="skill-tag" style="background:rgba(245,158,11,0.15);color:var(--orange);">itsm-expert/SKILL.md</span>
+        <div class="skill-agents">Used by: Agent 2 · Agent 3 · Agent 4</div>
+      </div>
+
+      <div class="skill-card reveal reveal-delay-1" style="--skill-color:var(--purple);">
+        <div class="skill-icon">📋</div>
+        <h3>Content Reviewer</h3>
+        <p>OmniTracker-specific extraction schema. Defines the exact JSON structure for timeline, communications, participants, metadata, and work notes. Powers the structured extraction in Agent 2.</p>
+        <span class="skill-tag" style="background:rgba(139,92,246,0.15);color:var(--purple);">content-reviewer/SKILL.md</span>
+        <div class="skill-agents">Used by: Agent 2 (primary)</div>
+      </div>
+
+      <div class="skill-card reveal reveal-delay-2" style="--skill-color:var(--green);">
+        <div class="skill-icon">📊</div>
+        <h3>Service Manager</h3>
+        <p>Defines CSAT scoring methodology, sentiment detection rules, customer experience gap taxonomy, and the output schema for escalation flags and improvement recommendations.</p>
+        <span class="skill-tag" style="background:rgba(16,185,129,0.15);color:var(--green);">service-manager/SKILL.md</span>
+        <div class="skill-agents">Used by: Agent 3</div>
+      </div>
+
+      <div class="skill-card reveal reveal-delay-3" style="--skill-color:var(--cyan);">
+        <div class="skill-icon">🏗️</div>
+        <h3>Enterprise Architect</h3>
+        <p>Five-dimension EA framework: Root Cause Analysis, Tech Stack identification, Affected Systems mapping, Architectural Observations, and Pattern Taxonomy classification.</p>
+        <span class="skill-tag" style="background:rgba(6,182,212,0.15);color:var(--cyan);">enterprise-architect/SKILL.md</span>
+        <div class="skill-agents">Used by: Agent 4</div>
+      </div>
+
+      <div class="skill-card reveal" style="--skill-color:var(--blue);">
+        <div class="skill-icon">🔍</div>
+        <h3>OmniTracker Parser</h3>
+        <p>Specialist format-parsing rules for the OmniTracker PDF layout — field labels, COMM block structures, date formats, and encoding quirks specific to this ITSM platform.</p>
+        <span class="skill-tag" style="background:rgba(59,130,246,0.15);color:var(--blue);">omnitracker-parser/SKILL.md</span>
+        <div class="skill-agents">Used by: Agent 2 (supplementary)</div>
+      </div>
+    </div>
+
+    <!-- 3-tier loading -->
+    <div style="margin-top:4rem;">
+      <h3 class="reveal" style="font-size:1.2rem;font-weight:700;margin-bottom:0.5rem;">3-Tier Skill Loading</h3>
+      <p class="reveal reveal-delay-1" style="color:var(--muted);font-size:0.875rem;margin-bottom:0;">Skills resolve at runtime — admin overrides win, falling back to files, then hardcoded JS constants.</p>
+      <div class="tier-flow">
+        <div class="tier-box" style="border-color:rgba(16,185,129,0.3);">
+          <div class="tier-priority" style="background:rgba(16,185,129,0.15);color:var(--green);">Priority 1 — HOT</div>
+          <h4 style="color:var(--green);">localStorage Override</h4>
+          <p>Admin Panel → SKILL Prompts tab. Live edits stored in browser. No restart. Session-persistent.</p>
+          <span class="tier-miss">on miss → fetches file</span>
+        </div>
+        <div class="tier-arrow">→</div>
+        <div class="tier-box" style="border-color:rgba(59,130,246,0.3);">
+          <div class="tier-priority" style="background:rgba(59,130,246,0.15);color:var(--blue);">Priority 2 — PORTABLE</div>
+          <h4 style="color:var(--blue);">Physical SKILL.md Files</h4>
+          <p>Loaded via <code style="font-family:JetBrains Mono;font-size:0.8em;">fetch()</code>. Works with CDN, web server, or local <code style="font-family:JetBrains Mono;font-size:0.8em;">npx serve</code>. Survives browser resets.</p>
+          <span class="tier-miss">on miss → uses JS constant</span>
+        </div>
+        <div class="tier-arrow">→</div>
+        <div class="tier-box" style="border-color:rgba(245,158,11,0.3);">
+          <div class="tier-priority" style="background:rgba(245,158,11,0.15);color:var(--orange);">Priority 3 — ALWAYS ON</div>
+          <h4 style="color:var(--orange);">Hardcoded JS Constants</h4>
+          <p>Embedded in <code style="font-family:JetBrains Mono;font-size:0.8em;">skill-registry.js</code>. Works even on <code style="font-family:JetBrains Mono;font-size:0.8em;">file://</code> protocol. Last resort, always available.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LLM ROUTER ════════════════════════════════════ -->
+<div class="divider"></div>
+<section id="llm" class="section">
+  <div class="wrap">
+    <div class="section-label reveal">LLM Routing</div>
+    <h2 class="section-title reveal reveal-delay-1">One router.<br>Any LLM provider.</h2>
+    <p class="section-desc reveal reveal-delay-2">
+      <code style="font-family:JetBrains Mono;font-size:0.9em;">core/llm-router.js</code> auto-detects the API format from the endpoint URL and adapts the request structure accordingly — swap providers without touching agent code.
+    </p>
+
+    <div class="router-grid reveal">
+      <div class="router-path" style="--path-glow:rgba(236,72,153,0.1);border-color:rgba(236,72,153,0.25);">
+        <div class="route-tag" style="background:rgba(236,72,153,0.15);color:var(--pink);">URL contains "anthropic.com"</div>
+        <h3>Anthropic Messages API</h3>
+        <ul>
+          <li>Header: <code style="font-family:JetBrains Mono;font-size:0.8em;">x-api-key</code></li>
+          <li>Header: <code style="font-family:JetBrains Mono;font-size:0.8em;">anthropic-version: 2023-06-01</code></li>
+          <li>Body: <code style="font-family:JetBrains Mono;font-size:0.8em;">system</code> field at top level</li>
+          <li>Body: <code style="font-family:JetBrains Mono;font-size:0.8em;">messages[]</code> (user role)</li>
+          <li><code style="font-family:JetBrains Mono;font-size:0.8em;">temperature: 0.1 · max_tokens: 8192</code></li>
+          <li>Requires CORS proxy for in-browser use</li>
+        </ul>
+      </div>
+      <div class="router-path" style="--path-glow:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.25);">
+        <div class="route-tag" style="background:rgba(59,130,246,0.15);color:var(--blue);">All other endpoints</div>
+        <h3>OpenAI-Compatible Format</h3>
+        <ul>
+          <li>Header: <code style="font-family:JetBrains Mono;font-size:0.8em;">Authorization: Bearer {key}</code></li>
+          <li>Body: <code style="font-family:JetBrains Mono;font-size:0.8em;">messages[]</code> with system role message</li>
+          <li>Supports any OpenAI-compatible endpoint</li>
+          <li>Works with local models (Ollama etc.)</li>
+          <li><code style="font-family:JetBrains Mono;font-size:0.8em;">temperature: 0.1 · max_tokens: 8192</code></li>
+          <li>No proxy needed for direct HTTPS endpoints</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="providers-grid">
+      <div class="provider-card reveal">
+        <div class="provider-icon">🟤</div>
+        <h4>Anthropic Claude</h4>
+        <p>via proxy or direct browser</p>
+      </div>
+      <div class="provider-card reveal reveal-delay-1">
+        <div class="provider-icon">🟢</div>
+        <h4>OpenAI GPT-4</h4>
+        <p>Direct HTTPS API</p>
+      </div>
+      <div class="provider-card reveal reveal-delay-2">
+        <div class="provider-icon">🔵</div>
+        <h4>GLM-5 / ZhipuAI</h4>
+        <p>OpenAI-compatible</p>
+      </div>
+      <div class="provider-card reveal reveal-delay-3">
+        <div class="provider-icon">🟡</div>
+        <h4>Qwen / DashScope</h4>
+        <p>OpenAI-compatible</p>
+      </div>
+      <div class="provider-card reveal">
+        <div class="provider-icon">⚪</div>
+        <h4>Ollama / Local</h4>
+        <p>Any custom endpoint</p>
+      </div>
+    </div>
+
+    <!-- CORS Proxy -->
+    <div class="reveal" style="margin-top:2.5rem;padding:2rem;border-radius:16px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--red);">🔒 Local CORS Proxy — proxy/proxy.js</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+        <div style="font-size:0.82rem;color:var(--muted);">
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Network isolation</strong>
+          Binds to <code style="font-family:JetBrains Mono">127.0.0.1</code> only — not network-accessible
+        </div>
+        <div style="font-size:0.82rem;color:var(--muted);">
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Hardcoded destination</strong>
+          Only forwards to <code style="font-family:JetBrains Mono">api.anthropic.com/v1/messages</code>
+        </div>
+        <div style="font-size:0.82rem;color:var(--muted);">
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Rate limiting</strong>
+          30 req/min · 2MB body cap · API key masked in all logs
+        </div>
+        <div style="font-size:0.82rem;color:var(--muted);">
+          <strong style="color:var(--text);display:block;margin-bottom:4px;">Origin validation</strong>
+          Rejects any non-localhost origin header
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ TOKEN OPTIMIZATION ════════════════════════════ -->
+<div class="divider"></div>
+<section id="tokens" class="section">
+  <div class="wrap">
+    <div class="section-label reveal">Token Optimization</div>
+    <h2 class="section-title reveal reveal-delay-1">73% fewer tokens.<br>Same intelligence.</h2>
+    <p class="section-desc reveal reveal-delay-2">
+      Three compounding optimizations turn a 232K-token analysis into a 62K run — without sacrificing extraction quality.
+    </p>
+
+    <!-- Evolution bars -->
+    <div class="token-bars reveal" style="max-width:700px;margin-top:3rem;">
+      <div style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-bottom:1.5rem;text-transform:uppercase;letter-spacing:0.1em;">Token evolution per full analysis</div>
+
+      <div class="token-row">
+        <div class="token-row-header">
+          <span class="label">V1 — Naive (4× raw PDF per agent)</span>
+          <span class="count">232K tokens</span>
+        </div>
+        <div class="token-bar-track">
+          <div class="token-bar-fill" style="--fill-color:#ef4444;" data-width="100%"></div>
+        </div>
+        <div style="margin-top:4px;font-size:0.72rem;color:var(--muted);">Baseline — no optimization</div>
+      </div>
+
+      <div class="token-row" style="margin-top:1.5rem;">
+        <div class="token-row-header">
+          <span class="label">V2 — JSON-fed SM + EA agents</span>
+          <span class="count">128K tokens <span style="color:var(--orange);font-size:0.75rem;margin-left:6px;">−45%</span></span>
+        </div>
+        <div class="token-bar-track">
+          <div class="token-bar-fill" style="--fill-color:#f59e0b;" data-width="55%"></div>
+        </div>
+        <div style="margin-top:4px;font-size:0.72rem;color:var(--muted);">Agents 3+4 fed compact JSON instead of raw PDF</div>
+      </div>
+
+      <div class="token-row" style="margin-top:1.5rem;">
+        <div class="token-row-header">
+          <span class="label">V3 — Client-side actors + parallel pipeline</span>
+          <span class="count">62K tokens <span style="color:var(--green);font-size:0.75rem;margin-left:6px;">−73%</span></span>
+        </div>
+        <div class="token-bar-track">
+          <div class="token-bar-fill" style="--fill-color:#10b981;" data-width="27%"></div>
+        </div>
+        <div style="margin-top:4px;font-size:0.72rem;color:var(--muted);">Agent 1 eliminated via regex; Agents 3+4 run in parallel</div>
+      </div>
+    </div>
+
+    <!-- Per-agent token breakdown -->
+    <div style="margin-top:4rem;" class="reveal">
+      <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:2rem;">Per-agent token breakdown (current V3)</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;">
+        <div style="padding:1.5rem;border-radius:14px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);text-align:center;">
+          <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--cyan);">0</div>
+          <div style="font-size:0.85rem;font-weight:600;margin:0.5rem 0 0.3rem;">Agent 1 (Regex)</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Pure client-side — no LLM</div>
+        </div>
+        <div style="padding:1.5rem;border-radius:14px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);text-align:center;">
+          <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--purple);">~50K</div>
+          <div style="font-size:0.85rem;font-weight:600;margin:0.5rem 0 0.3rem;">Agent 2 (Review)</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Full PDF — unavoidable</div>
+        </div>
+        <div style="padding:1.5rem;border-radius:14px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);text-align:center;">
+          <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--green);">~6K</div>
+          <div style="font-size:0.85rem;font-weight:600;margin:0.5rem 0 0.3rem;">Agent 3 (SM)</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Compact JSON from A2</div>
+        </div>
+        <div style="padding:1.5rem;border-radius:14px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);text-align:center;">
+          <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:var(--orange);">~6K</div>
+          <div style="font-size:0.85rem;font-weight:600;margin:0.5rem 0 0.3rem;">Agent 4 (EA)</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Compact JSON from A2</div>
+        </div>
+      </div>
+      <div style="margin-top:1.5rem;padding:1rem 1.5rem;border-radius:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div style="font-size:0.9rem;color:var(--muted);">⚡ Agents 3 + 4 run in <strong style="color:var(--text);">parallel</strong> — wall time = <strong style="color:var(--text);">max(A3, A4)</strong>, not A3 + A4</div>
+        <div class="savings-badge" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:var(--green);">Total: ~62K tokens saved 73%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SECURITY ══════════════════════════════════════ -->
+<div class="divider"></div>
+<section id="security" class="section">
+  <div class="wrap">
+    <div class="section-label reveal">Security Architecture</div>
+    <h2 class="section-title reveal reveal-delay-1">Defence in depth.<br>At every layer.</h2>
+    <p class="section-desc reveal reveal-delay-2">
+      Security is not an afterthought — it's woven through PDF ingestion, LLM output rendering, sentiment enforcement, and the proxy layer.
+    </p>
+
+    <div class="security-grid">
+      <div class="security-card reveal">
+        <div class="security-icon">🛡️</div>
+        <h3>Prompt Injection Guard</h3>
+        <p><code style="font-family:JetBrains Mono;font-size:0.8em;">core/security.js</code> runs <code style="font-family:JetBrains Mono;font-size:0.8em;">secDeepScan()</code> on the extracted PDF text before any LLM sees it. The <code style="font-family:JetBrains Mono;font-size:0.8em;">SEC_PATTERNS[]</code> array blocks shell execution, hidden instructions, and ClickFix-style attacks embedded in ticket content.</p>
+      </div>
+      <div class="security-card reveal reveal-delay-1">
+        <div class="security-icon">🔤</div>
+        <h3>HTML Escaping — No Raw innerHTML</h3>
+        <p>Every fragment of AI-generated content passes through <code style="font-family:JetBrains Mono;font-size:0.8em;">esc()</code> before DOM insertion. No AI text is ever set as raw <code style="font-family:JetBrains Mono;font-size:0.8em;">innerHTML</code>. XSS via LLM output is structurally impossible.</p>
+      </div>
+      <div class="security-card reveal reveal-delay-2">
+        <div class="security-icon">📋</div>
+        <h3>Clipboard Protection</h3>
+        <p><code style="font-family:JetBrains Mono;font-size:0.8em;">doCopy()</code> runs the security scanner before writing any AI content to the clipboard — preventing copy-paste prompt injection chains from reaching terminal or other tools.</p>
+      </div>
+      <div class="security-card reveal reveal-delay-3">
+        <div class="security-icon">😤</div>
+        <h3>Dual-Layer Sentiment Enforcement</h3>
+        <p><strong>Layer 1</strong>: Role-based ALLOW/DENY lists injected into every LLM system prompt. <strong>Layer 2</strong>: Client-side post-processing strips any hallucinated sentiment flags from resolver-side roles — the business rule is enforced in code, not just in the prompt.</p>
+      </div>
+      <div class="security-card reveal">
+        <div class="security-icon">🔌</div>
+        <h3>Hardened CORS Proxy</h3>
+        <p>The local proxy binds to <code style="font-family:JetBrains Mono;font-size:0.8em;">127.0.0.1</code> only, validates the <code style="font-family:JetBrains Mono;font-size:0.8em;">Origin</code> header, rate-limits to 30 req/min, caps request bodies at 2MB, and masks the API key in all log output.</p>
+      </div>
+      <div class="security-card reveal reveal-delay-1">
+        <div class="security-icon">🧱</div>
+        <h3>Content Security Policy</h3>
+        <p><code style="font-family:JetBrains Mono;font-size:0.8em;">default-src 'none'</code> baseline. Scripts restricted to self + specific CDN origins. No inline eval. All AI API calls go through HTTPS with explicit endpoint allowlisting.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CONFIG SYSTEM ══════════════════════════════════ -->
+<div class="divider"></div>
+<section class="section">
+  <div class="wrap">
+    <div class="section-label reveal">Configuration</div>
+    <h2 class="section-title reveal reveal-delay-1">Three tiers.<br>Zero hardcoding.</h2>
+
+    <div style="margin-top:3rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;">
+      <div class="glass reveal" style="padding:2rem;">
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;">PRIORITY 1 — RUNTIME</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">localStorage</h3>
+        <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;">Admin Panel writes model config, role definitions, and skill overrides to localStorage. Changes are hot — no page reload required.</p>
+        <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);">
+          ITSM_MODELS_CONFIG<br>
+          ITSM_ROLES_CONFIG_V2<br>
+          SKILL_ea / SKILL_sm / SKILL_itsm
+        </div>
+      </div>
+      <div class="glass reveal reveal-delay-1" style="padding:2rem;">
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--blue);margin-bottom:1rem;">PRIORITY 2 — PHYSICAL FILES</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">Script-tag config files</h3>
+        <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;">Loaded as <code style="font-family:JetBrains Mono;font-size:0.85em;">&lt;script src&gt;</code> tags. Survive browser resets, portable across machines. Edit locally, deploy to CDN.</p>
+        <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);">
+          config/config.js → window.CONFIG<br>
+          config/admin-config.js → window.ADMIN_CONFIG
+        </div>
+      </div>
+      <div class="glass reveal reveal-delay-2" style="padding:2rem;">
+        <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem;">PRIORITY 3 — ALWAYS ON</div>
+        <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;">Hardcoded JS defaults</h3>
+        <p style="font-size:0.83rem;color:var(--muted);line-height:1.6;">Model definitions, skill prompts, and role configs embedded in JS. Works on <code style="font-family:JetBrains Mono;font-size:0.85em;">file://</code> protocol. Always available as last resort.</p>
+        <div style="margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);">
+          DEFAULT_ITSM_SKILL<br>
+          DEFAULT_EA_SKILL<br>
+          DEFAULT_SM_SKILL
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin panel -->
+    <div class="reveal" style="margin-top:3rem;padding:2rem;border-radius:16px;background:rgba(255,255,255,0.03);border:1px solid var(--border);">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:1.5rem;">Admin Panel — Runtime Control</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+        <div style="padding:1.2rem;border-radius:10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--blue);margin-bottom:0.5rem;">AI MODELS TAB</div>
+          <p style="font-size:0.8rem;color:var(--muted);">Add/edit endpoints, API keys, model IDs. Set default model. Multi-provider switching at runtime.</p>
+        </div>
+        <div style="padding:1.2rem;border-radius:10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--green);margin-bottom:0.5rem;">ITSM ROLES TAB</div>
+          <p style="font-size:0.8rem;color:var(--muted);">Define roles, set <code style="font-family:JetBrains Mono;font-size:0.85em;">sentiment: true/false</code> per role. Controls the AI's emotional attribution.</p>
+        </div>
+        <div style="padding:1.2rem;border-radius:10px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.2);">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--purple);margin-bottom:0.5rem;">SKILL PROMPTS TAB</div>
+          <p style="font-size:0.8rem;color:var(--muted);">Live edit any SKILL.md directly in the browser. Changes persist in localStorage. Hot — no restart.</p>
+        </div>
+        <div style="padding:1.2rem;border-radius:10px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);">
+          <div style="font-size:0.7rem;font-weight:700;color:var(--orange);margin-bottom:0.5rem;">EXPORT / RESET</div>
+          <p style="font-size:0.8rem;color:var(--muted);">Export current state to <code style="font-family:JetBrains Mono;font-size:0.85em;">admin-config.js</code>. Reset to file defaults at any time.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ════════════════════════════════════ -->
+<div class="divider"></div>
+<footer>
+  <div class="wrap">
+    <div class="footer-logo">ITSM Ticket Intelligence Hub</div>
+    <p style="margin-bottom:0.5rem;">CSATNextV3 · Multi-Agent · Multi-Skill · Multi-LLM · Human-in-the-Loop</p>
+    <p style="font-size:0.78rem;margin-top:1rem;color:#374151;">
+      Agents: Actor Extractor · Content Reviewer · SM Analyst · EA Analyst &nbsp;|&nbsp;
+      Skills: ITSM Expert · Content Reviewer · Service Manager · Enterprise Architect · OmniTracker Parser
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ─── Intersection Observer: reveal on scroll ───────────────────────────── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ─── Animated stat counters ────────────────────────────────────────────── */
+function animateCounter(el) {
+  const target   = parseInt(el.dataset.count || el.textContent, 10);
+  const suffix   = el.dataset.suffix || '';
+  const duration = 1400;
+  const start    = performance.now();
+  const tick = (now) => {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(ease * target) + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('[data-count], [data-suffix]').forEach(el => animateCounter(el));
+      counterObserver.disconnect();
+    }
+  });
+}, { threshold: 0.5 });
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) counterObserver.observe(heroStats);
+
+/* ─── Token bar animation on scroll ─────────────────────────────────────── */
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.token-bar-fill').forEach(bar => {
+        const w = bar.dataset.width || '50%';
+        setTimeout(() => { bar.style.width = w; }, 200);
+      });
+      barObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+const tokenBars = document.querySelector('.token-bars');
+if (tokenBars) barObserver.observe(tokenBars);
+
+/* ─── Smooth nav link active state ─────────────────────────────────────── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--text)' : '';
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

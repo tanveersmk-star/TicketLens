@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'none'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; connect-src https:; img-src 'self' data: blob:; worker-src https://cdnjs.cloudflare.com blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'none';">
+  <title>ITSM Ticket Intelligence Hub</title>
+
+  <!-- ── External CDN Dependencies ─────────────────────────────────────── -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';</script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { primaryColor: '#f4f5f7', primaryTextColor: '#1a1a2e', primaryBorderColor: '#009999', lineType: 'basis' } });</script>
+
+  <!-- ── Fonts ──────────────────────────────────────────────────────────── -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- ── Application Stylesheet (extracted from monolith) ──────────────── -->
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <!-- ── App Config (physical files — edit these to configure the app) ─── -->
+  <!--
+    config/config.js     → window.CONFIG   (API keys, model endpoints)
+    config/admin-config.js → window.ADMIN_CONFIG (roles, model overrides, skill overrides)
+    Priority: localStorage > admin-config.js > config.js > hardcoded defaults
+  -->
+  <script src="config/config.js"></script>
+  <script src="config/admin-config.js"></script>
+
+  <!-- ── Core Framework Modules ────────────────────────────────────────── -->
+  <script src="core/security.js"></script>     <!-- SEC_PATTERNS, secDeepScan, SECURITY_SYSTEM_CONSTRAINT -->
+  <script src="core/utils.js"></script>         <!-- esc, isMissing, gv, safeParseJSON -->
+  <script src="core/token-tracker.js"></script> <!-- recordTokenUsage, getTokenUsage -->
+  <script src="core/config-manager.js"></script><!-- getConfiguredModels, getRolesConfig, cfgGet -->
+  <script src="core/pdf-processor.js"></script> <!-- extractPdfText, preprocessPdfText -->
+  <script src="core/llm-router.js"></script>    <!-- callLLM, isAnthropicUrl -->
+
+  <!-- ── Skill Registry (loads SKILL.md files from server or CDN) ───────── -->
+  <!--
+    Tries: fetch('./skills/*/SKILL.md') → admin-config.js overrides → hardcoded fallback
+    Works on web server/CDN. Falls back gracefully when running as file:// protocol.
+    Run locally: npx serve . or python -m http.server 8080
+  -->
+  <script src="skills/skill-registry.js"></script>
+
+  <!-- ── AI Pipeline Agents ────────────────────────────────────────────── -->
+  <script src="agents/actor-agent.js"></script>       <!-- Agent 1: client-side regex extraction -->
+  <script src="agents/review-agent.js"></script>      <!-- Agent 2: full PDF → structured JSON -->
+  <script src="agents/sm-agent.js"></script>          <!-- Agent 3: service manager analysis -->
+  <script src="agents/ea-agent.js"></script>          <!-- Agent 4: enterprise architect analysis -->
+  <script src="agents/orchestrator.js"></script>      <!-- Pipeline coordinator -->
+
+</head>
+
+<body>
+
+  <div class="app-header">
+    <div class="app-header-inner" style="display:flex;align-items:center;gap:24px;">
+      <div class="header-accent"></div>
+      <div style="flex:1;">
+        <h1>ITSM Ticket Intelligence Hub</h1>
+        <p class="subtitle">OmniTracker PDF Analysis — Service Manager CSAT Review &amp; Technical Root Cause</p>
+        <p style="font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; margin-top: 8px; letter-spacing: 0.5px; opacity: 0.8;">
+          ⚠️ Disclaimer: All intelligence is AI-generated and subject to hallucination. Human review required for reporting.
+        </p>
+      </div>
+      <div class="header-model-chip" id="header-model-chip" onclick="openAdmin()" title="Click to configure AI models">
+        <span class="hmc-icon" id="hmc-icon" style="background:linear-gradient(135deg,#00a67e,#007a5e);">AI</span>
+        <div class="hmc-info">
+          <div class="hmc-label">Active Model</div>
+          <div class="hmc-name" id="hmc-name">Loading…</div>
+          <div class="hmc-sub" id="hmc-sub">—</div>
+        </div>
+        <div class="hmc-gear">
+          <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Configure
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Security Warning Banner (hidden by default) -->
+  <div id="sec-warning-banner" style="display:none; background:#fef2f2; border-bottom:2px solid #fecaca; padding:12px 24px;">
+    <div style="display:flex;align-items:flex-start;gap:12px;max-width:1200px;margin:0 auto;">
+      <span class="sec-shield-icon">🛡️</span>
+      <div style="flex:1;">
+        <strong style="color:#7f1d1d;font-size:0.92rem;" id="sec-warn-title">Security Alert: Suspicious Content Detected</strong>
+        <div style="margin-top:4px;font-size:0.82rem;color:#991b1b;" id="sec-warn-body">
+          Patterns associated with shell execution or social engineering were found.
+          Do <strong>not</strong> open PowerShell, Command Prompt, or any terminal based on content from this analysis.
+        </div>
+        <div style="margin-top:5px;font-size:0.78rem;color:#7f1d1d;" id="sec-warn-detail"></div>
+      </div>
+      <button class="sec-dismiss-btn" onclick="document.getElementById('sec-warning-banner').style.display='none'">Dismiss</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Upload Panel -->
+    <div class="upload-panel">
+      <div class="upload-panel-header">
+        <span class="upload-panel-title">📄 PDF Source</span>
+        <button class="btn-reset" id="btn-reset" onclick="resetToNewFile()" title="Load a new PDF file">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Reset / New File
+        </button>
+      </div>
+
+      <div class="dropzone" id="dropzone">
+        <svg class="dz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        <p>Drop OmniTracker PDF export here</p>
+        <button class="btn-browse" id="btn-browse">Select PDF</button>
+        <input type="file" id="file-input" accept=".pdf">
+        <div class="hint">PDF is read client-side → AI analyzes via API → No data stored</div>
+      </div>
+
+      <!-- DataSource: URL input (for cloud / web deployment) -->
+      <div id="url-source-panel" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid var(--border-light);">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input type="text" id="pdf-url-input" placeholder="Or enter PDF URL (https://...)"
+            style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:4px;font-size:0.85rem;">
+          <button onclick="loadPdfFromUrlAndRun()"
+            style="padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:0.85rem;font-weight:600;">
+            Load URL
+          </button>
+        </div>
+        <div style="font-size:0.72rem;color:var(--text-light);margin-top:4px;">
+          URL must be HTTPS and allow CORS. For cloud storage, use pre-signed URLs.
+        </div>
+      </div>
+
+      <div id="file-status" class="file-status"></div>
+
+      <!-- Model Selector Pills -->
+      <div class="model-selector-section" id="model-selector-section">
+        <div class="model-selector-label">Active AI Model</div>
+        <div class="model-pill-group" id="model-pill-group"></div>
+      </div>
+    </div>
+
+    <!-- Re-analyze Toolbar -->
+    <div id="reanalyze-toolbar" style="display:none;">
+      <div class="toolbar-row">
+        <div class="toolbar-file-info">
+          <div class="toolbar-file-name" id="toolbar-filename">—</div>
+          <div class="toolbar-model-badge">
+            <span class="badge-dot"></span>
+            <span id="toolbar-model-label">Analyzed with —</span>
+          </div>
+        </div>
+        <div class="toolbar-model-pills" id="toolbar-model-pills"></div>
+        <button class="btn-reanalyze" id="btn-reanalyze" onclick="triggerReanalyze()" disabled>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Re-analyze
+        </button>
+      </div>
+    </div>
+
+    <!-- Role Mapping Panel (Human-in-the-Loop) -->
+    <div id="role-mapping-panel" style="display:none;">
+      <h3 style="margin-bottom:8px; color:var(--primary-dark);">👤 Identify Key Users (Human-in-the-Loop)</h3>
+      <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:15px;">
+        Review the AI-suggested roles below. Adjust any that are wrong, then run the full analysis.
+        Correct role assignment prevents AI from flagging service team comments as customer frustration.
+      </p>
+      <div id="role-mapping-list"></div>
+      <button class="btn-run" id="btn-run-analysis" onclick="runFullAnalysis()">▶ Run Full Analysis</button>
+    </div>
+
+    <div id="alert-box" class="alert"></div>
+
+    <!-- Progress Steps -->
+    <div class="progress-panel" id="progress-panel" style="display:none;">
+      <div class="progress-steps">
+        <div class="step-item" id="step-extract"><span class="step-spinner"></span> Extracting PDF text...</div>
+        <div class="step-item" id="step-mapping"><span class="step-spinner"></span> Analyzing roles...</div>
+        <div class="step-item" id="step-review"><span class="step-spinner"></span> Structuring &amp; translating content...</div>
+        <div class="step-item" id="step-sm"><span class="step-spinner"></span> AI: Service Manager analysis...</div>
+        <div class="step-item" id="step-arch"><span class="step-spinner"></span> AI: Technical / Architecture analysis...</div>
+      </div>
+    </div>
+
+    <!-- Results Tabs -->
+    <div id="results-area" style="display:none;">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="sm" onclick="switchTab('sm')">
+          <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+          </svg>
+          IT Service Manager
+        </button>
+        <button class="tab-btn" data-tab="review" onclick="switchTab('review')">
+          <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M8 7h8M8 11h8M8 15h5M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z" />
+          </svg>
+          Extracted Content Review
+        </button>
+        <button class="tab-btn" data-tab="arch" onclick="switchTab('arch')">
+          <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          Enterprise Architect / SME
+        </button>
+      </div>
+
+      <div class="tab-content active" id="tab-sm"></div>
+      <div class="tab-content" id="tab-review"></div>
+      <div class="tab-content" id="tab-arch"></div>
+    </div>
+  </div>
+
+
+  <!-- ─── Admin Panel (fullscreen overlay) ──────────────────────────────── -->
+  <!-- See ITSM_Ticket_Intelligence.html for the full Admin HTML structure -->
+  <!-- TODO: Extract to ui/admin-panel.html or keep inline below -->
+  <div id="admin-overlay" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:9999; overflow-y:auto;">
+    <!-- Admin content is rendered by ui/admin-panel JS (from ITSM_Ticket_Intelligence.html) -->
+    <!-- The full admin HTML is preserved in ITSM_Ticket_Intelligence.html as reference -->
+  </div>
+
+
+  <!-- ── URL DataSource helper ──────────────────────────────────────────── -->
+  <script>
+    async function loadPdfFromUrlAndRun() {
+      const urlInput = document.getElementById('pdf-url-input');
+      const url = urlInput ? urlInput.value.trim() : '';
+      if (!url) { showError('Please enter a PDF URL.'); return; }
+      if (!url.startsWith('https://')) { showError('URL must start with https://'); return; }
+
+      const fakeFile = { name: url.split('/').pop() || 'document.pdf' };
+      if (!fakeFile.name.endsWith('.pdf')) fakeFile.name += '.pdf';
+
+      document.getElementById('file-status').innerHTML = `Fetching <strong>${esc(fakeFile.name)}</strong> from URL...`;
+
+      try {
+        const { text, pages } = await extractPdfText(url);
+        pdfPages = pages;
+        pdfText  = text;
+        currentFileName   = fakeFile.name;
+        analysisComplete  = false;
+
+        document.getElementById('file-status').innerHTML =
+          `✅ <strong>${esc(fakeFile.name)}</strong> — ${pages.length} pages loaded from URL`;
+
+        const hits = secDeepScan({ pdfText });
+        if (hits.length > 0) showSecurityWarning(hits, 'PDF content');
+
+        await runPreAnalysis();
+      } catch (err) {
+        showError('Failed to load PDF from URL: ' + err.message);
+      }
+    }
+  </script>
+
+  <!-- ── Remaining application JS (UI renderers, admin panel, prompts) ── -->
+  <!--
+    NOTE: The render functions (renderReviewTab, renderSMTab, renderArchTab),
+    admin panel logic (initAdminState, renderAdminModelList, etc.), and
+    system prompt fallbacks are loaded from the original monolith file below.
+
+    Migration status:
+    ✅ core/security.js    — extracted
+    ✅ core/utils.js       — extracted
+    ✅ core/token-tracker.js — extracted
+    ✅ core/config-manager.js — extracted
+    ✅ core/pdf-processor.js — extracted
+    ✅ core/llm-router.js  — extracted
+    ✅ skills/skill-registry.js — extracted
+    ✅ agents/actor-agent.js — extracted
+    ✅ agents/review-agent.js — extracted
+    ✅ agents/sm-agent.js  — extracted
+    ✅ agents/ea-agent.js  — extracted
+    ✅ agents/orchestrator.js — extracted
+    🔲 ui/admin-panel.js   — TODO: extract from ITSM_Ticket_Intelligence.html
+    🔲 ui/render-review.js — TODO: extract from ITSM_Ticket_Intelligence.html
+    🔲 ui/render-sm.js     — TODO: extract from ITSM_Ticket_Intelligence.html
+    🔲 ui/render-ea.js     — TODO: extract from ITSM_Ticket_Intelligence.html
+    🔲 ui/render-helpers.js — TODO: extract from ITSM_Ticket_Intelligence.html
+  -->
+
+  <!-- Bootstrap module (wires DOM events + initializes skill registry) -->
+  <script src="core/app.js"></script>
+
+</body>
+</html>

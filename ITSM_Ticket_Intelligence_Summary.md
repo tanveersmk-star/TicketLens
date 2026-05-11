@@ -5,7 +5,6 @@ A self-contained single-page HTML application for analyzing OmniTracker ITSM tic
 ---
 
 ## Core Workflow
-
 1. User uploads an OmniTracker **PDF export** (drag & drop or file picker)
 2. **pdf.js** extracts text client-side — nothing is stored or sent to a server
 3. AI does a **pre-analysis** to identify human actors and suggest their roles listed in as per config.cs
