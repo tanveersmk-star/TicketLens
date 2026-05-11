@@ -1,8 +1,4 @@
 {
-  "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": false }
-  ],
-  "rewrites": [
-    { "source": "/", "destination": "/ITSM_Ticket_Intelligence.html" }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
