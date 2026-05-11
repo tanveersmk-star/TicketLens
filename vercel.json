@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/ITSM_Ticket_Intelligence.html" }
+  ]
+}

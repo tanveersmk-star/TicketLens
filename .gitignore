@@ -1,11 +1,19 @@
-.DS_Store
-Thumbs.db
-*.log
-node_modules/
-dist/
-build/
-.env
-.env.*
+# PDF exports — may contain PII / ticket data
 *.pdf
-*.key
-*.pem
+data/
+
+# Python helper scripts (dev-only)
+*.py
+fix*.py
+patch*.py
+_check*.py
+__test*.js
+temp*.js
+test_run.js
+
+# Dev scratch files
+Notes.txt
+TokenOptimizationPlan
+
+# Node
+node_modules/
