@@ -61,7 +61,30 @@ window.ADMIN_CONFIG = {
   },
 
   // ── AI Models ────────────────────────────────────────────────────────────
-  // null = use models from config.js + localStorage
-  // Set to an array to override: [{ id, label, modelId, url, apiKey, ... }]
-  models: null
+  // Pre-configured model list shown on first load (no localStorage required).
+  // Users add their API key via Admin → AI Models → Edit.
+  models: [
+    {
+      "id": "anthropic_claude",
+      "label": "Claude (Anthropic)",
+      "modelId": "claude-sonnet-4-6",
+      "url": "https://api.anthropic.com/v1/messages",
+      "apiKey": "",
+      "iconText": "An",
+      "iconBg": "linear-gradient(135deg,#d97706,#b45309)",
+      "enabled": true,
+      "isDefault": true
+    },
+    {
+      "id": "openai",
+      "label": "OpenAI",
+      "modelId": "gpt-4o-mini",
+      "url": "https://api.openai.com/v1/chat/completions",
+      "apiKey": "",
+      "iconText": "AI",
+      "iconBg": "linear-gradient(135deg,#00a67e,#007a5e)",
+      "enabled": true,
+      "isDefault": false
+    }
+  ]
 };
