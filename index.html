@@ -6805,7 +6805,7 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
                ${s.escalations_or_concerns ? `<div style="margin-bottom:8px;color:#9b2318;padding:8px;background:var(--danger-bg);border-left:4px solid var(--danger);border-radius:4px;"><strong>Escalations/Concerns:</strong> ${esc(s.escalations_or_concerns)}</div>` : ''}
                ${s.reasoning ? `<div style="margin-bottom:8px;color:var(--text);padding:8px;background:#f3f6f7;border-left:4px solid var(--primary);border-radius:4px;"><strong>Reasoning:</strong> ${esc(s.reasoning)}</div>` : ''}
                ${s.key_comment_references ? `<div style="margin-bottom:8px;color:var(--text);padding:8px;background:#fbf1f0;border-left:4px solid var(--danger);border-radius:4px;"><strong>Key Comment Reference:</strong> ${esc(s.key_comment_references)}</div>` : ''}
-               ${s.resolution_team_response ? `<div style="margin-bottom:8px;color:var(--info);"><strong>Team Response:</strong> ${esc(s.resolution_team_response)}</div>` : ''}
+               ${s.resolution_team_response && !/recovered from pdf|comment recovered|missing from AI timeline/i.test(s.resolution_team_response) ? `<div style="margin-bottom:8px;color:var(--info);"><strong>Team Response:</strong> ${esc(s.resolution_team_response)}</div>` : ''}
                ${s.resolution_notes ? `<div style="margin-bottom:8px;color:var(--success);"><strong>Resolution Notes:</strong> ${esc(s.resolution_notes)}</div>` : ''}
                ${s.closure_notes ? `<div style="margin-bottom:0;"><strong>Closure Notes:</strong> ${esc(s.closure_notes)}</div>` : ''}
             </div>
