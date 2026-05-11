@@ -6652,8 +6652,7 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
 
       // 5. Mermaid Sequence Diagram
       if (typeof reviewTranslations !== 'undefined' && reviewTranslations && reviewTranslations.timeline && reviewTranslations.timeline.length > 0) {
-        // Per-diagram theme for clean teal actor boxes
-        let mmd = `%%{init:{'theme':'base','themeVariables':{'actorBkg':'#e6f7f7','actorBorder':'#0d9488','actorTextColor':'#134e4a','actorLineColor':'#94a3b8','signalColor':'#1f2937','signalTextColor':'#1f2937','activationBkgColor':'#ccfbf1','activationBorderColor':'#0d9488','sequenceNumberColor':'#ffffff','fontFamily':'Inter,system-ui,sans-serif'}}}%%\nsequenceDiagram\n`;
+        let mmd = "sequenceDiagram\n";
         mmd += "  autonumber\n";
 
         // Readable date helper — "DD.MM.YYYY HH:MM:SS" → "23 Sep · 11:55"
