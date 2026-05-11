@@ -12,7 +12,7 @@
   <script src="config.js"></script>
   <script src="admin-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script>mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { primaryColor: '#f4f5f7', primaryTextColor: '#1a1a2e', primaryBorderColor: '#009999', lineType: 'basis' } });</script>
+  <script>mermaid.initialize({ startOnLoad: false, theme: 'base', themeVariables: { primaryColor: '#e6f7f7', primaryTextColor: '#1a1a2e', primaryBorderColor: '#009999', lineColor: '#94a3b8', secondaryColor: '#f1f5f9', actorBkg: '#e6f7f7', actorBorder: '#0d9488', actorTextColor: '#134e4a', actorLineColor: '#94a3b8', signalColor: '#1f2937', signalTextColor: '#1f2937', activationBkgColor: '#ccfbf1', activationBorderColor: '#0d9488', loopTextColor: '#6b7280', noteBkgColor: '#fffbeb', noteBorderColor: '#f59e0b', noteTextColor: '#92400e', sequenceNumberColor: '#ffffff', fontFamily: 'Inter,system-ui,sans-serif' } });</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -214,60 +214,121 @@
       color: var(--primary-dark);
     }
 
-    /* ── Tabs ── */
+    /* ── Tabs — card-style navigation ── */
     .tab-bar {
       display: flex;
-      gap: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      margin-bottom: 20px;
-      overflow: hidden;
+      gap: 10px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      margin-bottom: 24px;
+      overflow: visible;
+      position: relative;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 13px 16px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: none;
-      background: transparent;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-bottom: 2px solid transparent;
+      justify-content: flex-start;
+      gap: 12px;
+      border-radius: 14px;
       position: relative;
+      text-align: left;
+      border-top: 3px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
     }
 
-    .tab-btn:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 20%;
-      bottom: 20%;
-      width: 1px;
-      background: var(--border);
+    .tab-btn:not(:last-child)::after { display: none; }
+
+    .tab-btn .tab-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      opacity: 0.40;
+      transition: opacity 0.22s ease, color 0.22s ease;
+    }
+
+    .tab-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+    }
+
+    .tab-label-main {
+      font-size: 0.87rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: inherit;
+    }
+
+    .tab-label-sub {
+      font-size: 0.69rem;
+      font-weight: 400;
+      color: var(--text-light);
+      line-height: 1.2;
+      letter-spacing: 0.01em;
     }
 
     .tab-btn:hover {
-      color: var(--text);
-      background: var(--bg);
-    }
-
-    .tab-btn.active {
-      background: var(--surface);
+      border-color: rgba(0,153,153,0.45);
+      border-top-color: rgba(0,153,153,0.45);
       color: var(--primary-dark);
-      border-bottom-color: var(--primary);
-      font-weight: 700;
+      background: linear-gradient(160deg,#f0fdfa 0%,var(--surface) 100%);
+      box-shadow: 0 4px 16px rgba(0,153,153,0.10);
+      transform: translateY(-2px);
+    }
+    .tab-btn:hover .tab-icon { opacity: 0.75; }
+
+    /* Review tab (teal — default primary) */
+    .tab-btn[data-tab="review"].active {
+      color: var(--primary-dark);
+      background: linear-gradient(160deg,#e6f7f7 0%,#f0fdfa 100%);
+      border-color: var(--primary);
+      border-top-color: var(--primary);
+      box-shadow: 0 6px 20px rgba(0,153,153,0.16);
+    }
+    .tab-btn[data-tab="review"].active .tab-icon { opacity: 1; color: var(--primary); }
+
+    /* SM tab (purple) */
+    .tab-btn[data-tab="sm"].active {
+      color: #5b21b6;
+      background: linear-gradient(160deg,#f5f3ff 0%,#faf5ff 100%);
+      border-color: #7c3aed;
+      border-top-color: #7c3aed;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.13);
+    }
+    .tab-btn[data-tab="sm"].active .tab-icon { opacity: 1; color: #7c3aed; }
+    .tab-btn[data-tab="sm"]:hover {
+      border-color: rgba(124,58,237,0.4);
+      border-top-color: rgba(124,58,237,0.4);
+      color: #5b21b6;
+      background: linear-gradient(160deg,#f5f3ff 0%,#faf5ff 100%);
+      box-shadow: 0 4px 16px rgba(124,58,237,0.10);
     }
 
-    .tab-btn .tab-icon {
-      width: 17px;
-      height: 17px;
+    /* Arch tab (amber) */
+    .tab-btn[data-tab="arch"].active {
+      color: #92400e;
+      background: linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);
+      border-color: #d97706;
+      border-top-color: #d97706;
+      box-shadow: 0 6px 20px rgba(217,119,6,0.13);
+    }
+    .tab-btn[data-tab="arch"].active .tab-icon { opacity: 1; color: #d97706; }
+    .tab-btn[data-tab="arch"]:hover {
+      border-color: rgba(217,119,6,0.4);
+      border-top-color: rgba(217,119,6,0.4);
+      color: #92400e;
+      background: linear-gradient(160deg,#fffbeb 0%,#fef3c7 100%);
+      box-shadow: 0 4px 16px rgba(217,119,6,0.10);
     }
 
     .tab-content {
@@ -1009,8 +1070,13 @@
 
       .tab-btn {
         font-size: 0.76rem;
-        padding: 10px 8px;
+        padding: 10px 10px;
+        gap: 8px;
+        border-radius: 10px;
       }
+      .tab-label-sub { display: none; }
+      .tab-label-main { font-size: 0.76rem; }
+      .tab-btn .tab-icon { width: 16px; height: 16px; }
 
       .container {
         padding: 16px 12px 40px;
@@ -1058,34 +1124,18 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Sliding tab underline indicator ── */
+    /* ── Tab indicator hidden (card-style active border replaces it) ── */
     .tab-bar { position: relative; }
-
-    .tab-indicator {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      height: 2px;
-      width: 0;
-      background: var(--primary);
-      border-radius: 2px 2px 0 0;
-      transition:
-        left  0.38s cubic-bezier(0.34, 1.15, 0.64, 1),
-        width 0.38s cubic-bezier(0.34, 1.15, 0.64, 1);
-      pointer-events: none;
-      z-index: 2;
-    }
-
-    /* Remove static border-bottom on active tab — indicator replaces it */
-    .tab-btn.active {
-      border-bottom-color: transparent !important;
-    }
+    .tab-indicator { display: none; }
 
     /* Refined tab button transition */
     .tab-btn {
       transition:
         color      0.22s cubic-bezier(0.2, 0, 0, 1),
-        background 0.22s cubic-bezier(0.2, 0, 0, 1) !important;
+        background 0.22s cubic-bezier(0.2, 0, 0, 1),
+        border-color 0.22s cubic-bezier(0.2, 0, 0, 1),
+        box-shadow 0.22s cubic-bezier(0.2, 0, 0, 1),
+        transform  0.22s cubic-bezier(0.2, 0, 0, 1) !important;
     }
 
     /* ── Card hover lift ── */
@@ -1176,13 +1226,13 @@
       100% { box-shadow: 0 0 0 0   rgba(0, 153, 153, 0); }
     }
 
-    /* ── Tab bar hover shimmer ── */
-    .tab-btn:hover {
-      background: linear-gradient(
-        180deg,
-        var(--bg) 0%,
-        rgba(0, 153, 153, 0.04) 100%
-      );
+    /* ── Tab bar hover: card lift (defined per data-tab above; this is the fallback) ── */
+    .tab-btn[data-tab="review"]:hover {
+      border-color: rgba(0,153,153,0.45);
+      border-top-color: rgba(0,153,153,0.45);
+      color: var(--primary-dark);
+      background: linear-gradient(160deg,#f0fdfa 0%,var(--surface) 100%);
+      box-shadow: 0 4px 16px rgba(0,153,153,0.10);
     }
 
     /* ── Timeline Table ── */
@@ -3064,28 +3114,35 @@
     <!-- Tabs -->
     <div id="results-area" style="display:none;">
       <div class="tab-bar">
-        <div class="tab-indicator"></div>
         <button class="tab-btn active" data-tab="review" onclick="switchTab('review')">
           <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          Ticket Insights
+          <div class="tab-label">
+            <span class="tab-label-main">Extracted Content Review</span>
+            <span class="tab-label-sub">Timeline · Communications · Audit Trail</span>
+          </div>
         </button>
         <button class="tab-btn" data-tab="sm" onclick="switchTab('sm')">
           <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
           </svg>
-          IT Service Manager
+          <div class="tab-label">
+            <span class="tab-label-main">Service Performance &amp; Experience</span>
+            <span class="tab-label-sub">CSAT · Sentiment · Improvement Actions</span>
+          </div>
         </button>
         <button class="tab-btn" data-tab="arch" onclick="switchTab('arch')">
           <svg class="tab-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <circle cx="12" cy="12" r="3" />
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
           </svg>
-          Enterprise Architect / SME
+          <div class="tab-label">
+            <span class="tab-label-main">Root Cause &amp; Architecture Insights</span>
+            <span class="tab-label-sub">Technical Analysis · Systems · Patterns</span>
+          </div>
         </button>
       </div>
 
@@ -5205,7 +5262,14 @@ ${activeMappingString}
         renderSMTab(smData);
         setTimeout(async () => {
           if (typeof mermaid !== 'undefined') {
-            try { await mermaid.run({ querySelector: '.mermaid' }); } catch (err) { console.log("Mermaid parsing err:", err); }
+            try {
+              await mermaid.run({ querySelector: '.mermaid' });
+              // Round all actor/box rect corners in the rendered SVG
+              document.querySelectorAll('.mermaid svg rect').forEach(r => {
+                const rx = r.getAttribute('rx');
+                if (!rx || rx === '0') { r.setAttribute('rx', '8'); r.setAttribute('ry', '8'); }
+              });
+            } catch (err) { console.log('Mermaid err:', err); }
           }
         }, 300);
         renderReviewTab(pdfText, pdfPages, reviewTranslations);
@@ -6588,8 +6652,26 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
 
       // 5. Mermaid Sequence Diagram
       if (typeof reviewTranslations !== 'undefined' && reviewTranslations && reviewTranslations.timeline && reviewTranslations.timeline.length > 0) {
-        let mmd = "sequenceDiagram\n";
+        // Per-diagram theme for clean teal actor boxes
+        let mmd = `%%{init:{'theme':'base','themeVariables':{'actorBkg':'#e6f7f7','actorBorder':'#0d9488','actorTextColor':'#134e4a','actorLineColor':'#94a3b8','signalColor':'#1f2937','signalTextColor':'#1f2937','activationBkgColor':'#ccfbf1','activationBorderColor':'#0d9488','sequenceNumberColor':'#ffffff','fontFamily':'Inter,system-ui,sans-serif'}}}%%\nsequenceDiagram\n`;
         mmd += "  autonumber\n";
+
+        // Readable date helper — "DD.MM.YYYY HH:MM:SS" → "23 Sep · 11:55"
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const fmtSeqDate = (d, t) => {
+          if (!d) return (t || '').slice(0, 5);
+          const p = (d || '').split('.');
+          if (p.length === 3) {
+            const day = parseInt(p[0], 10);
+            const mon = MONTHS[parseInt(p[1], 10) - 1] || p[1];
+            const time = (t || '').slice(0, 5);
+            return time ? `${day} ${mon} - ${time}` : `${day} ${mon}`;
+          }
+          return `${d.replace(/\./g,'-')} ${(t||'').slice(0,5)}`.trim();
+        };
+
+        // Title-case event type: "comment_added" → "Comment Added"
+        const fmtType = s => String(s||'').split('_').map(w => w ? w[0].toUpperCase()+w.slice(1) : '').join(' ');
 
         let participants = new Set();
         let flowSteps = "";
@@ -6610,39 +6692,43 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
           addParticipant(reviewTranslations.incident.affected_person);
         }
 
-        reviewTranslations.timeline.forEach((ev, i) => {
+        reviewTranslations.timeline.forEach((ev) => {
           if (ev.event_type === 'no_action') return;
 
-          // Clean names to be valid mermaid participants (alphanumeric only)
           const actor = addParticipant(ev.actor || 'System');
           const safeActorKey = actor.key;
 
-          let actionType = ev.event_type.replace(/_/g, ' ');
-          let safeMsg = `${actionType}\n${ev.date || ''} ${ev.time || ''}`.trim();
-          safeMsg = safeMsg.replace(/[^a-zA-Z0-9 :\n\/\-]/g, ''); // strip weird chars that break mermaid
+          const actionLabel = fmtType(ev.event_type);
+          const dateStr = fmtSeqDate(ev.date, ev.time);
+          let safeMsg = (dateStr ? `${actionLabel} - ${dateStr}` : actionLabel)
+            .replace(/[^a-zA-Z0-9 :\-]/g, '');
 
-
-          // Generate sequence step. Assume System -> Actor if actor is present, or just Actor to System
           if (ev.sentiment_flag && String(ev.sentiment_flag) !== 'null') {
-            flowSteps += `  rect rgb(255, 230, 230)\n`;
-            flowSteps += `  ${safeActorKey}->>System: 🚨 [${ev.sentiment_flag.toUpperCase()}] ${safeMsg.replace(/\n/g, ' ')}\n`;
+            const flag = String(ev.sentiment_flag).toUpperCase();
+            flowSteps += `  rect rgb(255,235,235)\n`;
+            flowSteps += `  ${safeActorKey}->>${safeActorKey}: [${flag}] ${safeMsg}\n`;
+            flowSteps += `  ${safeActorKey}->>System: [${flag}] ${safeMsg}\n`;
             flowSteps += `  end\n`;
-          } else if (actionType.includes("resolution") || actionType.includes("root cause")) {
-            flowSteps += `  rect rgb(230, 255, 230)\n`;
-            flowSteps += `  ${safeActorKey}->>System: ✅ ${safeMsg.replace(/\n/g, ' ')}\n`;
+          } else if (/resolution|root cause|resolved|closed/i.test(ev.event_type)) {
+            flowSteps += `  rect rgb(236,253,245)\n`;
+            flowSteps += `  System-->>${safeActorKey}: ${safeMsg}\n`;
+            flowSteps += `  end\n`;
+          } else if (/escalat/i.test(ev.event_type)) {
+            flowSteps += `  rect rgb(255,251,235)\n`;
+            flowSteps += `  ${safeActorKey}->>System: ${safeMsg}\n`;
             flowSteps += `  end\n`;
           } else {
-            flowSteps += `  ${safeActorKey}->>System: ${safeMsg.replace(/\n/g, ' ')}\n`;
+            flowSteps += `  ${safeActorKey}->>System: ${safeMsg}\n`;
           }
         });
 
-        // Assemble Diagram
-        participants.add(`participant System as OmniTracker System`);
+        // Assemble
+        participants.add(`participant System as OmniTracker`);
         mmd += Array.from(participants).join("\n") + "\n";
         mmd += flowSteps;
 
-        const mmdHtml = `<div class="seq-diagram-wrap"><div class="mermaid" style="display:flex; justify-content:center; padding:20px; overflow-x:auto;">${mmd}</div></div>`;
-        html += makeCard('📊 Event Sequence Flowchart', mmdHtml);
+        const mmdHtml = `<div class="seq-diagram-wrap"><div class="mermaid" style="min-height:520px;display:flex;align-items:flex-start;justify-content:center;padding:28px 20px;overflow-x:auto;background:linear-gradient(180deg,#f8fffe 0%,#fff 100%);border-radius:10px;">${mmd}</div></div>`;
+        html += makeCard('📊 Event Sequence Diagram', mmdHtml);
       }
 
       tab.innerHTML = html;
