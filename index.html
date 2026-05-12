@@ -3074,6 +3074,131 @@
       color: var(--text-muted);
       min-width: 50px;
     }
+
+    /* ── Attachment Panel ── */
+    #attachment-panel {
+      margin-top: 18px;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    #attachment-panel.attach-dragover { border-color: var(--primary); background: var(--teal-bg); }
+    .attach-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .attach-header-left { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.88rem; color: var(--primary-dark); }
+    .attach-header-right { font-size: 0.78rem; color: var(--text-muted); }
+    .attach-body { padding: 12px 14px; }
+    .attach-drop-row {
+      display: flex; gap: 10px; margin-bottom: 10px;
+    }
+    .attach-zone {
+      flex: 1; border: 1.5px dashed var(--border); border-radius: 6px;
+      padding: 12px 8px; text-align: center; cursor: pointer;
+      font-size: 0.78rem; color: var(--text-secondary);
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .attach-zone:hover { background: var(--teal-bg); border-color: var(--primary); }
+    .attach-zone input[type=file] { display: none; }
+    .attach-zone-icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .attach-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .attach-chip {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 8px 5px 6px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; font-size: 0.78rem; color: var(--text);
+      max-width: 220px;
+    }
+    .attach-chip-thumb {
+      width: 32px; height: 32px; border-radius: 4px;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .attach-chip-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .attach-chip-info { display: flex; flex-direction: column; min-width: 0; }
+    .attach-chip-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    .attach-chip-meta { font-size: 0.72rem; color: var(--text-muted); }
+    .attach-chip-remove {
+      margin-left: auto; flex-shrink: 0;
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 1rem; padding: 0 2px;
+      line-height: 1;
+    }
+    .attach-chip-remove:hover { color: var(--danger); }
+    .attach-token-bar {
+      margin-top: 10px; padding: 8px 10px;
+      background: var(--info-bg); border-left: 3px solid var(--info);
+      border-radius: 4px; font-size: 0.78rem; color: var(--text-secondary);
+      display: none;
+    }
+    .attach-token-bar.visible { display: block; }
+    .attach-warn { color: var(--warning); font-weight: 700; }
+    .attach-err-msg { color: var(--danger); font-size: 0.78rem; margin-top: 6px; }
+
+    /* ── Diagnostics Panel ── */
+    #diagnostics-panel {
+      margin: 18px 0 0 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: none;
+    }
+    #diagnostics-panel.visible { display: block; }
+    .diag-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px; background: var(--surface);
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer; user-select: none;
+    }
+    .diag-header-left { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.88rem; }
+    .diag-header-badges { display: flex; gap: 6px; }
+    .diag-badge {
+      font-size: 0.72rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .diag-badge-ok { background: #dcfce7; color: #15803d; }
+    .diag-badge-warn { background: #fef9c3; color: #a16207; }
+    .diag-badge-fail { background: #fee2e2; color: #dc2626; }
+    .diag-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+    .diag-card {
+      padding: 12px 14px; border-radius: 6px;
+      border: 1px solid var(--border-light); background: var(--bg);
+    }
+    .diag-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .diag-card-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .diag-card-title { font-weight: 700; font-size: 0.88rem; color: var(--primary-dark); }
+    .diag-card-status { margin-left: auto; font-size: 0.75rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .diag-status-ok { background: #dcfce7; color: #15803d; }
+    .diag-status-warn { background: #fef9c3; color: #a16207; }
+    .diag-status-fail { background: #fee2e2; color: #dc2626; }
+    .diag-card-tokens { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; }
+    .diag-card-msg { font-size: 0.82rem; color: var(--text-secondary); }
+    .diag-card-hint { font-size: 0.8rem; color: var(--info); margin-top: 6px; }
+    .diag-card-warn-list { margin-top: 6px; display: flex; flex-direction: column; gap: 4px; }
+    .diag-card-warn-item { font-size: 0.78rem; padding: 4px 8px; background: #fef9c3; border-left: 3px solid var(--warning); border-radius: 3px; color: #713f12; }
+    .diag-raw-toggle { font-size: 0.75rem; color: var(--primary); cursor: pointer; background: none; border: none; padding: 0; margin-top: 6px; text-decoration: underline; }
+    .diag-raw-block { display: none; margin-top: 6px; padding: 8px; background: #1e1e2e; color: #cdd6f4; font-family: monospace; font-size: 0.72rem; border-radius: 4px; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow-y: auto; }
+    .diag-raw-block.visible { display: block; }
+    .diag-copy-btn { font-size: 0.72rem; padding: 2px 8px; margin-top: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); cursor: pointer; color: var(--text-secondary); }
+    .diag-copy-btn:hover { background: var(--teal-bg); }
+    .tab-fail-card {
+      margin: 24px auto; max-width: 480px; padding: 24px 28px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; text-align: center;
+    }
+    .tab-fail-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .tab-fail-type { font-weight: 700; font-size: 1rem; color: var(--primary-dark); margin-bottom: 8px; }
+    .tab-fail-msg { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5; }
+    .tab-fail-hint { font-size: 0.82rem; color: var(--info); margin-bottom: 14px; }
+    .tab-fail-link { display: inline-block; font-size: 0.82rem; color: var(--primary); text-decoration: underline; cursor: pointer; }
   </style>
 </head>
 
@@ -3188,6 +3313,35 @@
         analysis.
       </p>
       <div id="role-mapping-list"></div>
+
+      <!-- Attachment Panel -->
+      <div id="attachment-panel">
+        <div class="attach-header" onclick="toggleAttachPanel()">
+          <div class="attach-header-left">
+            <span>📎</span>
+            <span>Attach Supporting Files <span style="font-weight:400;color:var(--text-muted);">(optional)</span></span>
+          </div>
+          <div class="attach-header-right" id="attach-header-summary">Images &amp; logs · analysed by AI alongside ticket</div>
+        </div>
+        <div class="attach-body" id="attach-body" style="display:none;">
+          <div class="attach-drop-row">
+            <label class="attach-zone" id="attach-zone-img" title="jpg, png, gif, webp — max 3 files">
+              <input type="file" id="attach-input-img" accept="image/jpeg,image/png,image/gif,image/webp" multiple>
+              <span class="attach-zone-icon">🖼️</span>
+              <strong>Images</strong><br>jpg · png · gif · webp<br><span style="color:var(--text-muted);">max 3 · 800×800px resized</span>
+            </label>
+            <label class="attach-zone" id="attach-zone-log" title="txt, log, csv, json — max 2 files">
+              <input type="file" id="attach-input-log" accept=".txt,.log,.csv,.json,.xml" multiple>
+              <span class="attach-zone-icon">📄</span>
+              <strong>Logs / Text</strong><br>txt · log · csv · json<br><span style="color:var(--text-muted);">max 2 · truncated at 5 000 chars</span>
+            </label>
+          </div>
+          <div class="attach-chips" id="attach-chips"></div>
+          <div class="attach-token-bar" id="attach-token-bar"></div>
+          <div class="attach-err-msg" id="attach-err-msg"></div>
+        </div>
+      </div>
+
       <button class="btn-run" id="btn-run-analysis" onclick="runFullAnalysis()">▶ Run Full Analysis</button>
     </div>
 
@@ -3318,6 +3472,21 @@
         </div>
       </div>
     </div>
+
+    <!-- ─── Diagnostics Panel ─── -->
+    <div id="diagnostics-panel">
+      <div class="diag-header" onclick="toggleDiagPanel()">
+        <div class="diag-header-left">
+          <span>🔍</span>
+          <span>Analysis Diagnostics</span>
+          <div class="diag-header-badges" id="diag-header-badges"></div>
+        </div>
+        <span style="font-size:0.78rem;color:var(--text-muted);" id="diag-toggle-hint">▾ expand</span>
+      </div>
+      <div class="diag-body" id="diag-body" style="display:none;"></div>
+    </div>
+
+  </div>
   </div>
 
 
@@ -3867,6 +4036,7 @@ Every finding must have: evidence (specific data), impact (service/cost effect),
     // Initialize state on first boot
     window.addEventListener('DOMContentLoaded', () => {
       initAdminState();
+      initAttachmentInputs();
     });
 
     const LS_KEY = 'ITSM_MODELS_CONFIG';
@@ -4609,6 +4779,7 @@ Every finding must have: evidence (specific data), impact (service/cost effect),
       pdfText = ""; pdfPages = []; smData = null; archData = null;
       reviewTranslations = null; currentFileName = ""; analysisComplete = false;
       activeMappingString = ""; extractedUsers = [];
+      clearAttachments();
       elFileStatus.innerHTML = "";
       elResults.style.display = 'none';
       elProgress.style.display = 'none';
@@ -4903,6 +5074,207 @@ Every finding must have: evidence (specific data), impact (service/cost effect),
       if (/\b(resolver|resolved|2nd\s*level|3rd\s*level|engineer|developer|admin|technician|ops)\b/.test(ctx)) return 'Support Team';
       if (/\bdi\s+it\b/.test(orgUnit)) return 'Support Team';
       return 'Support Team';
+    }
+
+    // ─── Attachment Store ───────────────────────────────────────────────────
+    const attachmentStore = { images: [], logs: [] };
+    const ATTACH_MAX_IMAGES = 3;
+    const ATTACH_MAX_LOGS   = 2;
+    const ATTACH_IMG_PX     = 800;   // max side length after resize
+    const ATTACH_IMG_Q      = 0.75;  // JPEG quality
+    const ATTACH_IMG_MAX_KB = 600;
+    const ATTACH_LOG_CHARS  = 5000;
+    const ATTACH_TOK_PER_IMG = 1800; // rough estimate per image
+    const ATTACH_TOK_PER_LOG = 1300; // rough estimate per 5 000-char log
+
+    function isVisionCapable(modelId) {
+      return /claude-|gpt-4o|gpt-4-vision|gemini/i.test(modelId || '');
+    }
+
+    function toggleAttachPanel() {
+      const body = $('attach-body');
+      const hint = $('attach-header-summary');
+      const open = body.style.display !== 'none';
+      body.style.display = open ? 'none' : 'block';
+      hint.textContent = open ? 'Images & logs · analysed by AI alongside ticket' : '▲ collapse';
+    }
+
+    function toggleDiagPanel() {
+      const body = $('diag-body');
+      const hint = $('diag-toggle-hint');
+      const open = body.style.display !== 'none';
+      body.style.display = open ? 'none' : 'block';
+      hint.textContent = open ? '▾ expand' : '▴ collapse';
+    }
+
+    async function preprocessImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width, h = img.height;
+            const max = ATTACH_IMG_PX;
+            if (w > max || h > max) {
+              if (w > h) { h = Math.round(h * max / w); w = max; }
+              else       { w = Math.round(w * max / h); h = max; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', ATTACH_IMG_Q);
+            const sizeKB = Math.round(dataUrl.length * 0.75 / 1024);
+            if (sizeKB > ATTACH_IMG_MAX_KB * 1.1) {
+              reject(new Error(`"${file.name}" is still ${sizeKB} KB after resize — please use a smaller image.`));
+            } else {
+              resolve({ dataUrl, name: file.name, sizeKB, tokenEst: ATTACH_TOK_PER_IMG });
+            }
+          };
+          img.onerror = () => reject(new Error(`Could not read image: ${file.name}`));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error(`File read error: ${file.name}`));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function preprocessLog(file) {
+      return new Promise((resolve, reject) => {
+        if (file.size > 2 * 1024 * 1024) {
+          reject(new Error(`"${file.name}" is too large (max 2 MB for log files).`)); return;
+        }
+        const reader = new FileReader();
+        reader.onload = e => {
+          let text = e.target.result || '';
+          let truncated = false;
+          if (text.length > ATTACH_LOG_CHARS) { text = text.slice(0, ATTACH_LOG_CHARS) + '\n... [truncated]'; truncated = true; }
+          resolve({ text, name: file.name, sizeKB: Math.round(file.size / 1024), truncated, tokenEst: ATTACH_TOK_PER_LOG });
+        };
+        reader.onerror = () => reject(new Error(`File read error: ${file.name}`));
+        reader.readAsText(file);
+      });
+    }
+
+    function attachSetErr(msg) {
+      const el = $('attach-err-msg');
+      if (el) el.textContent = msg || '';
+    }
+
+    function updateAttachUI() {
+      const chips = $('attach-chips');
+      const tokenBar = $('attach-token-bar');
+      const headerSum = $('attach-header-summary');
+      if (!chips) return;
+
+      chips.innerHTML = attachmentStore.images.map((img, i) => `
+        <div class="attach-chip">
+          <img class="attach-chip-thumb" src="${img.dataUrl}" alt="${esc(img.name)}">
+          <div class="attach-chip-info">
+            <span class="attach-chip-name" title="${esc(img.name)}">${esc(img.name)}</span>
+            <span class="attach-chip-meta">${img.sizeKB} KB · ~${img.tokenEst.toLocaleString()} tok</span>
+          </div>
+          <button class="attach-chip-remove" onclick="removeAttachment('img',${i})" title="Remove">×</button>
+        </div>`).join('') +
+      attachmentStore.logs.map((log, i) => `
+        <div class="attach-chip">
+          <span class="attach-chip-icon">📄</span>
+          <div class="attach-chip-info">
+            <span class="attach-chip-name" title="${esc(log.name)}">${esc(log.name)}</span>
+            <span class="attach-chip-meta">${log.sizeKB} KB · ~${log.tokenEst.toLocaleString()} tok${log.truncated ? ' · truncated' : ''}</span>
+          </div>
+          <button class="attach-chip-remove" onclick="removeAttachment('log',${i})" title="Remove">×</button>
+        </div>`).join('');
+
+      const total = attachmentStore.images.reduce((s, f) => s + f.tokenEst, 0)
+                  + attachmentStore.logs.reduce((s, f) => s + f.tokenEst, 0);
+      const count = attachmentStore.images.length + attachmentStore.logs.length;
+
+      if (count > 0 && tokenBar) {
+        const overWarn = total > 8000;
+        tokenBar.className = 'attach-token-bar visible';
+        tokenBar.innerHTML = `📊 Estimated additional tokens: <strong class="${overWarn ? 'attach-warn' : ''}">${total.toLocaleString()}</strong>${overWarn ? ' <span class="attach-warn">— high, may impact cost</span>' : ''}`;
+        if (headerSum) headerSum.textContent = `${count} file${count > 1 ? 's' : ''} attached · ~${total.toLocaleString()} tokens`;
+      } else {
+        if (tokenBar) tokenBar.className = 'attach-token-bar';
+        if (headerSum) headerSum.textContent = 'Images & logs · analysed by AI alongside ticket';
+      }
+    }
+
+    function removeAttachment(type, idx) {
+      if (type === 'img') attachmentStore.images.splice(idx, 1);
+      else                attachmentStore.logs.splice(idx, 1);
+      attachSetErr('');
+      updateAttachUI();
+    }
+
+    function clearAttachments() {
+      attachmentStore.images = [];
+      attachmentStore.logs   = [];
+      attachSetErr('');
+      updateAttachUI();
+    }
+
+    async function handleAttachFiles(files, type) {
+      attachSetErr('');
+      for (const file of Array.from(files)) {
+        try {
+          if (type === 'img') {
+            if (attachmentStore.images.length >= ATTACH_MAX_IMAGES) {
+              attachSetErr(`Max ${ATTACH_MAX_IMAGES} images allowed. Remove one first.`); break;
+            }
+            const result = await preprocessImage(file);
+            attachmentStore.images.push(result);
+          } else {
+            if (attachmentStore.logs.length >= ATTACH_MAX_LOGS) {
+              attachSetErr(`Max ${ATTACH_MAX_LOGS} log files allowed. Remove one first.`); break;
+            }
+            const result = await preprocessLog(file);
+            attachmentStore.logs.push(result);
+          }
+        } catch (err) {
+          attachSetErr(err.message); break;
+        }
+      }
+      updateAttachUI();
+    }
+
+    // Wire up file inputs (deferred until DOM ready, called from init)
+    function initAttachmentInputs() {
+      const imgInput = $('attach-input-img');
+      const logInput = $('attach-input-log');
+      if (imgInput) imgInput.addEventListener('change', e => { handleAttachFiles(e.target.files, 'img'); e.target.value = ''; });
+      if (logInput) logInput.addEventListener('change', e => { handleAttachFiles(e.target.files, 'log'); e.target.value = ''; });
+    }
+
+    // ─── Error Classification ────────────────────────────────────────────────
+    function classifyLLMError(agent, err, rawResponse) {
+      const msg = (err?.message || String(err)).toLowerCase();
+      const raw = (rawResponse || '').toLowerCase();
+      let type = 'unknown', hint = 'Retry the analysis or check the console for details.';
+
+      if (/401|403|unauthorized|invalid.{0,20}key|authentication/i.test(msg))
+        { type = 'auth_error'; hint = 'Check your API key in Configure Models — it may be invalid or expired.'; }
+      else if (/quota|billing|exceeded.*quota|out of credit/i.test(msg))
+        { type = 'quota_exceeded'; hint = 'Your account quota is exhausted — check your billing dashboard.'; }
+      else if (/429|rate.?limit/i.test(msg))
+        { type = 'rate_limit'; hint = 'Rate limit reached — wait 60 seconds then retry.'; }
+      else if (/context.{0,30}length|too many tokens|input.{0,20}too long|maximum context|tokens? exceeded/i.test(msg))
+        { type = 'context_exceeded'; hint = 'The ticket content is too long for this model\'s context window. Try a model with a larger context (e.g. claude-sonnet-4-6) or a smaller PDF.'; }
+      else if (/vision|image|multimodal|does not support.*image/i.test(msg))
+        { type = 'capability_error'; hint = 'This model does not support image analysis. Switch to a vision-capable model or remove image attachments.'; }
+      else if (/content.{0,20}polic|safety|blocked/i.test(msg))
+        { type = 'content_filter'; hint = 'Content was blocked by the model\'s safety filter.'; }
+      else if (/network|failed to fetch|cors|dns|econnrefused/i.test(msg))
+        { type = 'network_error'; hint = 'Network error — check your connection and proxy settings.'; }
+
+      return { agent, type, message: err?.message || String(err), hint, rawStr: rawResponse || '', timestamp: new Date().toLocaleTimeString() };
+    }
+
+    function makeJsonParseError(agent, rawStr) {
+      return { agent, type: 'json_parse_error',
+        message: 'Model returned a response but it could not be parsed as JSON.',
+        hint: 'The raw response is shown below — copy it into a JSON validator to inspect.',
+        rawStr: rawStr || '', timestamp: new Date().toLocaleTimeString() };
     }
 
     async function runFullAnalysis() {
@@ -5223,14 +5595,31 @@ ${activeMappingString}${commManifest}
       const modReviewPrompt = REVIEW_TRANSLATE_PROMPT + mappingInjection;
       const modSmPrompt = SM_SYSTEM_PROMPT + mappingInjection;
 
+      // ── Pre-flight: vision capability warning ──────────────────────────────
+      const pipelineDiags = [];   // accumulates diagnostic records
+      const hasImages = attachmentStore.images.length > 0;
+      if (hasImages && !isVisionCapable(endpointConf.model)) {
+        pipelineDiags.push({ agent: 'attachments', type: 'capability_error',
+          message: `Images were attached but "${endpointConf.model}" does not support vision.`,
+          hint: 'Images were skipped. Switch to claude-sonnet-4-6 or gpt-4o to analyse images. Log files were still included.',
+          rawStr: '', timestamp: new Date().toLocaleTimeString() });
+      }
+
+      // Build attachment objects for Agent 2 and EA
+      const reviewAttachments = { images: isVisionCapable(endpointConf.model) ? attachmentStore.images : [], logs: attachmentStore.logs };
+      const eaAttachments     = { images: [], logs: attachmentStore.logs };  // EA gets logs only
+
       try {
         renderReviewTab(pdfText, pdfPages, null);
         elResults.style.display = 'block';
         switchTab('review');
 
+        // ── Agent 2: Content Reviewer ─────────────────────────────────────────
+        let reviewRaw = '';
         try {
-          const reviewRaw = await callLLM(endpointConf, apiKey, pdfText, modReviewPrompt);
+          reviewRaw = await callLLM(endpointConf, apiKey, pdfText, modReviewPrompt, null, reviewAttachments);
           reviewTranslations = safeParseJSON(reviewRaw);
+          if (!reviewTranslations && reviewRaw) pipelineDiags.push(makeJsonParseError('review', reviewRaw));
           repairMissingCommTimelineEvents(reviewTranslations, pdfText);
           enforcePersistingIssueConcern(reviewTranslations);
           // --- FRONT-END ENFORCEMENT FILTER FOR SENTIMENT ---
@@ -5270,8 +5659,8 @@ ${activeMappingString}${commManifest}
           }
         } catch (e) {
           reviewTranslations = null;
+          pipelineDiags.push(classifyLLMError('review', e, reviewRaw));
         }
-        // Security: scan review/timeline output for shell commands the AI may have echoed
         if (reviewTranslations) {
           const reviewHits = secDeepScan(reviewTranslations);
           if (reviewHits.length > 0) showSecurityWarning(reviewHits, 'AI review analysis output');
@@ -5359,77 +5748,67 @@ ${activeMappingString}
         setStep('sm', 'active');
         setStep('arch', 'active');
 
-        // Run SM and EA in parallel — they are independent
-        // Use enrichedMappingInjection which includes participants from Agent 2
-        const [smRaw, archRaw] = await Promise.all([
+        // ── Agents 3 + 4: SM and EA run in parallel, isolated ────────────────
+        const [smSettled, eaSettled] = await Promise.allSettled([
           callLLM(endpointConf, apiKey, smJson, SM_SYSTEM_PROMPT + enrichedMappingInjection, smUserPrefix),
-          callLLM(endpointConf, apiKey, eaJson, ARCH_SYSTEM_PROMPT, eaUserPrefix)
+          callLLM(endpointConf, apiKey, eaJson, ARCH_SYSTEM_PROMPT, eaUserPrefix, eaAttachments)
         ]);
 
-        smData = safeParseJSON(smRaw);
-
-        // --- FRONT-END ENFORCEMENT FILTER FOR SM TAB --- 
-        // Forcefully wipe service team sentiments that the LLM hallucinates
-        if (smData && smData.sentiment_summary && window.CONFIG && window.CONFIG.role_sentiment_config) {
-          const cfg = window.CONFIG.role_sentiment_config;
-          const actorMapSM = parseActorRoleMap();
-
-          const isSupportTeamRole = (roleText, actorText, impactText) => {
-            const combined = `${roleText || ''} ${actorText || ''} ${impactText || ''}`.toLowerCase();
-            return /\b(support\s+team|service\s+desk|resolver|agent|internal|ops\s+team|status\s+update|requested|acknowledged|confirmed|asked|continued|closed|reassigned|transferred)\b/.test(combined);
-          };
-
-          smData.sentiment_summary = smData.sentiment_summary.filter(s => {
-            const raisedByMatch = resolveMappedActor(s.raised_by, actorMapSM);
-            const roleFieldMatch = resolveMappedActor(s.role, actorMapSM);
-            const raisedByRole = raisedByMatch?.role || null;
-            const roleFieldRole = roleFieldMatch?.role || null;
-            const effectiveRole = raisedByRole || roleFieldRole || s.role;
-            if (raisedByMatch) {
-              s.raised_by = raisedByMatch.name;
-              s.role = raisedByMatch.role;
-            }
-
-            // Check config: if role is explicitly enabled (true), keep it
-            let exactMatch = Object.keys(cfg).find(r =>
-              normalizeActorKey(r).includes(normalizeActorKey(effectiveRole || '')) || normalizeActorKey(effectiveRole || '').includes(normalizeActorKey(r))
-            );
-
-            if (exactMatch && cfg[exactMatch] === true) {
-              return true;
-            }
-
-            // Check if this looks like support team activity (which should be ignored)
-            if (isSupportTeamRole(s.role, s.raised_by, s.business_impact)) {
+        // ── SM result ─────────────────────────────────────────────────────────
+        let smRaw = '';
+        if (smSettled.status === 'fulfilled') {
+          smRaw = smSettled.value;
+          smData = safeParseJSON(smRaw);
+          if (!smData && smRaw) pipelineDiags.push(makeJsonParseError('sm', smRaw));
+          // Front-end sentiment enforcement
+          if (smData && smData.sentiment_summary && window.CONFIG && window.CONFIG.role_sentiment_config) {
+            const cfg = window.CONFIG.role_sentiment_config;
+            const actorMapSM = parseActorRoleMap();
+            const isSupportTeamRole = (roleText, actorText, impactText) => {
+              const combined = `${roleText || ''} ${actorText || ''} ${impactText || ''}`.toLowerCase();
+              return /\b(support\s+team|service\s+desk|resolver|agent|internal|ops\s+team|status\s+update|requested|acknowledged|confirmed|asked|continued|closed|reassigned|transferred)\b/.test(combined);
+            };
+            smData.sentiment_summary = smData.sentiment_summary.filter(s => {
+              const raisedByMatch = resolveMappedActor(s.raised_by, actorMapSM);
+              const roleFieldMatch = resolveMappedActor(s.role, actorMapSM);
+              const raisedByRole = raisedByMatch?.role || null;
+              const roleFieldRole = roleFieldMatch?.role || null;
+              const effectiveRole = raisedByRole || roleFieldRole || s.role;
+              if (raisedByMatch) { s.raised_by = raisedByMatch.name; s.role = raisedByMatch.role; }
+              const exactMatch = Object.keys(cfg).find(r =>
+                normalizeActorKey(r).includes(normalizeActorKey(effectiveRole || '')) || normalizeActorKey(effectiveRole || '').includes(normalizeActorKey(r)));
+              if (exactMatch && cfg[exactMatch] === true) return true;
+              if (isSupportTeamRole(s.role, s.raised_by, s.business_impact)) return false;
               return false;
-            }
-
-            // If no explicit allow and not caught as support team, reject
-            return false;
-          });
-        }
-        setStep('sm', 'done');
-
-        // Security: scan SM output for shell patterns
-        if (smData) {
-          const smHits = secDeepScan(smData);
-          if (smHits.length > 0) showSecurityWarning(smHits, 'AI service manager output');
+            });
+          }
+          if (smData) { const hits = secDeepScan(smData); if (hits.length) showSecurityWarning(hits, 'AI service manager output'); }
+          setStep('sm', 'done');
+        } else {
+          smData = null;
+          pipelineDiags.push(classifyLLMError('sm', smSettled.reason, ''));
+          setStep('sm', 'error');
         }
 
-        archData = safeParseJSON(archRaw);
-        // Security: scan arch output for shell patterns
-        if (archData) {
-          const archHits = secDeepScan(archData);
-          if (archHits.length > 0) showSecurityWarning(archHits, 'AI architecture output');
+        // ── EA result ─────────────────────────────────────────────────────────
+        let eaRaw = '';
+        if (eaSettled.status === 'fulfilled') {
+          eaRaw = eaSettled.value;
+          archData = safeParseJSON(eaRaw);
+          if (!archData && eaRaw) pipelineDiags.push(makeJsonParseError('ea', eaRaw));
+          if (archData) { const hits = secDeepScan(archData); if (hits.length) showSecurityWarning(hits, 'AI architecture output'); }
+          setStep('arch', 'done');
+        } else {
+          archData = null;
+          pipelineDiags.push(classifyLLMError('ea', eaSettled.reason, ''));
+          setStep('arch', 'error');
         }
-        setStep('arch', 'done');
 
-        renderSMTab(smData);
+        renderSMTab(smData, pipelineDiags.find(d => d.agent === 'sm'));
         setTimeout(async () => {
           if (typeof mermaid !== 'undefined') {
             try {
               await mermaid.run({ querySelector: '.mermaid' });
-              // Round all actor/box rect corners in the rendered SVG
               document.querySelectorAll('.mermaid svg rect').forEach(r => {
                 const rx = r.getAttribute('rx');
                 if (!rx || rx === '0') { r.setAttribute('rx', '8'); r.setAttribute('ry', '8'); }
@@ -5438,16 +5817,20 @@ ${activeMappingString}
           }
         }, 300);
         renderReviewTab(pdfText, pdfPages, reviewTranslations);
-        renderArchTab(archData);
+        renderArchTab(archData, pipelineDiags.find(d => d.agent === 'ea'));
         elProgress.style.display = 'none';
 
-        // Mark analysis complete & update toolbar
+        // Show diagnostics if any issues
+        if (pipelineDiags.length > 0) renderDiagnostics(pipelineDiags, attachmentStore);
+
         analysisComplete = true;
         updateReanalyzeToolbar(modelKey);
 
       } catch (err) {
         elProgress.style.display = 'none';
-        showError(err.message);
+        pipelineDiags.push(classifyLLMError('review', err, ''));
+        renderDiagnostics(pipelineDiags, attachmentStore);
+        showError('Analysis failed: ' + err.message);
       }
     }
 
@@ -5457,9 +5840,89 @@ ${activeMappingString}
       if (!el) return;
       el.className = 'step-item' + (state ? ' ' + state : '');
       const spinnerStyle = state === 'active' ? 'inline-block' : 'none';
-      const checkMark = state === 'done' ? '✅ ' : '';
-      const text = el.textContent.replace('✅ ', '').trim();
-      el.innerHTML = `<span class="step-spinner" style="display:${spinnerStyle};"></span>${checkMark}${text}`;
+      const icon = state === 'done' ? '✅ ' : state === 'error' ? '❌ ' : '';
+      const text = el.textContent.replace(/^[✅❌]\s*/, '').trim();
+      el.innerHTML = `<span class="step-spinner" style="display:${spinnerStyle};"></span>${icon}${text}`;
+    }
+
+    function renderDiagnostics(records, attStore) {
+      const panel = $('diagnostics-panel');
+      const body  = $('diag-body');
+      const badges = $('diag-header-badges');
+      if (!panel || !body) return;
+
+      const agentMeta = {
+        review:      { icon: '📋', label: 'Content Review (Agent 2)' },
+        sm:          { icon: '📊', label: 'Service Manager (Agent 3)' },
+        ea:          { icon: '🏗️', label: 'Enterprise Architect (Agent 4)' },
+        attachments: { icon: '📎', label: 'Attachments' }
+      };
+      const typeLabel = { auth_error:'Auth Error', rate_limit:'Rate Limit', quota_exceeded:'Quota Exceeded',
+        context_exceeded:'Context Exceeded', capability_error:'Capability', content_filter:'Content Filter',
+        network_error:'Network Error', empty_response:'Empty Response', json_parse_error:'Parse Error', unknown:'Error' };
+
+      const fails = records.filter(r => r.type !== 'capability_error' || r.agent === 'sm' || r.agent === 'ea');
+      const warns = records.filter(r => r.type === 'capability_error' && r.agent === 'attachments');
+
+      // Header badges
+      const failCount = records.filter(r => ['review','sm','ea'].includes(r.agent) && r.type !== 'json_parse_error').length;
+      const warnCount = records.length - failCount;
+      badges.innerHTML =
+        (failCount ? `<span class="diag-badge diag-badge-fail">${failCount} error${failCount>1?'s':''}</span>` : '') +
+        (warnCount ? `<span class="diag-badge diag-badge-warn">${warnCount} warning${warnCount>1?'s':''}</span>` : '');
+
+      // Per-record cards
+      let html = '';
+      records.forEach((rec, i) => {
+        const meta = agentMeta[rec.agent] || { icon: '⚠️', label: rec.agent };
+        const isErr = ['review','sm','ea'].includes(rec.agent);
+        const isFail = isErr && !['json_parse_error'].includes(rec.type) && rec.agent !== 'attachments';
+        const statusCls = isFail ? 'diag-status-fail' : 'diag-status-warn';
+        const statusTxt = isFail ? 'Failed' : 'Warning';
+        const tl = typeLabel[rec.type] || rec.type;
+        const hasRaw = rec.rawStr && rec.rawStr.length > 0;
+        html += `<div class="diag-card">
+          <div class="diag-card-header">
+            <span class="diag-card-icon">${meta.icon}</span>
+            <span class="diag-card-title">${esc(meta.label)}</span>
+            <span class="diag-card-status ${statusCls}">${statusTxt} · ${esc(tl)}</span>
+          </div>
+          <div class="diag-card-msg">${esc(rec.message)}</div>
+          ${rec.hint ? `<div class="diag-card-hint">💡 ${esc(rec.hint)}</div>` : ''}
+          ${rec.timestamp ? `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">at ${rec.timestamp}</div>` : ''}
+          ${hasRaw ? `
+            <button class="diag-raw-toggle" onclick="this.nextElementSibling.classList.toggle('visible');this.textContent=this.textContent.includes('Show')?'▲ Hide raw response':'▶ Show raw response'">▶ Show raw response</button>
+            <div class="diag-raw-block">${esc(rec.rawStr.slice(0, 2000))}${rec.rawStr.length > 2000 ? '\n... [truncated]' : ''}</div>
+            <button class="diag-copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(rec.rawStr)}).then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='📋 Copy raw',1500)})">📋 Copy raw</button>
+          ` : ''}
+        </div>`;
+      });
+
+      // Attachment summary card
+      if (attStore && (attStore.images.length || attStore.logs.length)) {
+        const skippedImgs = attStore.images.length > 0 && !isVisionCapable((window._lastModelId||''))
+          ? attStore.images.length : 0;
+        const sentImgs  = attStore.images.length - skippedImgs;
+        const sentLogs  = attStore.logs.length;
+        const warns2 = [];
+        if (skippedImgs) warns2.push(`${skippedImgs} image${skippedImgs>1?'s':''} skipped — model not vision-capable`);
+        if (sentImgs)    warns2.push(`${sentImgs} image${sentImgs>1?'s':''} sent to Content Review agent`);
+        if (sentLogs)    warns2.push(`${sentLogs} log file${sentLogs>1?'s':''} sent to Content Review + EA agents`);
+        html += `<div class="diag-card">
+          <div class="diag-card-header">
+            <span class="diag-card-icon">📎</span>
+            <span class="diag-card-title">Attachment Summary</span>
+            <span class="diag-card-status diag-status-ok">Processed</span>
+          </div>
+          <div class="diag-card-warn-list">${warns2.map(w=>`<div class="diag-card-warn-item">${esc(w)}</div>`).join('')}</div>
+        </div>`;
+      }
+
+      body.innerHTML = html;
+      panel.classList.add('visible');
+      body.style.display = 'flex';
+      const toggle = $('diag-toggle-hint');
+      if (toggle) toggle.textContent = '▴ collapse';
     }
 
     // ─── System Prompts ───
@@ -5918,39 +6381,58 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
 
     // ─── LLM Call (OpenAI-compatible + Anthropic native support) ───
     // userMsgPrefix: optional custom prefix for the user message (default: raw PDF framing)
-    async function callLLM(endpointConf, apiKey, text, systemPrompt, userMsgPrefix) {
+    // attachments = { images: [{dataUrl, name}], logs: [{text, name}] } — optional
+    async function callLLM(endpointConf, apiKey, text, systemPrompt, userMsgPrefix, attachments) {
       const safeKey = (apiKey || '').trim();
       const isAnthropic = isAnthropicUrl(endpointConf.url);
       const prefix = userMsgPrefix || 'Analyze this OmniTracker ITSM ticket export and return strict JSON';
-      const userContent = `${prefix}:\n\n${text}`;
+
+      // Append log text to the user message
+      const imgs   = (attachments?.images || []);
+      const logs   = (attachments?.logs   || []);
+      const logAppend = logs.length
+        ? '\n\n---ATTACHED LOG FILES---\n' + logs.map(l => `[${l.name}]\n${l.text}`).join('\n\n---\n')
+        : '';
+      const userText = `${prefix}:\n\n${text}${logAppend}`;
+
+      // Vision check — only inject images if model supports it
+      const visionOk = isVisionCapable(endpointConf.model);
+      const activeImgs = visionOk ? imgs : [];
 
       const headers = { 'Content-Type': 'application/json' };
       let bodyObj;
 
       if (isAnthropic) {
-        // Anthropic Messages API — uses x-api-key, system as top-level param
         headers['x-api-key'] = safeKey;
         headers['anthropic-version'] = '2023-06-01';
         headers['anthropic-dangerous-direct-browser-access'] = 'true';
+
+        // Build content array: text first, then image blocks
+        const contentBlocks = [{ type: 'text', text: userText }];
+        activeImgs.forEach(img => {
+          const b64 = img.dataUrl.replace(/^data:image\/[^;]+;base64,/, '');
+          contentBlocks.push({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } });
+        });
+
         bodyObj = {
-          model: endpointConf.model,
-          temperature: 0.1,
-          max_tokens: 8192,
+          model: endpointConf.model, temperature: 0.1, max_tokens: 8192,
           system: systemPrompt,
-          messages: [
-            { role: 'user', content: userContent }
-          ]
+          messages: [{ role: 'user', content: contentBlocks }]
         };
       } else {
-        // OpenAI-compatible format
         headers['Authorization'] = `Bearer ${safeKey}`;
+
+        // Build content array for OpenAI vision format
+        const contentBlocks = [{ type: 'text', text: userText }];
+        activeImgs.forEach(img => {
+          contentBlocks.push({ type: 'image_url', image_url: { url: img.dataUrl } });
+        });
+
         bodyObj = {
-          model: endpointConf.model,
-          temperature: 0.1,
-          max_tokens: 8192,
+          model: endpointConf.model, temperature: 0.1, max_tokens: 8192,
           messages: [
             { role: 'system', content: systemPrompt },
-            { role: 'user', content: userContent }
+            { role: 'user', content: activeImgs.length ? contentBlocks : userText }
           ]
         };
       }
@@ -6660,9 +7142,17 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
     }
 
     // ─── Render: Service Manager Tab ───
-    function renderSMTab(d) {
+    function renderSMTab(d, errRecord) {
       const tab = $('tab-sm');
       let html = '';
+
+      if (!d) {
+        const typeLabel = errRecord ? errRecord.type.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : 'Unknown Error';
+        const hint = errRecord ? errRecord.hint : 'Check the diagnostics panel below for details.';
+        const msg  = errRecord ? errRecord.message : 'Service Manager analysis did not return a result.';
+        tab.innerHTML = `<div class="tab-fail-card"><div class="tab-fail-icon">⚠️</div><div class="tab-fail-type">${esc(typeLabel)}</div><div class="tab-fail-msg">${esc(msg)}</div><div class="tab-fail-hint">${esc(hint)}</div><a class="tab-fail-link" href="#diagnostics-panel" onclick="document.getElementById('diag-body').style.display='block';document.getElementById('diag-toggle-hint').textContent='▴ collapse';">View Diagnostics ↓</a></div>`;
+        return;
+      }
 
       if (d.service_manager_insights || d.service_manager_reasoning || d.issue_root_driver || d.requestor_satisfaction_indicators || d.response_timeliness_summary || d.service_health_summary) {
         html += makeCard('🧠 Service Manager Snapshot', `
@@ -6923,9 +7413,17 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
     }
 
     // ─── Render: Architecture Tab ───
-    function renderArchTab(d) {
+    function renderArchTab(d, errRecord) {
       const tab = $('tab-arch');
       let html = '';
+
+      if (!d) {
+        const typeLabel = errRecord ? errRecord.type.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()) : 'Unknown Error';
+        const hint = errRecord ? errRecord.hint : 'Check the diagnostics panel below for details.';
+        const msg  = errRecord ? errRecord.message : 'Enterprise Architect analysis did not return a result.';
+        tab.innerHTML = `<div class="tab-fail-card"><div class="tab-fail-icon">⚠️</div><div class="tab-fail-type">${esc(typeLabel)}</div><div class="tab-fail-msg">${esc(msg)}</div><div class="tab-fail-hint">${esc(hint)}</div><a class="tab-fail-link" href="#diagnostics-panel" onclick="document.getElementById('diag-body').style.display='block';document.getElementById('diag-toggle-hint').textContent='▴ collapse';">View Diagnostics ↓</a></div>`;
+        return;
+      }
 
       const sevClass = { 'CRITICAL': 'badge-danger', 'HIGH': 'badge-danger', 'MEDIUM': 'badge-warning', 'LOW': 'badge-success' }[d.severity_assessment] || 'badge-info';
 
