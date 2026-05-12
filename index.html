@@ -5788,10 +5788,12 @@ ANALYSIS FOCUS (Strict rules based on Service Manager requirements):
 5. SERVICE MANAGER VALUE ASSESSMENT: Provide a concise service manager summary that explains why this ticket matters from a business user perspective, what core service quality issues are visible, and what improvements would best reduce repeat friction or improve requestor satisfaction. BASE THIS ONLY ON THE ROLES AND SENTIMENTS FROM THE PROVIDED MAPPING.
 - Include a separate reasoning output that explains the underlying evidence and rationale for each service manager insight.
 6. IMPROVEMENTS: Highlight what can be improved, providing a clear rationale why it is recommended for this specific ticket from the requestor's experience.
-7. TIMELINE SUMMARY: Summarize the sequence of events focusing on: Issue reported by requestor, Escalations or concerns from BUSINESS-SIDE only, Response timing from support, Resolution clarity, and Closure communication. Ensure EVERY event showing business-side frustration, urgency, or concern is specifically highlighted as a RED FLAG.
-- For each timeline item include reasoning that explains why the event is significant for escalation, concern, or service quality risk.
-- Also add a key comment reference pointing to the specific business-side phrase or message that supports the escalation/concern assessment.
-- RESOLVER TECHNICAL MILESTONES: Include resolver COMM block content in resolution_team_response when the COMM contains: (a) root cause identification (e.g. resolver names the specific function, system, or configuration causing the issue), (b) investigation/debug findings (e.g. trace results, test outcomes, environment comparisons), (c) confirmation that the issue persists through testing, or (d) scope clarification (e.g. affects PKI card users but not DWP users). These are service quality milestones that the Service Manager must see to assess resolution depth and communication effectiveness.
+7. TIMELINE SUMMARY: Produce a clean, scannable timeline that a Service Manager can read without opening work notes. Each entry must answer: what action was taken, who performed it, and what the current state or expectation is. Rules:
+- Use ONLY these categories (pick the single best fit per entry): Issue Reported | Investigation Started | Information Requested | User Update | Business Impact Update | Escalation | Vendor Coordination | Resolution Action | Monitoring | Validation Follow Up | Closure Follow Up | Resolved
+- Write 1-2 concise business-readable sentences per entry. No raw work notes, no jargon (e.g. instead of "Checked ST22 dumps" write "Support team analyzed backend system logs to identify application failures").
+- Highlight business impact and urgency where visible (operational delays, finance impact, user frustration, escalation risk).
+- Avoid repetition — do not produce consecutive entries that say "Awaiting update" or "Following up" without adding new context. Merge or skip if no new information.
+- Also produce an executive_summary: a 2-3 sentence overview of the entire ticket (issue raised, key actions taken, current status) for at-a-glance reading.
 
 OUTPUT: STRICT JSON ONLY. 
 NO PREAMBLE. NO POST-TEXT. NO MARKDOWN FENCES (\`\`\`).
@@ -5830,14 +5832,12 @@ NO PREAMBLE. NO POST-TEXT. NO MARKDOWN FENCES (\`\`\`).
             "rationale": "string (why this improves ticket requestor satisfaction)"
     }
         ],
+        "executive_summary": "string — 2-3 sentences: issue raised, key actions taken, current status. Business-readable at-a-glance overview.",
         "timeline_summary": [
           {
-            "time_sequence": "string (e.g. Day 1 - Morning / Date)",
-            "issue_reported": "string (by ticket requestor)",
-            "escalations_or_concerns": "string (REQUIRED: only BUSINESS-SIDE comments; explicitly detail any frustration or urgency as RED FLAGS)",
-            "resolution_team_response": "string (support's action)",
-            "resolution_notes": "string",
-            "closure_notes": "string (how was requestor informed of closure?)"
+            "time_sequence": "string — e.g. 'Day 1 - 22.09.2025'",
+            "category": "string — one of: Issue Reported | Investigation Started | Information Requested | User Update | Business Impact Update | Escalation | Vendor Coordination | Resolution Action | Monitoring | Validation Follow Up | Closure Follow Up | Resolved",
+            "summary": "string — 1-2 concise sentences: what action was taken, who performed it, why it matters, current state. Business-readable, no technical jargon."
     }
         ],
         "response_metrics": {
@@ -6795,19 +6795,41 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
 
       // 4. Timeline Summary
       if (d.timeline_summary && d.timeline_summary.length > 0) {
-        let sumHtml = '<div class="vtl">';
+        const TL_CAT = {
+          'Issue Reported':        { dot: '#0078b4', badge: '#0078b4', bg: '#e8f4fd' },
+          'Investigation Started': { dot: '#4f46e5', badge: '#4f46e5', bg: '#f0f4ff' },
+          'Information Requested': { dot: '#7c3aed', badge: '#7c3aed', bg: '#f5f3ff' },
+          'User Update':           { dot: '#16a34a', badge: '#16a34a', bg: '#f0fdf4' },
+          'Business Impact Update':{ dot: '#ea580c', badge: '#ea580c', bg: '#fff7ed' },
+          'Escalation':            { dot: '#dc2626', badge: '#dc2626', bg: '#fef2f2' },
+          'Vendor Coordination':   { dot: '#ca8a04', badge: '#ca8a04', bg: '#fefce8' },
+          'Resolution Action':     { dot: '#15803d', badge: '#15803d', bg: '#f0fdf4' },
+          'Monitoring':            { dot: '#0284c7', badge: '#0284c7', bg: '#f0f9ff' },
+          'Validation Follow Up':  { dot: '#9333ea', badge: '#9333ea', bg: '#fdf4ff' },
+          'Closure Follow Up':     { dot: '#64748b', badge: '#64748b', bg: '#f8fafc' },
+          'Resolved':              { dot: '#15803d', badge: '#15803d', bg: '#f0fdf4' }
+        };
+        const TL_DEFAULT = { dot: '#94a3b8', badge: '#64748b', bg: '#f8fafc' };
+
+        let sumHtml = '';
+
+        // Executive summary block
+        if (d.executive_summary) {
+          sumHtml += `<div style="margin-bottom:20px;padding:16px 20px;background:#f0f9ff;border-left:4px solid #0284c7;border-radius:6px;">
+            <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#0284c7;margin-bottom:6px;">Executive Summary</div>
+            <div style="font-size:0.95rem;line-height:1.6;color:var(--text);">${esc(d.executive_summary)}</div>
+          </div>`;
+        }
+
+        sumHtml += '<div class="vtl">';
         d.timeline_summary.forEach(s => {
+          const cfg = TL_CAT[s.category] || TL_DEFAULT;
           sumHtml += `<div class="vtl-item">
-            <div class="vtl-dot purple">⧖</div>
-            <div class="vtl-date" style="font-size:0.85rem;color:var(--primary-dark);font-weight:700;">${esc(s.time_sequence)}</div>
-            <div class="vtl-content" style="background:var(--surface);border:1px solid var(--border-light);padding:14px;border-radius:6px;margin-top:8px;box-shadow:var(--shadow-sm);">
-               ${s.issue_reported ? `<div style="margin-bottom:8px;"><strong>Issue Reported:</strong> ${esc(s.issue_reported)}</div>` : ''}
-               ${s.escalations_or_concerns ? `<div style="margin-bottom:8px;color:#9b2318;padding:8px;background:var(--danger-bg);border-left:4px solid var(--danger);border-radius:4px;"><strong>Escalations/Concerns:</strong> ${esc(s.escalations_or_concerns)}</div>` : ''}
-               ${s.reasoning ? `<div style="margin-bottom:8px;color:var(--text);padding:8px;background:#f3f6f7;border-left:4px solid var(--primary);border-radius:4px;"><strong>Reasoning:</strong> ${esc(s.reasoning)}</div>` : ''}
-               ${s.key_comment_references ? `<div style="margin-bottom:8px;color:var(--text);padding:8px;background:#fbf1f0;border-left:4px solid var(--danger);border-radius:4px;"><strong>Key Comment Reference:</strong> ${esc(s.key_comment_references)}</div>` : ''}
-               ${s.resolution_team_response && !/recovered from pdf|comment recovered|missing from AI timeline/i.test(s.resolution_team_response) ? `<div style="margin-bottom:8px;color:var(--info);"><strong>Team Response:</strong> ${esc(s.resolution_team_response)}</div>` : ''}
-               ${s.resolution_notes ? `<div style="margin-bottom:8px;color:var(--success);"><strong>Resolution Notes:</strong> ${esc(s.resolution_notes)}</div>` : ''}
-               ${s.closure_notes ? `<div style="margin-bottom:0;"><strong>Closure Notes:</strong> ${esc(s.closure_notes)}</div>` : ''}
+            <div class="vtl-dot" style="background:${cfg.dot};color:#fff;font-size:0.7rem;display:flex;align-items:center;justify-content:center;">●</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:0.82rem;font-weight:700;color:var(--primary-dark);margin-bottom:6px;">${esc(s.time_sequence)}</div>
+              <div style="display:inline-block;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#fff;background:${cfg.badge};padding:2px 9px;border-radius:20px;margin-bottom:8px;">${esc(s.category || 'Update')}</div>
+              <div style="font-size:0.92rem;line-height:1.6;color:var(--text);background:${cfg.bg};padding:10px 14px;border-radius:6px;border-left:3px solid ${cfg.dot};">${esc(s.summary)}</div>
             </div>
           </div>`;
         });
