@@ -6355,11 +6355,11 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
               ? `<div class="evt-narrative-row">${esc(narrativeText)}</div>`
               : '';
 
-            const actionDescRow = ev.action_description
+            const actionDescRow = ev.action_description && !/recovered from pdf|comment recovered|missing from AI timeline/i.test(ev.action_description)
               ? `<div style="margin-top:6px;padding:8px;background:var(--bg);border-radius:4px;font-size:0.85rem;color:var(--text-secondary);"><strong>Action:</strong> ${esc(ev.action_description)}</div>`
               : '';
 
-            const intentRow = ev.intent_reasoning
+            const intentRow = ev.intent_reasoning && !/recovered to ensure every COMM block/i.test(ev.intent_reasoning)
               ? `<div style="margin-top:6px;padding:8px;background:var(--bg);border-radius:4px;font-size:0.85rem;color:var(--text-secondary);"><strong>Intent/Reasoning:</strong> ${esc(ev.intent_reasoning)}</div>`
               : '';
 
@@ -6544,7 +6544,9 @@ START DIRECTLY WITH THE OPENING BRACE { AND END WITH THE CLOSING BRACE }.
       if (!isEmail && !isComment) return '';
 
       const lines = [];
-      const actionText = ev.action_description ? ev.action_description : isEmail ? 'sent an email' : 'sent a follow-up comment';
+      const rawAction = ev.action_description && !/recovered from pdf|comment recovered|missing from AI timeline/i.test(ev.action_description)
+        ? ev.action_description : null;
+      const actionText = rawAction ? rawAction : isEmail ? 'sent an email' : 'sent a follow-up comment';
       lines.push(`${actorLabel} ${actionText}.`);
 
       if (ev.message_summary) {

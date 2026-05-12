@@ -88,20 +88,19 @@ Highlight what can be improved with clear rationale specific to this ticket from
 
 ## Timeline Summary Rules
 
-For each timeline summary item:
-- Focus on: issue reported by requestor, escalations/concerns from business-side only, response timing from support, resolution clarity, closure communication
-- **Highlight EVERY business-side frustration, urgency, or concern explicitly as a RED FLAG**
-- Include reasoning explaining why the event is significant
-- Include key comment reference pointing to the specific business-side phrase supporting the assessment
+Produce a clean, scannable timeline that a Service Manager can read without opening work notes. Each entry must answer: what action was taken, who performed it, and what the current state or expectation is.
 
-### Resolver Technical Milestones in Timeline
-Include resolver COMM block content in `resolution_team_response` when the COMM contains any of these milestone events:
-- **Root cause identification**: resolver explicitly names what caused the issue (e.g., "found the issue in calling function X", "ST12 trace shows delay in…")
-- **Investigation findings**: resolver reports what was discovered during debugging, tracing, or testing (e.g., "same behaviour on Q-System", "delay only occurs for PKI card users")
-- **Issue persists confirmation**: resolver confirms through testing that the problem still exists or reproduces in specific conditions
-- **Environment/scope clarification**: resolver identifies that the issue applies to a subset of users or configurations
+### Category (required — pick single best fit per entry)
+`Issue Reported` | `Investigation Started` | `Information Requested` | `User Update` | `Business Impact Update` | `Escalation` | `Vendor Coordination` | `Resolution Action` | `Monitoring` | `Validation Follow Up` | `Closure Follow Up` | `Resolved`
 
-These are **service quality milestones** — they reveal investigation depth, communication of findings to stakeholders, and progress toward resolution. Omitting them from `timeline_summary` hides critical service delivery context from the Service Manager view.
+### Writing Rules
+- **1–2 sentences per entry** — business-readable, no jargon. Instead of "Checked ST22 dumps" write "Support team analyzed backend system logs to identify application failures."
+- **Include business context** where visible: operational delays, finance impact, user frustration, escalation risk.
+- **No repetition** — do not produce consecutive entries saying "Awaiting update" or "Following up" without new context. Merge or skip if nothing new occurred.
+- **Highlight urgency** — use the `Escalation` or `Business Impact Update` category when business-side pressure, frustration, or impact is evident.
+
+### Executive Summary (required)
+Also produce an `executive_summary`: 2–3 sentences covering the entire ticket — issue raised, key investigation/actions taken, current status. Enables at-a-glance reading before the timeline.
 
 ## Output Schema
 
@@ -140,14 +139,12 @@ These are **service quality milestones** — they reveal investigation depth, co
       "rationale": "string (why this improves requestor satisfaction)"
     }
   ],
+  "executive_summary": "string — 2-3 sentences: issue raised, key actions taken, current status. Business-readable at-a-glance overview.",
   "timeline_summary": [
     {
-      "time_sequence": "string (e.g. Day 1 - Morning / Date)",
-      "issue_reported": "string (by ticket requestor)",
-      "escalations_or_concerns": "string (BUSINESS-SIDE ONLY; flag frustration/urgency as RED FLAGS)",
-      "resolution_team_response": "string",
-      "resolution_notes": "string",
-      "closure_notes": "string"
+      "time_sequence": "string — e.g. 'Day 1 - 22.09.2025'",
+      "category": "string — one of: Issue Reported | Investigation Started | Information Requested | User Update | Business Impact Update | Escalation | Vendor Coordination | Resolution Action | Monitoring | Validation Follow Up | Closure Follow Up | Resolved",
+      "summary": "string — 1-2 concise sentences: what action was taken, who performed it, why it matters, current state. Business-readable, no technical jargon."
     }
   ],
   "response_metrics": {
